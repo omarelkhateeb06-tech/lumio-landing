@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Menu, 
-  X, 
-  Check, 
-  ArrowRight, 
-  Sparkles, 
-  BookOpen, 
-  Award, 
-  ChevronRight,
-  HelpCircle,
+import {
+  Menu,
+  X,
+  Check,
+  ArrowRight,
+  Sparkles,
   Zap,
-  Globe,
-  Play
+  Sprout,
+  Briefcase,
+  Palette,
+  Settings,
+  Building2,
+  Rocket
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ConversationLesson from "@/components/ConversationLesson";
+import PromptRunner from "@/components/PromptRunner";
+import { captureEmail } from "@/lib/supabase";
 
 // Constants
 const SIGNUP_URL = "https://lumio-ai-learning-pl-fdup.bolt.host/signup";
@@ -23,6 +26,29 @@ export default function Home() {
   // Navigation State
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Email capture state
+  const [heroEmail, setHeroEmail] = useState("");
+  const [heroEmailSubmitted, setHeroEmailSubmitted] = useState(false);
+  const [heroEmailError, setHeroEmailError] = useState<string | null>(null);
+  const [heroEmailSubmitting, setHeroEmailSubmitting] = useState(false);
+
+  const handleHeroEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setHeroEmailError(null);
+    if (!heroEmail || !heroEmail.includes("@")) {
+      setHeroEmailError("That doesn't look like an email.");
+      return;
+    }
+    setHeroEmailSubmitting(true);
+    const res = await captureEmail(heroEmail, "landing_hero");
+    setHeroEmailSubmitting(false);
+    if (res.ok) {
+      setHeroEmailSubmitted(true);
+    } else {
+      setHeroEmailError("Couldn't send the link. Check your connection and try again.");
+    }
+  };
 
   // Monitor Scroll for Navbar
   useEffect(() => {
@@ -37,13 +63,15 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Framer Motion Variants (Editorial, subtle fade + translate-y, no bouncy spring physics)
+  // Framer Motion Variants - expo ease-out for editorial warmth
+  const EASE = [0.16, 1, 0.3, 1] as const;
+
   const fadeInVariant = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { 
-      opacity: 1, 
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" as any }
+      transition: { duration: 0.7, ease: EASE }
     }
   };
 
@@ -52,14 +80,14 @@ export default function Home() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.15,
         delayChildren: 0.1
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-[#1C1917] selection:bg-[#FEF3C7] selection:text-[#F97316] overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] text-[#1C1917] selection:bg-[#FEF3C7] selection:text-[#F97316] overflow-x-clip font-sans">
       
       {/* 1. NAVBAR */}
       <header 
@@ -158,21 +186,21 @@ export default function Home() {
       </header>
 
       {/* 2. HERO SECTION */}
-      <section className="pt-32 pb-24 md:pt-44 md:pb-32 overflow-hidden">
+      <section className="pt-32 pb-16 md:pt-44 md:pb-20 overflow-hidden">
         <div className="container max-w-[1200px]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 flex flex-col text-left">
-              <motion.h1 
+            {/* Content Column */}
+            <div className="lg:col-span-9 flex flex-col text-left">
+              <motion.h1
                 initial="hidden"
                 animate="visible"
                 variants={fadeInVariant}
-                className="font-serif text-[44px] leading-[1.1] md:text-[68px] font-semibold tracking-tight text-[#1C1917]"
+                className="font-serif text-[40px] leading-[1.1] md:text-[56px] font-semibold tracking-tight text-[#1C1917]"
               >
-                Your colleagues are already using <span className="font-serif italic font-normal text-[#F97316]">AI</span>. Here's how to catch up.
+                While you're Googling "best ChatGPT prompts," <span className="font-serif italic font-normal text-[#F97316]">the person next to you</span> just automated their entire Monday.
               </motion.h1>
-              
-              <motion.p 
+
+              <motion.p
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -181,97 +209,106 @@ export default function Home() {
                 }}
                 className="mt-6 text-[#6B7280] text-lg md:text-xl leading-relaxed font-sans max-w-xl"
               >
-                Lumio teaches knowledge workers to use AI tools confidently — through 5-minute daily lessons, real exercises, and a structured path from curious to capable.
+                Catch up in 5 minutes a day. 30 lessons, one per workday. By lesson 10 you'll save an hour a week. By lesson 30 you'll be the person your team asks.
               </motion.p>
 
-              {/* CTAs */}
-              <motion.div 
+              {/* Primary CTA + soft text link + risk reversal */}
+              <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={{
                   ...fadeInVariant,
                   visible: { ...fadeInVariant.visible, transition: { ...fadeInVariant.visible.transition, delay: 0.25 } }
                 }}
-                className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
+                className="mt-8 flex flex-col items-start gap-3"
               >
-                <Button 
-                  asChild
-                  className="rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white px-8 py-6 text-base font-medium transition-transform active:scale-97"
-                >
-                  <a href={SIGNUP_URL}>Try a free lesson</a>
-                </Button>
-                
-                <Button 
-                  asChild
-                  variant="ghost"
-                  className="rounded-full text-[#1C1917] hover:bg-[#F5F5F4] px-8 py-6 text-base font-medium transition-transform active:scale-97 border border-[#E5E7EB]"
-                >
-                  <a href="#lessons">See the curriculum</a>
-                </Button>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                  <Button
+                    asChild
+                    className="rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white px-8 py-6 text-base font-medium transition-transform active:scale-97"
+                  >
+                    <a href={SIGNUP_URL}>Try lesson 1, free</a>
+                  </Button>
+
+                  <a
+                    href="#lessons"
+                    className="text-sm font-medium text-[#6B7280] hover:text-[#1C1917] underline underline-offset-4 decoration-[#E5E7EB] hover:decoration-[#F97316] transition-colors"
+                  >
+                    or see the full curriculum
+                  </a>
+                </div>
+                <p className="text-xs text-[#6B7280]">
+                  Free. No credit card. One lesson a day. Skip any one, unsubscribe in one click.
+                </p>
               </motion.div>
 
-              {/* Trust Banner */}
-              <motion.div 
+              {/* Email capture + honest founder line */}
+              <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={{
                   ...fadeInVariant,
                   visible: { ...fadeInVariant.visible, transition: { ...fadeInVariant.visible.transition, delay: 0.35 } }
                 }}
-                className="mt-12 pt-8 border-t border-[#E5E7EB] flex flex-wrap items-center gap-4"
+                className="mt-12 pt-8 border-t border-[#E5E7EB] max-w-xl"
               >
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-[#FEF3C7] border-2 border-[#FAFAF7] flex items-center justify-center text-xs font-semibold text-[#B45309]">S</div>
-                  <div className="w-8 h-8 rounded-full bg-[#DCFCE7] border-2 border-[#FAFAF7] flex items-center justify-center text-xs font-semibold text-[#15803D]">M</div>
-                  <div className="w-8 h-8 rounded-full bg-[#E0F2FE] border-2 border-[#FAFAF7] flex items-center justify-center text-xs font-semibold text-[#0369A1]">P</div>
-                  <div className="w-8 h-8 rounded-full bg-[#FEE2E2] border-2 border-[#FAFAF7] flex items-center justify-center text-xs font-semibold text-[#B91C1C]">K</div>
-                  <div className="w-8 h-8 rounded-full bg-[#F3E8FF] border-2 border-[#FAFAF7] flex items-center justify-center text-xs font-semibold text-[#6B21A8]">A</div>
-                </div>
-                <p className="text-sm text-[#6B7280] font-medium">
-                  Join early learners going from <span className="text-[#1C1917] font-semibold">AI-curious</span> to <span className="text-[#1C1917] font-semibold">AI-confident</span>.
-                </p>
+                {heroEmailSubmitted ? (
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-[#DCFCE7] flex items-center justify-center text-[#166534] mt-0.5 shrink-0">
+                      <Check className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[#1C1917]">
+                        You're in. Monday morning, Lesson 1 lands in your inbox.
+                      </p>
+                      <p className="text-xs text-[#6B7280] mt-1">
+                        Hit reply with what's still confusing. I read every one.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-[#1C1917] font-medium mb-3">
+                      Or get Lesson 1 in your inbox: <span className="text-[#6B7280] font-normal italic">When to use ChatGPT vs. Google.</span>
+                    </p>
+                    <form onSubmit={handleHeroEmail} className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="email"
+                        required
+                        value={heroEmail}
+                        onChange={(e) => setHeroEmail(e.target.value)}
+                        placeholder="you@work.com"
+                        disabled={heroEmailSubmitting}
+                        className="flex-1 min-w-0 px-4 py-2.5 rounded-full border border-[#E5E7EB] bg-white text-sm text-[#1C1917] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#FEF3C7] transition-colors disabled:opacity-50"
+                      />
+                      <button
+                        type="submit"
+                        disabled={heroEmailSubmitting}
+                        className="px-5 py-2.5 rounded-full bg-[#1C1917] hover:bg-[#000000] text-white text-sm font-medium transition-colors disabled:opacity-60 whitespace-nowrap"
+                      >
+                        {heroEmailSubmitting ? "Sending…" : "Send me Lesson 1"}
+                      </button>
+                    </form>
+                    {heroEmailError && (
+                      <p className="text-xs text-[#B91C1C] mt-2">{heroEmailError}</p>
+                    )}
+                    <p className="text-xs text-[#6B7280] mt-3 leading-relaxed">
+                      Reply and tell me what's confusing. I'll rewrite the lesson and send it back to you. <span className="text-[#9CA3AF]">/ Omar, building this solo.</span>
+                    </p>
+                  </>
+                )}
               </motion.div>
             </div>
 
-            {/* Right Side: Floating Lesson Card Mockup */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <motion.div 
-                initial={{ opacity: 0, rotate: 0, y: 30 }}
-                animate={{ opacity: 1, rotate: 2, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" as any }}
-                className="relative bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-[0_8px_30px_rgb(28,25,23,0.03)] max-w-sm w-full hover:rotate-0 transition-all duration-500 cursor-pointer"
-              >
-                {/* Lesson Header */}
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-medium text-[#6B7280] uppercase tracking-wider">Lesson Preview</span>
-                  <span className="bg-[#FEF3C7] text-[#F97316] text-xs px-2.5 py-0.5 rounded-full font-medium">+50 XP</span>
-                </div>
-                
-                {/* Title */}
-                <h3 className="font-serif text-xl font-medium text-[#1C1917] mb-3">
-                  How to talk to Claude (like a senior colleague)
-                </h3>
-                
-                <p className="text-sm text-[#6B7280] mb-4 leading-relaxed">
-                  Stop writing prompts like Google searches. Learn the 3-step framing technique that unlocks deep, structured reasoning.
-                </p>
-
-                {/* Progress bar simulation */}
-                <div className="w-full bg-[#F5F5F4] h-1.5 rounded-full overflow-hidden mb-4">
-                  <div className="bg-[#166534] w-3/4 h-full rounded-full"></div>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-[#166534] font-semibold">
-                  <span className="flex items-center gap-1">
-                    <Check className="w-3.5 h-3.5" /> Practice Completed
-                  </span>
-                  <span className="text-[#6B7280]">5 min read</span>
-                </div>
-              </motion.div>
-            </div>
           </div>
         </div>
       </section>
+
+      {/* INTERACTIVE PROMPT RUNNER (live Groq-powered demo) */}
+      <PromptRunner />
+
+      {/* CONVERSATION LESSON */}
+      <ConversationLesson />
 
       {/* 3. THE PROBLEM SECTION */}
       <section className="py-24 bg-[#F5F5F4]/40 border-y border-[#E5E7EB]">
@@ -304,7 +341,7 @@ export default function Home() {
               <span className="text-xs font-semibold tracking-wider text-[#6B7280] uppercase">Scenario A</span>
               <h3 className="font-serif text-2xl font-medium text-[#1C1917] mt-3 mb-4">Too technical.</h3>
               <p className="text-base text-[#6B7280] leading-relaxed">
-                Transformers, tokens, embeddings. You wanted to write better emails, not pass a CS exam.
+                Ten minutes in and they're explaining how the technology works under the hood. You just wanted to write a better email.
               </p>
             </motion.div>
 
@@ -317,22 +354,11 @@ export default function Home() {
               <span className="text-xs font-semibold tracking-wider text-[#6B7280] uppercase">Scenario B</span>
               <h3 className="font-serif text-2xl font-medium text-[#1C1917] mt-3 mb-4">Too shallow.</h3>
               <p className="text-base text-[#6B7280] leading-relaxed">
-                Another listicle of 'amazing prompts.' Three weeks later you still don't know when to use which tool.
+                A viral thread of "game-changing AI prompts" you bookmarked, tried once, and forgot by Friday.
               </p>
             </motion.div>
           </motion.div>
 
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInVariant}
-            className="text-center mt-16"
-          >
-            <p className="font-serif italic text-xl md:text-2xl text-[#F97316]">
-              Lumio is built different.
-            </p>
-          </motion.div>
         </div>
       </section>
 
@@ -367,7 +393,7 @@ export default function Home() {
                 Take a 60-second quiz.
               </h3>
               <p className="text-base text-[#6B7280] leading-relaxed">
-                We learn what you already know and what you actually want to use AI for — at work, in writing, for research, whatever fits.
+                We learn what you already know and what you actually want to use AI for. At work, in writing, for research, whatever fits.
               </p>
             </motion.div>
 
@@ -393,7 +419,7 @@ export default function Home() {
                 Practice with real tools.
               </h3>
               <p className="text-base text-[#6B7280] leading-relaxed">
-                Every lesson ends with a "Try It Yourself" challenge in ChatGPT or Claude. You don't just read about AI — you use it.
+                Every lesson ends with a "Try It Yourself" challenge in ChatGPT or Claude. You don't just read about AI. You use it.
               </p>
             </motion.div>
           </motion.div>
@@ -444,8 +470,8 @@ export default function Home() {
               className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#FEF3C7] flex items-center justify-center text-lg">
-                  🌱
+                <div className="w-10 h-10 rounded-lg bg-[#FEF3C7] flex items-center justify-center text-[#B45309]">
+                  <Sprout className="w-5 h-5" />
                 </div>
                 <span className="bg-[#DCFCE7] text-[#166534] text-xs px-2.5 py-0.5 rounded-full font-semibold">
                   Beginner
@@ -467,8 +493,8 @@ export default function Home() {
               className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#DCFCE7] flex items-center justify-center text-lg">
-                  💼
+                <div className="w-10 h-10 rounded-lg bg-[#DCFCE7] flex items-center justify-center text-[#166534]">
+                  <Briefcase className="w-5 h-5" />
                 </div>
                 <span className="bg-[#DCFCE7] text-[#166534] text-xs px-2.5 py-0.5 rounded-full font-semibold">
                   Beginner
@@ -476,7 +502,7 @@ export default function Home() {
               </div>
               <h3 className="font-serif text-xl font-semibold text-[#1C1917] mb-2">2. AI for Everyday Work</h3>
               <p className="text-sm text-[#6B7280] leading-relaxed mb-4">
-                "Email, docs, meetings, calendar — your daily wins."
+                "Email, docs, meetings, calendar. Your daily wins."
               </p>
               <div className="text-xs text-[#6B7280] font-medium pt-3 border-t border-[#E5E7EB]">
                 5 lessons
@@ -490,8 +516,8 @@ export default function Home() {
               className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#E0F2FE] flex items-center justify-center text-lg">
-                  🎨
+                <div className="w-10 h-10 rounded-lg bg-[#E0F2FE] flex items-center justify-center text-[#0369A1]">
+                  <Palette className="w-5 h-5" />
                 </div>
                 <span className="bg-[#FEF3C7] text-[#B45309] text-xs px-2.5 py-0.5 rounded-full font-semibold">
                   Intermediate
@@ -499,7 +525,7 @@ export default function Home() {
               </div>
               <h3 className="font-serif text-xl font-semibold text-[#1C1917] mb-2">3. AI for Creation</h3>
               <p className="text-sm text-[#6B7280] leading-relaxed mb-4">
-                "Writing, images, brainstorming — make better, faster."
+                "Writing, images, brainstorming. Make better, faster."
               </p>
               <div className="text-xs text-[#6B7280] font-medium pt-3 border-t border-[#E5E7EB]">
                 5 lessons
@@ -513,8 +539,8 @@ export default function Home() {
               className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#F5F5F4] flex items-center justify-center text-lg">
-                  ⚙️
+                <div className="w-10 h-10 rounded-lg bg-[#F5F5F4] flex items-center justify-center text-[#1C1917]">
+                  <Settings className="w-5 h-5" />
                 </div>
                 <span className="bg-[#FEF3C7] text-[#B45309] text-xs px-2.5 py-0.5 rounded-full font-semibold">
                   Intermediate
@@ -536,8 +562,8 @@ export default function Home() {
               className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#FEE2E2] flex items-center justify-center text-lg">
-                  🏭
+                <div className="w-10 h-10 rounded-lg bg-[#FEE2E2] flex items-center justify-center text-[#B91C1C]">
+                  <Building2 className="w-5 h-5" />
                 </div>
                 <span className="bg-[#E5E7EB] text-[#1C1917] text-xs px-2.5 py-0.5 rounded-full font-semibold">
                   Advanced
@@ -559,8 +585,8 @@ export default function Home() {
               className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#FEF3C7] flex items-center justify-center text-lg">
-                  🚀
+                <div className="w-10 h-10 rounded-lg bg-[#FEF3C7] flex items-center justify-center text-[#F97316]">
+                  <Rocket className="w-5 h-5" />
                 </div>
                 <span className="bg-[#E5E7EB] text-[#1C1917] text-xs px-2.5 py-0.5 rounded-full font-semibold">
                   Advanced
@@ -601,9 +627,9 @@ export default function Home() {
             variants={fadeInVariant}
             className="max-w-2xl mx-auto bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_12px_40px_rgba(28,25,23,0.04)] overflow-hidden relative"
           >
-            {/* XP Badge */}
-            <div className="absolute top-6 right-6 bg-[#DCFCE7] text-[#166534] text-xs font-semibold px-3 py-1 rounded-full">
-              +50 XP
+            {/* Read time chip (replaces +50 XP badge, adult-coded, not gamified) */}
+            <div className="absolute top-6 right-6 bg-[#F5F5F4] text-[#6B7280] text-xs font-medium px-3 py-1 rounded-full">
+              5 min read
             </div>
 
             <div className="p-8 md:p-10">
@@ -694,127 +720,24 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="flex flex-col gap-10 max-w-2xl mx-auto text-center"
-          >
-            <motion.p variants={fadeInVariant} className="text-lg md:text-xl text-[#6B7280] leading-relaxed">
-              Stop feeling behind in every meeting where someone mentions ChatGPT.
-            </motion.p>
-            <motion.p variants={fadeInVariant} className="text-lg md:text-xl text-[#6B7280] leading-relaxed">
-              Stop guessing which tool to use for what.
-            </motion.p>
-            <motion.p variants={fadeInVariant} className="text-lg md:text-xl text-[#6B7280] leading-relaxed">
-              Start showing up as the person on your team who actually knows this stuff.
-            </motion.p>
-          </motion.div>
-
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInVariant}
-            className="text-center mt-16"
+            className="text-center mt-10"
           >
-            <Button 
+            <Button
               asChild
               className="rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white px-8 py-6 text-base font-medium transition-transform active:scale-97"
             >
-              <a href={SIGNUP_URL}>Become that person</a>
+              <a href={SIGNUP_URL}>Start lesson 1, free</a>
             </Button>
           </motion.div>
         </div>
       </section>
 
-      {/* 8. TESTIMONIALS */}
-      <section className="py-24 md:py-32">
-        <div className="container max-w-[1200px]">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInVariant}
-            className="text-center max-w-2xl mx-auto mb-20"
-          >
-            <h2 className="font-serif text-3xl md:text-5xl font-medium text-[#1C1917] leading-tight">
-              What early learners are saying.
-            </h2>
-          </motion.div>
-
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            {/* Testimonial 1 */}
-            <motion.div 
-              variants={fadeInVariant}
-              whileHover={{ y: -4 }}
-              className="bg-white p-8 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] flex flex-col justify-between transition-all duration-300"
-            >
-              <p className="font-serif italic text-lg text-[#1C1917] leading-relaxed mb-8">
-                "I'd done so many AI 'crash courses' that taught me nothing. Lumio was the first one where I actually started using AI at work the next day."
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center text-sm font-semibold text-[#B45309]">
-                  SK
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-[#1C1917]">Sarah K.</h4>
-                  <p className="text-xs text-[#6B7280]">Product Manager</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Testimonial 2 */}
-            <motion.div 
-              variants={fadeInVariant}
-              whileHover={{ y: -4 }}
-              className="bg-white p-8 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] flex flex-col justify-between transition-all duration-300"
-            >
-              <p className="font-serif italic text-lg text-[#1C1917] leading-relaxed mb-8">
-                "Felt like having a patient friend explain everything I was too embarrassed to ask my engineering team."
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#DCFCE7] flex items-center justify-center text-sm font-semibold text-[#15803D]">
-                  MT
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-[#1C1917]">Marcus T.</h4>
-                  <p className="text-xs text-[#6B7280]">Marketing Lead</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Testimonial 3 */}
-            <motion.div 
-              variants={fadeInVariant}
-              whileHover={{ y: -4 }}
-              className="bg-white p-8 rounded-2xl border border-[#E5E7EB] shadow-[0_4px_20px_rgb(28,25,23,0.01)] flex flex-col justify-between transition-all duration-300"
-            >
-              <p className="font-serif italic text-lg text-[#1C1917] leading-relaxed mb-8">
-                "I finally know which model to use for what. That alone was worth it."
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#FEE2E2] flex items-center justify-center text-sm font-semibold text-[#B91C1C]">
-                  PR
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-[#1C1917]">Priya R.</h4>
-                  <p className="text-xs text-[#6B7280]">Operations Manager</p>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 9. FINAL CTA */}
+      {/* 8. FINAL CTA */}
       <section className="py-24 bg-[#FEF3C7] border-t border-[#E5E7EB] text-center relative overflow-hidden">
         {/* Background decorative soft shapes (strictly warm tints, no cool gradients) */}
         <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none opacity-40">
@@ -831,14 +754,14 @@ export default function Home() {
             className="max-w-3xl mx-auto flex flex-col items-center"
           >
             <h2 className="font-serif text-3xl md:text-5xl font-medium text-[#1C1917] leading-tight mb-10">
-              Five minutes a day. Three months from now, you're the AI person on your team.
+              Five minutes a day. Three Mondays from now, you're the one being asked.
             </h2>
 
             <Button 
               asChild
               className="rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white px-10 py-7 text-lg font-medium shadow-md transition-transform active:scale-97 border-0"
             >
-              <a href={SIGNUP_URL}>Start your first lesson — free</a>
+              <a href={SIGNUP_URL}>Start your first lesson, free</a>
             </Button>
           </motion.div>
         </div>
@@ -859,7 +782,7 @@ export default function Home() {
                 </span>
               </a>
               <p className="text-sm text-[#6B7280] font-medium">
-                AI skills for the rest of us.
+                For people who feel behind.
               </p>
             </div>
 
@@ -878,7 +801,7 @@ export default function Home() {
 
             {/* Right Copyright */}
             <div className="text-left md:text-right text-sm text-[#6B7280] font-medium">
-              <p>© 2026 Lumio. Built for AI-curious humans.</p>
+              <p>© 2026 Lumio.</p>
             </div>
           </div>
         </div>

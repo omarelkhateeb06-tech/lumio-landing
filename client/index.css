@@ -39,37 +39,39 @@
   /* Font Family tokens */
   --font-serif: "Fraunces", Georgia, serif;
   --font-sans: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 :root {
-  /* Lumio Brand Palette (Strict Spec) */
-  --background: #FAFAF7; /* Warm off-white */
-  --foreground: #1C1917; /* Warm charcoal */
-  
+  /* Lumio Brand Palette — mirrors the JS tokens in client/src/lib/theme.ts.
+     Keep these two in sync; theme.ts is the source of truth. */
+  --background: #F2EFE7; /* paper */
+  --foreground: #0E0D0B; /* ink */
+
   --card: #FFFFFF;
-  --card-foreground: #1C1917;
-  
+  --card-foreground: #0E0D0B;
+
   --popover: #FFFFFF;
-  --popover-foreground: #1C1917;
-  
-  /* Primary Accent: Amber/Orange */
-  --primary: #F97316;
+  --popover-foreground: #0E0D0B;
+
+  /* Primary Accent: brand orange */
+  --primary: #E85D04;
   --primary-foreground: #FFFFFF;
-  
-  /* Secondary Accent: Forest Green */
-  --secondary: #166534;
+
+  /* Secondary Accent: forest green */
+  --secondary: #0B3D2E;
   --secondary-foreground: #FFFFFF;
-  
-  --muted: #F5F5F4; /* Warm grey/stone */
-  --muted-foreground: #6B7280; /* Text secondary */
-  
-  --accent: #FEF3C7; /* Amber-50 */
-  --accent-foreground: #F97316;
-  
-  --border: #E5E7EB;
-  --input: #E5E7EB;
-  --ring: #F97316;
-  
+
+  --muted: #F5F5F4; /* warm stone */
+  --muted-foreground: #52443A; /* umber — secondary text */
+
+  --accent: #F7D9B5; /* amber paper */
+  --accent-foreground: #A8380A; /* orangeInk — matches C.orangeInk in theme.ts (~5.7:1 on paper) */
+
+  --border: rgba(14, 13, 11, 0.08); /* hairline */
+  --input: rgba(14, 13, 11, 0.08);
+  --ring: #E85D04;
+
   --radius: 1rem; /* 16px rounded-2xl style, smooth corners */
 }
 
@@ -79,6 +81,18 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased selection:bg-amber-100 selection:text-amber-900;
+  }
+  /* Explicit placeholder color — UA defaults hover around 4:1 and fail AA.
+     #52443A (umber) on white is ~7.8:1. Inputs on the dark band opt out via
+     the .placeholder-on-dark utility below. */
+  input::placeholder,
+  textarea::placeholder {
+    color: #52443A;
+    opacity: 1;
+  }
+  .placeholder-on-dark::placeholder {
+    color: rgba(241, 238, 230, 0.55);
+    opacity: 1;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif tracking-tight;
@@ -94,6 +108,50 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Breathing Fraunces: variable-font axes loop for the hero in /v2/atelier.
+   Slow, hypnotic, never quite landing. Reduced-motion disables this. */
+@keyframes fraunces-breathe {
+  0%, 100% {
+    font-variation-settings: "opsz" 144, "wght" 420, "SOFT" 30;
+    letter-spacing: -0.025em;
+  }
+  50% {
+    font-variation-settings: "opsz" 120, "wght" 380, "SOFT" 100;
+    letter-spacing: -0.022em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Newsprint film grain — adds 4% noise overlay, fixed, mix-blend-overlay.
+   Applied selectively to .v2-grain elements (not globally — keeps the existing
+   /  page untouched). */
+.v2-grain {
+  position: relative;
+}
+.v2-grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='1'/></svg>");
+  background-size: 200px 200px;
 }
 
 @layer components {
