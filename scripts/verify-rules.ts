@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // rules_v1 verification — exercises the recommendation engine (buildPathV1)
-// against the live, freshly-seeded curriculum (102 lessons across 9 modules).
+// against the live, freshly-seeded curriculum (101 lessons across 9 modules).
 //
 //   pnpm exec tsx scripts/verify-rules.ts
 //   (or)  node --import tsx scripts/verify-rules.ts
@@ -171,8 +171,8 @@ function verifyPersona(name: string, profile: RecProfile, lessons: RecLesson[], 
 
 const lessons = await loadLessons();
 console.log(`Loaded ${lessons.length} published lessons from the DB.`);
-if (lessons.length !== 102) {
-  console.log(`\x1b[33m⚠ expected 102 published lessons, got ${lessons.length} — seed may not be fully applied.\x1b[0m`);
+if (lessons.length !== 101) {
+  console.log(`\x1b[33m⚠ expected 101 published lessons, got ${lessons.length} — seed may not be fully applied.\x1b[0m`);
 }
 
 const personas: Array<{ name: string; profile: RecProfile; exclude?: Set<string> }> = [
