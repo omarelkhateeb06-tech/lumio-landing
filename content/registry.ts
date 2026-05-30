@@ -31,6 +31,7 @@ export interface TagDef {
 // Ordered — array position is the module's order_index.
 export const MODULES: ModuleDef[] = [
   { slug: "foundations", title: "Foundations" },
+  { slug: "first-steps", title: "First Steps" },
   { slug: "everyday-work", title: "Everyday work" },
   { slug: "creation", title: "Creation" },
   { slug: "business-workflows", title: "Business workflows" },

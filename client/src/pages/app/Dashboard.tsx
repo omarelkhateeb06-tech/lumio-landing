@@ -23,6 +23,8 @@ import {
   levelCheckFor,
 } from "@/lib/gamification";
 import type { UserStats, BadgeDefinition, MasteryCheckSummary } from "@/lib/gamification";
+import { fetchDashboardCerts, CERT_STATUS_LABEL } from "@/lib/certs";
+import type { CertDashboardCard, CertStatus } from "@/lib/certs";
 import { C, FOCUS_RING, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT_SOFT, PILL } from "@/lib/theme";
 import { dur, ease } from "@/lib/motion";
 import { BrandNav } from "@/components/marketing";
@@ -507,6 +509,119 @@ function BadgeGrid({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Certificates section — one card per published cert with progress + a
+// status-aware call to action.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CERT_STATUS_TONE: Record<CertStatus, { bg: string; border: string; ink: string }> = {
+  "not-started": { bg: C.surface, border: C.hairline, ink: C.umber },
+  "in-progress": { bg: C.surface, border: C.orangeWashBorder, ink: C.orangeInk },
+  "capstone-unlocked": { bg: C.surface, border: C.orangeWashBorder, ink: C.orangeInk },
+  submitted: { bg: C.orangeWash, border: C.orangeWashBorder, ink: C.orangeInk },
+  certified: { bg: C.surface, border: C.orangeWashBorder, ink: C.forest },
+};
+
+function certCta(card: CertDashboardCard): { label: string; href: string } {
+  const { cert, status, nextLessonSlug, completedCount, total } = card;
+  const overview = `/app/cert/${cert.slug}`;
+  if (status === "certified") return { label: "View certificate →", href: overview };
+  if (status === "submitted") return { label: "View status →", href: overview };
+  if (status === "capstone-unlocked") return { label: "Submit capstone →", href: `${overview}/submit` };
+  if (status === "in-progress" && total > 0 && completedCount === total)
+    return { label: "Unlock capstone →", href: overview };
+  if (status === "in-progress" && nextLessonSlug)
+    return { label: "Continue learning →", href: `/lesson/${nextLessonSlug}` };
+  return { label: "Start earning →", href: overview };
+}
+
+function CertWidget({ certs, rm }: { certs: CertDashboardCard[]; rm: boolean }) {
+  if (certs.length === 0) return null;
+  return (
+    <motion.section
+      initial={rm ? false : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: dur.base, delay: 0.62, ease: ease.ink }}
+      className="mt-16"
+    >
+      <h2
+        className="font-serif mb-6"
+        style={{ color: C.espresso, fontSize: 22, fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT) }}
+      >
+        Certificates
+      </h2>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {certs.map((card) => {
+          const { cert, total, completedCount, status } = card;
+          const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+          const tone = CERT_STATUS_TONE[status];
+          const cta = certCta(card);
+          return (
+            <div
+              key={cert.id}
+              className="rounded-2xl p-6 flex flex-col"
+              style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
+            >
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <a
+                  href={`/app/cert/${cert.slug}`}
+                  className={`font-serif hover:underline ${FOCUS_RING}`}
+                  style={{ color: C.espresso, fontSize: 19, fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT) }}
+                >
+                  {cert.name}
+                </a>
+                <span
+                  className="inline-block text-[11px] font-medium px-2.5 py-1 rounded-full flex-shrink-0"
+                  style={{
+                    backgroundColor: tone.bg,
+                    border: `1px solid ${tone.border}`,
+                    color: tone.ink,
+                    fontFamily: FONT_MONO,
+                  }}
+                >
+                  {CERT_STATUS_LABEL[status]}
+                </span>
+              </div>
+
+              <div
+                className="w-full rounded-full overflow-hidden"
+                style={{ height: 6, backgroundColor: C.hairline }}
+                role="progressbar"
+                aria-valuenow={pct}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${completedCount} of ${total} cert lessons complete`}
+              >
+                <div
+                  style={{
+                    width: `${pct}%`,
+                    height: "100%",
+                    backgroundColor: C.orange,
+                    borderRadius: 9999,
+                    minWidth: completedCount > 0 ? 6 : 0,
+                    transition: rm ? undefined : "width 0.6s cubic-bezier(0.22,1,0.36,1)",
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+                {completedCount} of {total} lessons
+              </p>
+
+              <a
+                href={cta.href}
+                className={`inline-block mt-5 text-sm font-medium ${FOCUS_RING}`}
+                style={{ color: C.orangeInk }}
+              >
+                {cta.label}
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </motion.section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -521,6 +636,7 @@ export default function Dashboard() {
   const [badges, setBadges] = useState<BadgeDefinition[]>([]);
   const [earnedBadges, setEarnedBadges] = useState<Set<string>>(new Set());
   const [checks, setChecks] = useState<MasteryCheckSummary[]>([]);
+  const [certs, setCerts] = useState<CertDashboardCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -529,7 +645,7 @@ export default function Dashboard() {
     // Fire-and-forget: stamp today's activity so the streak advances on visit.
     recordActivity();
     (async () => {
-      const [curr, done, masteredIds, userStats, badgeDefs, earnedIds, allChecks] =
+      const [curr, done, masteredIds, userStats, badgeDefs, earnedIds, allChecks, certCards] =
         await Promise.all([
           fetchCurriculum(),
           fetchCompletedLessonIds(),
@@ -538,6 +654,7 @@ export default function Dashboard() {
           fetchBadgeDefinitions(),
           fetchEarnedBadgeIds(),
           fetchMasteryChecks(),
+          fetchDashboardCerts(),
         ]);
       // The personalized path drives lesson ordering. If the user has none yet
       // (onboarded before rules_v1 shipped), generate it lazily, then read back.
@@ -554,6 +671,7 @@ export default function Dashboard() {
       setBadges(badgeDefs);
       setEarnedBadges(earnedIds);
       setChecks(allChecks);
+      setCerts(certCards);
       setPathOrder(path);
       setLoading(false);
       if (done.size === 0 && masteredIds.size === 0 && !localStorage.getItem("lumio_welcomed")) {
@@ -709,6 +827,7 @@ export default function Dashboard() {
           <>
             <TodayCard lesson={nextLesson} total={total} rm={rm} />
             <ModuleGrid curriculum={curriculum} completed={effectiveCompleted} checks={checks} rm={rm} />
+            <CertWidget certs={certs} rm={rm} />
             <BadgeGrid badges={badges} earned={earnedBadges} rm={rm} />
           </>
         )}

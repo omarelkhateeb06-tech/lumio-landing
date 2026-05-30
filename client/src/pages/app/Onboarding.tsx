@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchOnboardingComplete, saveOnboarding, generateUserPath } from "@/lib/supabase";
+import { supabase, fetchOnboardingComplete, saveOnboarding, generateUserPath } from "@/lib/supabase";
 import type { OnboardingAnswers, SkillLevel, AiUsage, OnboardingGoal } from "@/lib/supabase";
 import {
   C,
@@ -238,6 +238,15 @@ export default function Onboarding() {
       // a failure here shouldn't block entry — the Dashboard regenerates lazily
       // and falls back to the natural curriculum order in the meantime.
       await generateUserPath();
+      // Kick off block personalization and Loops contact enrichment in the
+      // background. Fire and forget: a Groq or Loops hiccup must never keep the
+      // learner from reaching their dashboard.
+      try {
+        void supabase.functions.invoke("personalize-blocks");
+        void supabase.functions.invoke("loops-enrich-contact");
+      } catch {
+        // ignore — both are best-effort and reconcile later
+      }
       setSaving(false);
       navigate("/app", { replace: true });
     } else {

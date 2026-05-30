@@ -41,9 +41,8 @@
 //
 // Interactive block types (multiple_choice, fill_blank, try_it_live,
 // before_after) are authored as a fenced ```json block whose shape matches the
-// content interfaces in client/src/lib/curriculum.ts. NOTE: those four types are
-// imported and stored but do not RENDER until the Phase 3 reader components ship;
-// reading + mini_project render today.
+// content interfaces in client/src/lib/curriculum.ts. All six block types render
+// in the lesson reader.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { readdirSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
@@ -73,6 +72,7 @@ const BLOCK_TYPES = new Set([
 interface ParsedBlock {
   type: string;
   content: unknown;
+  personalizable: boolean;
 }
 
 interface ParsedLesson {
@@ -142,20 +142,33 @@ function splitFrontmatter(text: string): { fm: Record<string, string | string[]>
 
 // ── Block parsing ──────────────────────────────────────────────────────────--
 
-function parseRawBlocks(body: string): { type: string; raw: string }[] {
+// A block section heading may carry an optional [personalizable] marker, e.g.
+// "## reading [personalizable]", flagging the block for the personalization
+// layer (see the personalize-blocks Edge Function). The marker is stripped to
+// recover the bare block type.
+function parseRawBlocks(body: string): { type: string; raw: string; personalizable: boolean }[] {
   const lines = body.split("\n");
-  const blocks: { type: string; raw: string }[] = [];
-  let current: { type: string; lines: string[] } | null = null;
+  const blocks: { type: string; raw: string; personalizable: boolean }[] = [];
+  let current: { type: string; lines: string[]; personalizable: boolean } | null = null;
   for (const line of lines) {
     const m = line.match(/^##\s+(.+?)\s*$/);
     if (m) {
-      if (current) blocks.push({ type: current.type, raw: current.lines.join("\n").trim() });
-      current = { type: m[1].trim(), lines: [] };
+      if (current)
+        blocks.push({ type: current.type, raw: current.lines.join("\n").trim(), personalizable: current.personalizable });
+      let heading = m[1].trim();
+      let personalizable = false;
+      const marker = heading.match(/\s*\[personalizable\]\s*$/i);
+      if (marker) {
+        personalizable = true;
+        heading = heading.slice(0, marker.index).trim();
+      }
+      current = { type: heading, lines: [], personalizable };
     } else if (current) {
       current.lines.push(line);
     }
   }
-  if (current) blocks.push({ type: current.type, raw: current.lines.join("\n").trim() });
+  if (current)
+    blocks.push({ type: current.type, raw: current.lines.join("\n").trim(), personalizable: current.personalizable });
   return blocks;
 }
 
@@ -297,14 +310,14 @@ function parseLesson(file: string, rel: string): ParsedLesson | null {
         fail(rel, "reading block is empty");
         ok = false;
       }
-      blocks.push({ type: "reading", content: { markdown: rb.raw } });
+      blocks.push({ type: "reading", content: { markdown: rb.raw }, personalizable: rb.personalizable });
     } else if (rb.type === "mini_project") {
       const mp = parseMiniProject(rb.raw);
       if (!mp.brief) {
         fail(rel, "mini_project block has no brief text");
         ok = false;
       }
-      blocks.push({ type: "mini_project", content: mp });
+      blocks.push({ type: "mini_project", content: mp, personalizable: rb.personalizable });
     } else {
       const content = extractJson(rb.raw);
       if (content === undefined) {
@@ -317,7 +330,7 @@ function parseLesson(file: string, rel: string): ParsedLesson | null {
         fail(rel, shapeErr);
         ok = false;
       }
-      blocks.push({ type: rb.type, content });
+      blocks.push({ type: rb.type, content, personalizable: rb.personalizable });
     }
   }
 
@@ -392,7 +405,7 @@ function buildSql(lessons: ParsedLesson[]): string {
 
     l.blocks.forEach((b, i) => {
       blockRows.push(
-        `  (${u(idFor.block(l.slug, i))}, ${u(lessonId)}, ${i}, ${dq(b.type)}, ${jsonbLit(b.content)}, false)`,
+        `  (${u(idFor.block(l.slug, i))}, ${u(lessonId)}, ${i}, ${dq(b.type)}, ${jsonbLit(b.content)}, ${b.personalizable})`,
       );
     });
     // Remove any blocks beyond the current count (e.g. a block was deleted).

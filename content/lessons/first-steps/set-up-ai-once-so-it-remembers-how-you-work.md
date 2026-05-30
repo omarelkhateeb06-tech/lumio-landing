@@ -1,10 +1,10 @@
 ---
 slug: set-up-ai-once-so-it-remembers-how-you-work
-module: foundations
+module: first-steps
 title: Set up AI once so it remembers how you work
 level: beginner
 minutes: 8
-order: 5
+order: 7
 hook: You've been setting up your AI from scratch every single conversation. There's a way to stop doing that.
 key_takeaway: Custom instructions are a one-time 15-minute investment that makes every future conversation 30% more useful. Set them up today.
 tags: [general, custom-instructions]

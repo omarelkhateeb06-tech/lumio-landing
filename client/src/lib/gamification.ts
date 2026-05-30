@@ -204,6 +204,28 @@ export async function submitMasteryCheck(
   return { ok: true, result: data as SubmitResult };
 }
 
+// Per-question feedback. Grades a single answer server-side (the served payload
+// is answer-key-stripped, so the client cannot grade locally) and returns just
+// correctness + the explanation to show. Records and awards nothing — final
+// scoring still runs entirely through submit_mastery_check.
+export interface AnswerFeedback {
+  correct: boolean;
+  explanation: string | null;
+}
+
+export async function checkMasteryAnswer(
+  questionId: string,
+  response: CheckResponse,
+): Promise<AnswerFeedback | null> {
+  const { data, error } = await supabase.rpc("check_mastery_answer", {
+    p_question_id: questionId,
+    p_response: response,
+  });
+  if (error || !data) return null;
+  const d = data as { correct?: boolean; explanation?: string | null };
+  return { correct: !!d.correct, explanation: d.explanation ?? null };
+}
+
 // Fire-and-forget: stamp today's activity so the streak advances. Safe to call
 // on dashboard load and on lesson open; idempotent per calendar day server-side.
 export async function recordActivity(): Promise<void> {

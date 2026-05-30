@@ -10,6 +10,7 @@ import {
   fetchCurriculum,
   fetchLessonBySlug,
   markLessonComplete,
+  trackLoopsEvent,
   unmarkLessonComplete,
 } from "@/lib/supabase";
 import type { CurriculumLesson, LessonReaderData } from "@/lib/supabase";
@@ -18,10 +19,26 @@ import { C, FOCUS_RING, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT_SOFT, PI
 import { dur, ease } from "@/lib/motion";
 import { BrandNav } from "@/components/marketing";
 import { ConfettiBurst, playCompletionChime } from "@/components/Celebration";
+import BeforeAfterBlock from "@/components/lesson/BeforeAfterBlock";
+import MultipleChoiceBlock from "@/components/lesson/MultipleChoiceBlock";
+import FillBlankBlock from "@/components/lesson/FillBlankBlock";
+import TryItLiveBlock from "@/components/lesson/TryItLiveBlock";
+import PersonalizationLayer from "@/components/lesson/PersonalizationLayer";
+import { usePersonalizedBlock } from "@/hooks/usePersonalizedBlock";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Nav action — lesson pages drop the orange top strip for the scroll-progress bar.
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Loops lifecycle events must fire at most once per browser session. Loops
+// journeys are not idempotent, so a double-fire would send a duplicate email.
+// We dedupe by event name in a module-level set that lives for the session.
+const firedLoopsEvents = new Set<string>();
+function fireLoopsEventOnce(eventName: string) {
+  if (firedLoopsEvents.has(eventName)) return;
+  firedLoopsEvents.add(eventName);
+  void trackLoopsEvent(eventName);
+}
 
 const DashboardLink = (
   <a
@@ -137,11 +154,33 @@ function renderBlock(block: LessonBlock) {
       return <div key={block.id}>{renderMarkdown(block.content.markdown)}</div>;
     case "mini_project":
       return <ExerciseCard key={block.id} brief={block.content.brief} parts={block.content.parts} />;
+    case "multiple_choice":
+      return <MultipleChoiceBlock key={block.id} blockId={block.id} content={block.content} />;
+    case "fill_blank":
+      return <FillBlankBlock key={block.id} blockId={block.id} content={block.content} />;
+    case "try_it_live":
+      return <TryItLiveBlock key={block.id} blockId={block.id} content={block.content} />;
+    case "before_after":
+      return <BeforeAfterBlock key={block.id} blockId={block.id} content={block.content} />;
     default:
-      // Interactive block types are not yet rendered (Phase 3). Skip silently
-      // rather than crash — the published curriculum doesn't use them yet.
       return null;
   }
+}
+
+// Wraps a block with its personalized version when one is cached and fresh for
+// the current user. The base block always renders; personalization is additive
+// framing layered around it. Calling the hook here (one component per block)
+// keeps the hook count stable across renders.
+function RenderedBlock({ block }: { block: LessonBlock }) {
+  const { content, personalization, isPersonalized } = usePersonalizedBlock(block.id, block);
+  if (isPersonalized && personalization) {
+    return (
+      <PersonalizationLayer personalization={personalization}>
+        {renderBlock(content)}
+      </PersonalizationLayer>
+    );
+  }
+  return renderBlock(content);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -188,6 +227,15 @@ export default function Lesson() {
   const next = index >= 0 && index < order.length - 1 ? order[index + 1] : undefined;
   const isCompleted = lesson ? completed.has(lesson.id) : false;
 
+  // The learner has opened a lesson they have not finished yet: that counts as
+  // starting it. Fired once per session (the guard dedupes), so the Loops
+  // "Day 2 nudge" journey knows the learner engaged.
+  useEffect(() => {
+    if (lesson && !isCompleted) {
+      fireLoopsEventOnce("lesson_started");
+    }
+  }, [lesson, isCompleted]);
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -211,6 +259,18 @@ export default function Lesson() {
     setMarking(false);
     if (res.ok) {
       setCompleted((prev) => new Set(prev).add(lesson.id));
+      // Re-read the authoritative completed count and fire any milestone the
+      // learner just crossed. Best-effort and deduped: never blocks the UX.
+      try {
+        const ids = await fetchCompletedLessonIds();
+        const count = ids.size;
+        if (count === 1) fireLoopsEventOnce("lesson_started");
+        if (count === 5) fireLoopsEventOnce("lesson_5_milestone");
+        if (count === 15) fireLoopsEventOnce("lesson_15_halfway");
+        if (count === 30) fireLoopsEventOnce("lesson_30_complete");
+      } catch {
+        // ignore — milestone tracking is best-effort
+      }
       if (!rm) {
         setShowConfetti(true);
         playCompletionChime();
@@ -350,7 +410,9 @@ export default function Lesson() {
         )}
 
         {/* Blocks (reading, exercise, ...) in order */}
-        {lesson.blocks.map((block) => renderBlock(block))}
+        {lesson.blocks.map((block) => (
+          <RenderedBlock key={block.id} block={block} />
+        ))}
 
         {/* Key takeaway */}
         {lesson.key_takeaway && (

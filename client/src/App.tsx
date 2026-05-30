@@ -21,6 +21,9 @@ import Dashboard from "./pages/app/Dashboard";
 import Lesson from "./pages/app/Lesson";
 import MasteryCheck from "./pages/app/MasteryCheck";
 import Onboarding from "./pages/app/Onboarding";
+import CertOverview from "./pages/app/CertOverview";
+import CertSubmit from "./pages/app/CertSubmit";
+import Verify from "./pages/Verify";
 
 // Blank paper screen shown while auth/onboarding state resolves — avoids a
 // flash of redirect on protected routes.
@@ -116,6 +119,15 @@ function Router() {
       <Route path={"/check/:slug"}>
         {() => <ProtectedRoute component={gated(MasteryCheck)} />}
       </Route>
+      <Route path={"/app/cert/:slug/submit"}>
+        {() => <ProtectedRoute component={gated(CertSubmit)} />}
+      </Route>
+      <Route path={"/app/cert/:slug"}>
+        {() => <ProtectedRoute component={gated(CertOverview)} />}
+      </Route>
+
+      {/* Public certificate verification — intentionally outside ProtectedRoute */}
+      <Route path={"/verify/:token"} component={Verify} />
 
       {/* Fallbacks */}
       <Route path={"/404"} component={NotFound} />

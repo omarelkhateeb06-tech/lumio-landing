@@ -4,7 +4,7 @@ module: foundations
 title: When to use ChatGPT vs. Google
 level: beginner
 minutes: 5
-order: 1
+order: 4
 hook: You've been using the wrong tool for half your questions. Here's the 10-second test that fixes that.
 key_takeaway: Google retrieves; ChatGPT creates: when you mix them up, you get confident-sounding wrong answers or 14 listicles that say nothing.
 tags: [general, research, tool-selection, fundamentals]

@@ -5,11 +5,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   getMasteryCheckBySlug,
   submitMasteryCheck,
+  checkMasteryAnswer,
   type MasteryCheckPayload,
   type CheckQuestion,
   type CheckResponse,
   type CheckResponses,
   type SubmitResult,
+  type AnswerFeedback,
 } from "@/lib/gamification";
 import {
   C, FOCUS_RING, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT_SOFT, PILL,
@@ -72,11 +74,16 @@ function McqQuestion({
   question,
   value,
   onChange,
+  locked,
+  feedback,
 }: {
   question: Extract<CheckQuestion, { type: "multiple_choice" }>;
   value: string | undefined;
   onChange: (optionId: string) => void;
+  locked: boolean;
+  feedback: AnswerFeedback | undefined;
 }) {
+  const isCorrect = !!feedback?.correct;
   return (
     <fieldset className="border-0 p-0 m-0">
       <legend
@@ -88,13 +95,18 @@ function McqQuestion({
       <div className="space-y-3">
         {question.content.options.map((opt) => {
           const selected = value === opt.id;
+          // After submitting, color only the chosen option (forest if correct,
+          // error if not) and dim the rest — mirrors MultipleChoiceBlock.
+          const stateColor = locked && selected ? (isCorrect ? C.forest : C.error) : selected ? C.orange : C.hairline;
+          const bg = locked && selected ? (isCorrect ? C.orangeWash : C.surface) : selected ? C.orangeWash : C.surface;
           return (
             <label
               key={opt.id}
-              className={`flex items-start gap-3 px-5 py-4 rounded-2xl cursor-pointer transition-colors ${FOCUS_RING}`}
+              className={`flex items-start gap-3 px-5 py-4 rounded-2xl transition-colors ${FOCUS_RING} ${locked ? "" : "cursor-pointer"}`}
               style={{
-                backgroundColor: selected ? C.orangeWash : C.surface,
-                border: `1.5px solid ${selected ? C.orange : C.hairline}`,
+                backgroundColor: bg,
+                border: `1.5px solid ${stateColor}`,
+                opacity: locked && !selected ? 0.55 : 1,
               }}
             >
               <input
@@ -102,6 +114,7 @@ function McqQuestion({
                 name={question.id}
                 value={opt.id}
                 checked={selected}
+                disabled={locked}
                 onChange={() => onChange(opt.id)}
                 className="sr-only"
               />
@@ -111,8 +124,8 @@ function McqQuestion({
                 style={{
                   width: 20,
                   height: 20,
-                  border: `1.5px solid ${selected ? C.orange : C.inkDisc}`,
-                  backgroundColor: selected ? C.orange : "transparent",
+                  border: `1.5px solid ${selected ? stateColor : C.inkDisc}`,
+                  backgroundColor: selected ? stateColor : "transparent",
                 }}
               >
                 {selected && (
@@ -134,16 +147,22 @@ function FillBlankQuestion({
   question,
   value,
   onChange,
+  locked,
+  feedback,
 }: {
   question: Extract<CheckQuestion, { type: "fill_blank" }>;
   value: Record<string, string> | undefined;
   onChange: (blankId: string, text: string) => void;
+  locked: boolean;
+  feedback: AnswerFeedback | undefined;
 }) {
   // Split the template on {{id}} placeholders, interleaving text and inputs.
   const segments = useMemo(
     () => question.content.template.split(/(\{\{\w+\}\})/g),
     [question.content.template],
   );
+
+  const isCorrect = !!feedback?.correct;
 
   return (
     <div>
@@ -155,18 +174,23 @@ function FillBlankQuestion({
           const m = seg.match(/^\{\{(\w+)\}\}$/);
           if (m) {
             const blankId = m[1];
+            const filled = !!value?.[blankId]?.trim();
+            // Once locked, the whole question is graded as a unit, so every
+            // blank takes the question-level correct/incorrect color.
+            const border = locked ? (isCorrect ? C.forest : C.error) : filled ? C.orange : C.hairline;
             return (
               <input
                 key={i}
                 type="text"
                 aria-label={`Blank ${blankId}`}
                 value={value?.[blankId] ?? ""}
+                disabled={locked}
                 onChange={(e) => onChange(blankId, e.target.value)}
                 className={`inline-block mx-1 px-3 py-1 rounded-lg text-base ${FOCUS_RING}`}
                 style={{
                   minWidth: 120,
                   backgroundColor: C.surface,
-                  border: `1.5px solid ${value?.[blankId]?.trim() ? C.orange : C.hairline}`,
+                  border: `1.5px solid ${border}`,
                   color: C.espresso,
                   fontFamily: FONT_MONO,
                 }}
@@ -175,6 +199,33 @@ function FillBlankQuestion({
           }
           return <span key={i}>{seg}</span>;
         })}
+      </div>
+    </div>
+  );
+}
+
+// Feedback panel shown after a question is submitted. Mirrors the feedback box
+// in MultipleChoiceBlock — same tokens, same copy pattern.
+function FeedbackPanel({ feedback }: { feedback: AnswerFeedback }) {
+  const correct = feedback.correct;
+  return (
+    <div aria-live="polite">
+      <div
+        className="mt-6 px-5 py-4 rounded-xl"
+        style={{
+          backgroundColor: correct ? C.orangeWash : C.surface,
+          border: `1px solid ${correct ? C.orangeWashBorder : C.hairline}`,
+        }}
+      >
+        <div
+          className="text-[11px] uppercase tracking-[0.18em] mb-2"
+          style={{ color: correct ? C.forest : C.error, fontFamily: FONT_MONO }}
+        >
+          {correct ? "Correct" : "Not quite"}
+        </div>
+        <p className="text-sm leading-relaxed" style={{ color: C.espresso }}>
+          {feedback.explanation ?? (correct ? "That is the one." : "Have another look at the lesson.")}
+        </p>
       </div>
     </div>
   );
@@ -197,6 +248,8 @@ export default function MasteryCheck() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [step, setStep] = useState(0);
   const [responses, setResponses] = useState<CheckResponses>({});
+  const [feedback, setFeedback] = useState<Record<string, AnswerFeedback>>({});
+  const [gradingAnswer, setGradingAnswer] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -235,6 +288,23 @@ export default function MasteryCheck() {
     setResponses((prev) => ({ ...prev, [qid]: value }));
   }
 
+  // Grade the current question server-side and lock it. Records nothing — the
+  // final score is computed independently in submit_mastery_check.
+  async function gradeCurrent() {
+    if (!current) return;
+    const response = responses[current.id];
+    if (response === undefined) return;
+    setGradingAnswer(true);
+    setError(null);
+    const fb = await checkMasteryAnswer(current.id, response);
+    setGradingAnswer(false);
+    if (!fb) {
+      setError("Could not check that answer. Please try again.");
+      return;
+    }
+    setFeedback((prev) => ({ ...prev, [current.id]: fb }));
+  }
+
   async function handleSubmit() {
     if (!payload) return;
     setSubmitting(true);
@@ -256,6 +326,7 @@ export default function MasteryCheck() {
 
   function retake() {
     setResponses({});
+    setFeedback({});
     setStep(0);
     setResult(null);
     setError(null);
@@ -476,6 +547,8 @@ export default function MasteryCheck() {
 
   // ── Running (stepper) ──────────────────────────────────────────────────────
   const isLast = step === total - 1;
+  const currentFeedback = current ? feedback[current.id] : undefined;
+  const isGraded = !!currentFeedback;
   return (
     <Frame>
       {/* Progress */}
@@ -516,6 +589,8 @@ export default function MasteryCheck() {
               question={current}
               value={responses[current.id] as string | undefined}
               onChange={(optionId) => setResponse(current.id, optionId)}
+              locked={isGraded}
+              feedback={currentFeedback}
             />
           )}
           {current?.type === "fill_blank" && (
@@ -526,8 +601,11 @@ export default function MasteryCheck() {
                 const prev = (responses[current.id] as Record<string, string> | undefined) ?? {};
                 setResponse(current.id, { ...prev, [blankId]: text });
               }}
+              locked={isGraded}
+              feedback={currentFeedback}
             />
           )}
+          {currentFeedback && <FeedbackPanel feedback={currentFeedback} />}
         </motion.div>
       </AnimatePresence>
 
@@ -548,7 +626,17 @@ export default function MasteryCheck() {
           ← Back
         </button>
 
-        {isLast ? (
+        {!isGraded ? (
+          <motion.button
+            onClick={gradeCurrent}
+            disabled={!answered(current) || gradingAnswer}
+            whileTap={rm ? undefined : { scale: 0.97 }}
+            className={`${PILL} ${FOCUS_RING} cursor-pointer disabled:opacity-50`}
+            style={{ backgroundColor: C.ink, color: C.paper }}
+          >
+            {gradingAnswer ? "Checking…" : "Submit answer"}
+          </motion.button>
+        ) : isLast ? (
           <motion.button
             onClick={handleSubmit}
             disabled={!allAnswered || submitting}
@@ -556,17 +644,16 @@ export default function MasteryCheck() {
             className={`${PILL} ${FOCUS_RING} cursor-pointer disabled:opacity-50`}
             style={{ backgroundColor: C.ink, color: C.paper }}
           >
-            {submitting ? "Grading…" : "Submit check"}
+            {submitting ? "Grading…" : "See results"}
           </motion.button>
         ) : (
           <motion.button
             onClick={() => setStep((s) => Math.min(total - 1, s + 1))}
-            disabled={!answered(current)}
             whileTap={rm ? undefined : { scale: 0.97 }}
             className={`${PILL} ${FOCUS_RING} cursor-pointer disabled:opacity-50`}
             style={{ backgroundColor: C.ink, color: C.paper }}
           >
-            Next →
+            Next question →
           </motion.button>
         )}
       </div>

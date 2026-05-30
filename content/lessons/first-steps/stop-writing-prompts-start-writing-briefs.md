@@ -1,6 +1,6 @@
 ---
 slug: stop-writing-prompts-start-writing-briefs
-module: foundations
+module: first-steps
 title: Stop writing prompts (start writing briefs)
 level: beginner
 minutes: 6

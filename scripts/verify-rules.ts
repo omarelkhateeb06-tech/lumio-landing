@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // rules_v1 verification — exercises the recommendation engine (buildPathV1)
-// against the live, freshly-seeded 30-lesson curriculum.
+// against the live, freshly-seeded curriculum (72 lessons across 7 modules).
 //
 //   pnpm exec tsx scripts/verify-rules.ts
 //   (or)  node --import tsx scripts/verify-rules.ts
@@ -17,7 +17,9 @@ import { buildPathV1, type RecLesson, type RecProfile } from "../client/src/lib/
 import type { LessonLevel } from "../client/src/lib/curriculum";
 
 const BAND: Record<LessonLevel, number> = { beginner: 0, growing: 1, confident: 2 };
-const FOUNDATIONS = "foundations";
+// The core of the beginner spine — must mirror CORE_MODULES in recommend.ts.
+const CORE_MODULES: ReadonlySet<string> = new Set(["foundations", "first-steps"]);
+const isCore = (moduleSlug: string) => CORE_MODULES.has(moduleSlug);
 
 // ── Load the published curriculum from the DB ────────────────────────────────
 
@@ -112,23 +114,24 @@ function verifyPersona(name: string, profile: RecProfile, lessons: RecLesson[], 
   }
   check("band-respecting (level never decreases along the path)", bandOk);
 
-  // 6. foundations handling per skill level
-  const foundations = lessons
-    .filter((l) => l.module_slug === FOUNDATIONS && !(exclude?.has(l.id)))
-    .sort((a, b) => a.order_index - b.order_index);
+  // 6. core-module handling per skill level. The core spine is the CORE_MODULES
+  // (foundations → first-steps) in module order, then lesson order.
+  const coreLessons = lessons
+    .filter((l) => isCore(l.module_slug) && !(exclude?.has(l.id)))
+    .sort((a, b) => a.module_order - b.module_order || a.order_index - b.order_index);
   if (profile.skill_level === "confident") {
-    check("confident path skips Foundations (core empty)", core.length === 0);
-    if (foundations.length > 0) {
+    check("confident path skips core modules (core empty)", core.length === 0);
+    if (coreLessons.length > 0) {
       check(
-        "confident gets a Foundations review nudge in suggestions",
-        suggestions[0] === foundations[0].id,
-        `suggestions[0]=${slug(suggestions[0] ?? "")} expected ${foundations[0].slug}`,
+        "confident gets a core-review nudge in suggestions",
+        suggestions[0] === coreLessons[0].id,
+        `suggestions[0]=${slug(suggestions[0] ?? "")} expected ${coreLessons[0].slug}`,
       );
     }
   } else {
     check(
-      "non-confident core = Foundations in natural order",
-      core.length === foundations.length && core.every((id, i) => id === foundations[i].id),
+      "non-confident core = core modules in natural order (foundations → first-steps)",
+      core.length === coreLessons.length && core.every((id, i) => id === coreLessons[i].id),
     );
   }
 
@@ -143,8 +146,8 @@ function verifyPersona(name: string, profile: RecProfile, lessons: RecLesson[], 
       if (BAND[cur.level] !== BAND[prev.level]) continue;
       const curHas = cur.tags.includes(profile.industry);
       const prevHas = prev.tags.includes(profile.industry);
-      // Foundations core is fixed natural order and exempt from the boost.
-      if (cur.module_slug === FOUNDATIONS || prev.module_slug === FOUNDATIONS) continue;
+      // Core modules are fixed natural order and exempt from the industry boost.
+      if (isCore(cur.module_slug) || isCore(prev.module_slug)) continue;
       if (curHas && !prevHas) {
         industryOk = false;
         detail = `${prev.slug} (no ${profile.industry}) precedes ${cur.slug} (has it) in same band`;
@@ -168,8 +171,8 @@ function verifyPersona(name: string, profile: RecProfile, lessons: RecLesson[], 
 
 const lessons = await loadLessons();
 console.log(`Loaded ${lessons.length} published lessons from the DB.`);
-if (lessons.length !== 30) {
-  console.log(`\x1b[33m⚠ expected 30 published lessons, got ${lessons.length} — seed may not be fully applied.\x1b[0m`);
+if (lessons.length !== 72) {
+  console.log(`\x1b[33m⚠ expected 72 published lessons, got ${lessons.length} — seed may not be fully applied.\x1b[0m`);
 }
 
 const personas: Array<{ name: string; profile: RecProfile; exclude?: Set<string> }> = [

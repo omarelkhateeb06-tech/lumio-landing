@@ -4,7 +4,7 @@ module: foundations
 title: Spot when AI is making things up
 level: beginner
 minutes: 5
-order: 2
+order: 5
 hook: ChatGPT lies with complete confidence. And there are four tells that give it away every time.
 key_takeaway: Hallucinations are structural, not bugs. Train yourself to spot the four tells before you paste anything into a document with your name on it.
 tags: [general, research, hallucinations]

@@ -78,7 +78,9 @@ export interface RecPath {
 
 // ── Tuning constants ─────────────────────────────────────────────────────────
 
-const FOUNDATIONS_MODULE = "foundations";
+/** The always-included core of the beginner spine. Both modules are walked
+ *  in module order before anything else; confident learners skip the whole set. */
+const CORE_MODULES: ReadonlySet<string> = new Set(["foundations", "first-steps"]);
 const GENERIC_INDUSTRY = "general";
 
 /** Level → band index. The spine sorts ascending on this. */
@@ -142,23 +144,24 @@ export function buildPathV1(input: RecInput): RecPath {
   const pool = input.lessons.filter((l) => !exclude.has(l.id));
   const isConfident = profile.skill_level === "confident";
 
-  const foundations = pool
-    .filter((l) => l.module_slug === FOUNDATIONS_MODULE)
-    .sort((a, b) => a.order_index - b.order_index);
-  const rest = pool.filter((l) => l.module_slug !== FOUNDATIONS_MODULE);
+  const coreLessons = pool
+    .filter((l) => CORE_MODULES.has(l.module_slug))
+    .sort((a, b) => a.module_order - b.module_order || a.order_index - b.order_index);
+  const rest = pool.filter((l) => !CORE_MODULES.has(l.module_slug));
 
   const cmp = makeComparator(profile);
 
-  // Core: Foundations in natural order. Confident users skip it (it moves to
-  // suggestions as optional review), so their path starts at the growing band.
-  const core = isConfident ? [] : foundations.map((l) => l.id);
+  // Core: the beginner spine (Foundations → First Steps) in module/lesson order.
+  // Confident users skip it (it moves to suggestions as optional review), so
+  // their path starts at the growing band.
+  const core = isConfident ? [] : coreLessons.map((l) => l.id);
 
-  // Stretch: everything outside Foundations, ordered by the spine + score.
+  // Stretch: everything outside the core modules, ordered by the spine + score.
   const stretch = rest.slice().sort(cmp).map((l) => l.id);
 
   const active = [...core, ...stretch];
 
-  const suggestions = computeSuggestions(pool, profile, active, isConfident, foundations);
+  const suggestions = computeSuggestions(pool, profile, active, isConfident, coreLessons);
 
   return { core, stretch, active, suggestions };
 }
@@ -168,7 +171,7 @@ function computeSuggestions(
   profile: RecProfile,
   active: string[],
   isConfident: boolean,
-  foundations: RecLesson[],
+  coreLessons: RecLesson[],
 ): string[] {
   const skipFront = new Set(active.slice(0, SUGGESTION_SKIP_FRONT));
 
@@ -186,8 +189,8 @@ function computeSuggestions(
 
   const out: string[] = [];
   // Confident learners get one "revisit the basics" nudge first, since their
-  // active path skips Foundations entirely.
-  if (isConfident && foundations.length > 0) out.push(foundations[0].id);
+  // active path skips the core modules entirely.
+  if (isConfident && coreLessons.length > 0) out.push(coreLessons[0].id);
   for (const id of scored) {
     if (out.length >= MAX_SUGGESTIONS) break;
     if (!out.includes(id)) out.push(id);

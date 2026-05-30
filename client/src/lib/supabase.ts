@@ -268,6 +268,18 @@ export async function unmarkLessonComplete(
   return { ok: true };
 }
 
+// Fire a lifecycle event to Loops via the loops-track-event Edge Function.
+// Best-effort and fire-and-forget: any failure is swallowed so it can never
+// block the learning UX. The Edge Function enforces the event-name allowlist and
+// resolves the caller's email server-side, so this only forwards the name.
+export async function trackLoopsEvent(eventName: string): Promise<void> {
+  try {
+    await supabase.functions.invoke("loops-track-event", { body: { eventName } });
+  } catch {
+    // ignore — email automation is best-effort
+  }
+}
+
 // Returns the set of completed lesson UUIDs for the current user.
 export async function fetchCompletedLessonIds(): Promise<Set<string>> {
   const { data, error } = await supabase
@@ -276,6 +288,56 @@ export async function fetchCompletedLessonIds(): Promise<Set<string>> {
     .eq("completed", true);
   if (error || !data) return new Set();
   return new Set((data as { lesson_id: string }[]).map((r) => r.lesson_id));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Block-level progress — interactive blocks (Phase 3). Keyed by block UUID, a
+// finer grain than user_progress: it records per-block status, the learner's
+// response payload, and a running attempt count. RLS allows own-row select /
+// insert / update only (no delete). Lesson-level completion is unaffected.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type BlockStatus = "viewed" | "attempted" | "passed" | "completed";
+
+// Record that the learner has seen an interactive block. ignoreDuplicates makes
+// this insert-only, so it can never downgrade a block that's already
+// attempted / passed / completed back to "viewed". Best-effort and silent: a
+// signed-out reader (none today, but defensive) is a no-op rather than an error.
+export async function markBlockViewed(blockId: string): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase
+    .from("user_block_progress")
+    .upsert(
+      { user_id: user.id, block_id: blockId, status: "viewed" },
+      { onConflict: "user_id,block_id", ignoreDuplicates: true }
+    );
+}
+
+// Persist the learner's interaction with a block: its status, the response
+// payload, and the running attempt count (the component owns the canonical
+// count). completed_at is stamped once the block reaches a terminal state
+// (passed or completed). Mirrors markLessonComplete's auth + return style.
+export async function saveBlockProgress(
+  blockId: string,
+  opts: { status: BlockStatus; response?: unknown; attempts: number }
+): Promise<{ ok: boolean; error?: string }> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated" };
+  const terminal = opts.status === "passed" || opts.status === "completed";
+  const { error } = await supabase.from("user_block_progress").upsert(
+    {
+      user_id: user.id,
+      block_id: blockId,
+      status: opts.status,
+      response: opts.response ?? null,
+      attempts: opts.attempts,
+      completed_at: terminal ? new Date().toISOString() : null,
+    },
+    { onConflict: "user_id,block_id" }
+  );
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
