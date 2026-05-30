@@ -35,8 +35,10 @@ export const MODULES: ModuleDef[] = [
   { slug: "everyday-work", title: "Everyday work" },
   { slug: "creation", title: "Creation" },
   { slug: "business-workflows", title: "Business workflows" },
+  { slug: "working-well-with-ai", title: "Working well with AI" },
   { slug: "industry-deep-dives", title: "Industry deep dives" },
   { slug: "building-with-ai", title: "Building with AI" },
+  { slug: "responsibility-and-judgment", title: "Responsibility & judgment" },
 ];
 
 export const TAGS: TagDef[] = [

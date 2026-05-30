@@ -1,10 +1,10 @@
 ---
 slug: fact-checking-ai-output
-module: foundations
+module: working-well-with-ai
 title: "Fact-Checking AI: A Practical Method"
-level: beginner
+level: growing
 minutes: 7
-order: 7
+order: 0
 hook: A 60-second checking habit is the difference between looking sharp and getting caught out.
 key_takeaway: Treat every AI claim as a draft fact: scan for names, numbers, and dates, verify those against a real source, and never paste an unchecked specific.
 tags: [general, hallucinations, research]

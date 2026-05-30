@@ -1,10 +1,10 @@
 ---
 slug: ai-and-your-privacy
-module: foundations
+module: working-well-with-ai
 title: "AI and Your Privacy: What to Share and What Not To"
-level: beginner
+level: growing
 minutes: 6
-order: 8
+order: 1
 hook: One simple rule keeps you out of trouble: never paste anything you would not want on a billboard.
 key_takeaway: Public AI tools may store and review what you type, so strip out names and confidential details, or use an approved private tool, before you paste real work in.
 tags: [general, fundamentals]
