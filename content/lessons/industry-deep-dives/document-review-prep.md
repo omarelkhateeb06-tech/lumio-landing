@@ -44,3 +44,41 @@ The pattern, again: AI handles the structure, the checklists, and the first-draf
   "explanation": "AI is great for the checklist and the organizing around a review, but the judgment about what is material and what needs action remains a human responsibility."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "AI organizes your flagged clauses into a clean table and notes which it thinks are 'material.' How should you treat the 'material' labels?",
+  "options": [
+    {
+      "id": "a",
+      "label": "As the AI's organizing guess, which you replace with your own judgment about what is actually material to this matter, verified against the source clauses.",
+      "is_correct": true,
+      "explanation": "Correct. What counts as material, what needs escalation, and what is a real problem are professional calls AI cannot make. It structures your findings; you decide their significance and confirm them against the documents."
+    },
+    {
+      "id": "b",
+      "label": "As a reliable materiality assessment, since the AI reviewed all the clauses together.",
+      "is_correct": false,
+      "explanation": "The tool only sees the text you gave it and has no view of the matter's strategy or stakes. Materiality is a judgment call that stays with you."
+    },
+    {
+      "id": "c",
+      "label": "Adopt the labels to save time, since the review judgment is mostly mechanical anyway.",
+      "is_correct": false,
+      "explanation": "Review judgment is the opposite of mechanical; it is exactly the trained part of the work. AI prepares and organizes, it does not decide what matters."
+    },
+    {
+      "id": "d",
+      "label": "Ignore the table; AI output has no place in document review.",
+      "is_correct": false,
+      "explanation": "Too far. Organizing flagged findings into a clean record is a legitimate, useful AI task. You just supply the materiality judgment and verify against the source."
+    }
+  ]
+}
+```
+
+## mini_project
+
+Your 5-minute exercise: Pick a real review task (a matter type and what you are reviewing for) and ask AI to build you a checklist of clauses and red flags to look for. Review the checklist against your own experience: what did it miss, and what did it surface that you would not have listed? Then take a few sample (genericized) clauses, have AI organize them into a table by document and issue, and verify each entry against the source text. The deliverable is one reusable review checklist plus a note on where your judgment had to correct the tool.

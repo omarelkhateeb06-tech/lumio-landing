@@ -42,3 +42,31 @@ This is not about distrusting AI. It is about understanding the deal: AI does th
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "In the editing pass this lesson describes, which check is the one that catches the '[insert resolution details here]' placeholder before it embarrasses you?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The thirty-second scan for the obvious slip: leftover placeholders, a wrong name, a promise you can't keep.",
+      "is_correct": true,
+      "explanation": "Correct. The final scan exists precisely to catch the mortifying obvious mistakes, like a placeholder nobody removed, that escape when you paste raw."
+    },
+    {
+      "id": "b",
+      "label": "Cutting filler, since shorter writing automatically removes placeholders.",
+      "is_correct": false,
+      "explanation": "Trimming filler tightens the prose but won't reliably surface a leftover placeholder. The dedicated scan for obvious slips is what catches it."
+    },
+    {
+      "id": "c",
+      "label": "None, because a good enough prompt means the draft never has placeholders.",
+      "is_correct": false,
+      "explanation": "The lesson is explicit that the fix is not a better prompt but an editing pass you never skip. Raw drafts routinely contain placeholders and slips."
+    }
+  ]
+}
+```

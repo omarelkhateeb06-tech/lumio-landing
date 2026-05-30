@@ -40,3 +40,31 @@ Two things to keep in mind. Read the result to make sure the AI did not change y
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does the dump-first, shape-second workflow produce writing that still sounds like you?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the ideas start with you in the brain-dump, so the AI is organizing your own thinking rather than inventing content from a blank prompt.",
+      "is_correct": true,
+      "explanation": "Correct. The hard part of writing is having the ideas. When they come from you, the polished version still says what you meant and sounds like you."
+    },
+    {
+      "id": "b",
+      "label": "Because the AI rewrites everything into a polished corporate voice that's better than yours.",
+      "is_correct": false,
+      "explanation": "That's the opposite of the goal. A generic corporate voice is exactly what you avoid by supplying your own raw thinking first."
+    },
+    {
+      "id": "c",
+      "label": "Because you skip reading the result once the AI returns the polished draft.",
+      "is_correct": false,
+      "explanation": "You still read to check the AI didn't change your meaning or add a claim, and fix any line that doesn't sound like you. The polish is a draft, not a verdict."
+    }
+  ]
+}
+```

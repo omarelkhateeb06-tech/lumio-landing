@@ -28,6 +28,34 @@ Knowledge workers have a retrieval problem. We produce enormous volumes of notes
 
 This is your second brain, queryable.
 
+## multiple_choice
+
+```json
+{
+  "stem": "You set up a personal knowledge base but keep forgetting to add things, so it stays nearly empty and useless. Which fix does this lesson point to?",
+  "options": [
+    {
+      "id": "a",
+      "label": "A sustainable capture habit, like one capture per day, since a PKB is only as good as what goes into it and consistency beats completeness.",
+      "is_correct": true,
+      "explanation": "Correct. The capture habit is the load-bearing step. A modest, consistent input beats an ambitious system you stop feeding."
+    },
+    {
+      "id": "b",
+      "label": "Switch to a more powerful note-taking app, since the tool is the real problem.",
+      "is_correct": false,
+      "explanation": "The lesson says the right tool is the one you'll actually maintain. Swapping apps doesn't fix an empty base; a capture habit does."
+    },
+    {
+      "id": "c",
+      "label": "Wait until you've built up a large backlog, then import everything in one big session.",
+      "is_correct": false,
+      "explanation": "A big one-time import is the opposite of the sustainable minimum. Daily consistency is what keeps the base alive and useful."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Upload 5 documents to NotebookLM. Ask it 3 questions that require synthesizing across all 5. What did it surface that you'd forgotten?

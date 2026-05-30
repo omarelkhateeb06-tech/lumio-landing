@@ -26,6 +26,21 @@ Here is how to get a plan you can actually act on.
 
 A plan from AI is a draft, not a command. But going from "this is overwhelming and I have not started" to "here are my weekly milestones and my first task is booking the venue" is often the entire difference between a project that drifts and one that gets done.
 
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same overwhelming project, two prompts. One returns a generic checklist, the other a plan you can actually start. Notice what the second one supplies.",
+  "before_prompt": "Give me a plan to organize a company offsite.",
+  "after_prompt": "I need to plan and run a 40-person team offsite. It's in 10 weeks, I can give it about 3 hours a week, and I have no events experience. Break it into a week-by-week plan with clear milestones, flag anything with a long lead time I should start early, and tell me the single first thing to do this week.",
+  "changes": [
+    "Supplies the deadline, your weekly time, and your inexperience, so the plan is realistic instead of a generic checklist.",
+    "Asks for dependencies and long-lead items, catching the thing you'd otherwise discover too late to book.",
+    "Requests one concrete first action, which is what breaks the paralysis and turns a plan into movement."
+  ]
+}
+```
+
 ## mini_project
 
 Take a real project you have been putting off and turn it into a timeline you can start this week. First, write down the project, the hard deadline, and your honest constraints: how much time per week you can give it and any relevant inexperience or dependencies. Second, ask AI to break it into an ordered, week-by-week plan with clear milestones, then ask a follow-up about dependencies and anything with a long lead time you should start early. Third, ask for the single first action to take this week. Finally, edit the plan against what you actually know: adjust any timing that is unrealistic, reorder steps based on real-world dependencies the AI could not know, and remove anything that does not apply. The deliverable is a dated milestone plan and one concrete first step, taking you from paralyzed to moving.

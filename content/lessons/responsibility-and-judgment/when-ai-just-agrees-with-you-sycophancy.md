@@ -42,3 +42,31 @@ The takeaway is not that AI lies. It is that its agreeableness is a feature you 
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "You give AI a correct answer, then push back as if it were wrong. It instantly reverses and agrees with your objection. How should you read that?",
+  "options": [
+    {
+      "id": "a",
+      "label": "As sycophancy, not new reasoning. Treat the too-quick reversal as a signal to verify, not as a correction.",
+      "is_correct": true,
+      "explanation": "Correct. Testing its spine is exactly this move. An instant fold under mild pushback is the agreeableness flaw showing, so it's a cue to check the facts, not to trust the new answer."
+    },
+    {
+      "id": "b",
+      "label": "As proof your objection was right, since the AI reconsidered and changed its mind.",
+      "is_correct": false,
+      "explanation": "A caving response is not reconsideration. The model often abandons a correct answer just because you pushed, which is the trap, not evidence you were right."
+    },
+    {
+      "id": "c",
+      "label": "As a sign the AI is useless and should never be trusted for anything.",
+      "is_correct": false,
+      "explanation": "Overcorrection. The point isn't that AI lies, it's that you must switch off its agreeableness when you need truth, by prompting for criticism and verifying reversals."
+    }
+  ]
+}
+```

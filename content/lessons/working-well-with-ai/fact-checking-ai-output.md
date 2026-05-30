@@ -38,3 +38,31 @@ The goal is not to distrust everything. It is to know exactly which 10 percent t
   "input_placeholder": "Paste an AI answer and I'll list what to check and where..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "An AI answer includes a perfectly round statistic ('exactly 50% of small businesses fail in year one') alongside a crisp, quotable source name. Under this lesson's method, what should that tidy detail trigger?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Extra caution and a check against the real source, because suspiciously clean numbers and flawless quotes are often the invented ones.",
+      "is_correct": true,
+      "explanation": "Correct. Step 4: a too-clean answer, like a round statistic or a perfect quote, is a flag to slow down, since hallucinated details often look more polished than real ones."
+    },
+    {
+      "id": "b",
+      "label": "Confidence that it is accurate, since a specific source name means the AI looked it up.",
+      "is_correct": false,
+      "explanation": "A named source in an AI answer is not proof it exists or says that. Citations are exactly the kind of specific that gets invented, so this needs checking, not trust."
+    },
+    {
+      "id": "c",
+      "label": "Nothing, because a statistic is the kind of general knowledge AI is reliable on.",
+      "is_correct": false,
+      "explanation": "A specific figure is the opposite of safe general knowledge. Numbers are guess-prone and consequential, which is precisely what the method tells you to verify."
+    }
+  ]
+}
+```

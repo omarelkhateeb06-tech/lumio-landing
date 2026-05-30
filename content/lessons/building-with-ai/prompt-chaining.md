@@ -46,3 +46,31 @@ One practical note: because each step builds on the last, keep the chain in a si
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "In the outline-then-draft chain, what is the single biggest advantage of pausing to review the outline before any drafting happens?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It's a checkpoint where you catch structural problems and steer before they get baked into 1,500 words.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson calls this checkpoint the whole advantage: fixing a weak structure at the outline stage is far cheaper than after the full draft is written."
+    },
+    {
+      "id": "b",
+      "label": "It makes the AI write the later sections faster.",
+      "is_correct": false,
+      "explanation": "Speed isn't the point of the checkpoint. The value is catching and correcting problems early, before errors compound through a long draft."
+    },
+    {
+      "id": "c",
+      "label": "It lets you skip the drafting step entirely.",
+      "is_correct": false,
+      "explanation": "The outline doesn't replace drafting. It improves it, by letting you approve the structure before each section is written with full attention."
+    }
+  ]
+}
+```

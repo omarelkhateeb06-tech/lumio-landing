@@ -51,3 +51,18 @@ Structure and clarity from AI, substance and judgment from you. That combination
   ]
 }
 ```
+
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same budget pitch, two prompts. One produces a forgettable autopilot deck, the other a deck that persuades. Notice what you bring versus what AI builds.",
+  "before_prompt": "Make me a slide deck to ask leadership for a bigger budget.",
+  "after_prompt": "I am pitching a 20 percent budget increase for my support team to leadership. Audience: a CFO who cares about cost per ticket and customer retention. Give me a slide-by-slide structure that builds a persuasive case, one clear message per slide in under ten words each, with two supporting sub-points. Use plain, concrete language and no buzzwords. Leave a clearly marked placeholder on each slide where I will drop in my real numbers. The proof I have: response time fell from 14 hours to 3, and churn dropped 8 percent after we last expanded the team.",
+  "changes": [
+    "States the specific ask, the audience, and what that audience actually cares about, so the arc is built to persuade this person, not anyone.",
+    "Asks for a one-message-per-slide structure in plain language with buzzwords banned, which is what keeps a deck from looking AI-made.",
+    "Supplies the real proof and marks where your numbers go, so AI handles structure and wording while the substance stays yours."
+  ]
+}
+```

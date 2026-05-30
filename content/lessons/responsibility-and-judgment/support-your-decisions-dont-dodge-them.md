@@ -26,6 +26,34 @@ The useful frame is to give AI the analyst's job, not the executive's. Let it do
 
 The line to hold: AI helps you decide better; it does not decide for you. When the outcome lands, "the AI told me to" is not a defense anyone accepts, nor should it be. You used a good tool to think more clearly, and then you chose. That is what owning a decision looks like.
 
+## multiple_choice
+
+```json
+{
+  "stem": "A hard hiring decision lands on your desk and you want to use AI well. Which use keeps both the decision and the accountability yours?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Have it lay out the options, name the trade-offs and risks, and argue against your leaning, then you make the call weighing context only you have.",
+      "is_correct": true,
+      "explanation": "Correct. That is the analyst's job, not the executive's. AI informs the decision; you fold in the relationships, values, and consequences it cannot know, and you choose."
+    },
+    {
+      "id": "b",
+      "label": "Describe both candidates, ask AI who to hire, and follow its pick to save time.",
+      "is_correct": false,
+      "explanation": "That hands the executive's job to a tool with none of your context. AI is a poor decision-maker precisely because it does not carry your values or bear the consequences."
+    },
+    {
+      "id": "c",
+      "label": "Ask AI to make the call so that if it goes wrong, the decision wasn't really on you.",
+      "is_correct": false,
+      "explanation": "Accountability does not transfer. 'The AI told me to' is not a defense anyone accepts, so dodging the decision this way protects nothing."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Take a real decision you are currently weighing and run it through an advisor-not-decider process, keeping the call firmly yours. First, write down your own initial leaning and the one or two things you are unsure about, before consulting AI at all. Second, use AI as an analyst: ask it to lay out the realistic options with pros and cons, then ask it to name the trade-offs and risks you might be missing, and finally ask it to make the strongest case against your current leaning. Third, set the AI output aside and write the decision yourself in a few sentences, explicitly noting the context only you have, the relationships, values, or constraints that AI never knew, and how they shaped your final call. The deliverable is your decision, on the record, informed by AI but owned by you. Notice how much clearer the reasoning is than if you had just asked it what to do.

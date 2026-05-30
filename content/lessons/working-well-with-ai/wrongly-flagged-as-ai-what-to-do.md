@@ -42,3 +42,31 @@ You cannot control a flawed detector. You can control whether you have a paper t
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "You want to protect yourself in advance against being wrongly flagged as AI. What is the single best protection this lesson recommends?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Keep evidence of your process: draft in a tool with version history, and save your notes and messy early versions.",
+      "is_correct": true,
+      "explanation": "Correct. A visible trail of drafts is almost impossible to fake and settles the question fast. Protecting your process, not just the final product, is the best defense."
+    },
+    {
+      "id": "b",
+      "label": "Run your writing through a detector yourself first and rewrite until it passes.",
+      "is_correct": false,
+      "explanation": "Detectors guess and frequently flag genuine human writing, so chasing a passing score is a losing game. Evidence of your process is what actually protects you."
+    },
+    {
+      "id": "c",
+      "label": "Make your writing deliberately messy so it looks less 'predictable' to a detector.",
+      "is_correct": false,
+      "explanation": "Sabotaging your own clarity to fool an unreliable tool is the wrong fix. Keep writing well and keep a draft trail instead."
+    }
+  ]
+}
+```

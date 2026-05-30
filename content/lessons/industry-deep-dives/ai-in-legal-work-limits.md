@@ -63,3 +63,22 @@ The mindset that keeps you safe: AI is a fast junior assistant whose work you al
   ]
 }
 ```
+
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same research task, two prompts. Notice which one keeps the tool on the safe side of the line.",
+  "before_prompt": "Find me three cases that support the argument that this non-compete is unenforceable, with citations.",
+  "after_prompt": "Here is the rule and the two verified cases I pulled from our legal database on non-compete enforceability: [paste]. Using only this material, draft a plain-language explanation of how these authorities apply to my client's facts, and list the open questions I still need to research. Do not add any cases or citations of your own.",
+  "changes": [
+    "Stops asking the tool to supply legal authority, which is where it invents fake cases and citations, and instead feeds it authority the human already verified.",
+    "Redirects the model to what it is genuinely good at: explaining and organizing verified material in plain language.",
+    "Explicitly bars it from adding citations, so nothing unverified can slip into the work product."
+  ]
+}
+```
+
+## mini_project
+
+Build your before-it-leaves-my-desk checklist. AI-assisted legal work is safe only when a verification step is built in, so write a short checklist you will run on anything AI helped produce before it is filed or sent. Include at minimum: every case, statute, and citation confirmed in an authoritative legal database (not the AI); every quoted rule checked against the primary source; a confirmation that no confidential client details were pasted into a public tool; and a named qualified human who takes responsibility for the final accuracy. Keep it to five or six lines you can actually run every time, and tape it somewhere you will see it.

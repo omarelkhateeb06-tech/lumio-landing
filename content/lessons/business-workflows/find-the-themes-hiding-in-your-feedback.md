@@ -26,6 +26,34 @@ Here is how to do it well.
 
 Done this way, a backlog of feedback that was too big to use becomes a clear, prioritized picture of what people actually think, in the time it takes to read this lesson.
 
+## multiple_choice
+
+```json
+{
+  "stem": "When grouping a pile of feedback into themes, why does this lesson tell you to ask the AI which themes are rare but serious, not just which are most common?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because frequency can bury severity. A complaint mentioned twice that describes a safety problem matters more than a minor gripe mentioned fifty times.",
+      "is_correct": true,
+      "explanation": "Correct. Asking it to flag both common and rare-but-serious themes keeps a low-frequency, high-stakes issue from being drowned out by volume."
+    },
+    {
+      "id": "b",
+      "label": "Because the rare themes are always the most important and the common ones can be ignored.",
+      "is_correct": false,
+      "explanation": "The lesson does not say rare always beats common. It says to surface both, so you weigh frequency and severity together rather than letting one hide the other."
+    },
+    {
+      "id": "c",
+      "label": "Because the AI's counts are exact, so the rare themes are guaranteed to be the real priorities.",
+      "is_correct": false,
+      "explanation": "The lesson is clear that the counts are estimates, not exact tallies. The reason to ask about rare-but-serious themes is severity, not precision of the numbers."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Turn a real pile of feedback you have access to into a themed, actionable summary. First, gather a batch of open-ended text, survey comments, support tickets, reviews, or meeting notes, and remove names or identifying details if you are using a public tool. Second, paste it in and ask the AI to group it into named themes, each with a rough count and two or three representative quotes. Third, ask it which themes are most common and which are rare but serious, so frequency does not hide severity. Finally, ask for the top three changes the feedback suggests and what each would address, then sanity-check the groupings against a quick skim of the raw text to make sure nothing important was flattened. The deliverable is a one-page theme summary with counts, quotes, and recommended actions, built from feedback you would otherwise never have fully read.

@@ -26,6 +26,18 @@ Long-form content fails at the outline stage 90% of the time. Either there's no 
 
 The outline is where you make the decisions. The writing is where you execute them.
 
+## fill_blank
+
+```json
+{
+  "template": "The blank page problem disappears when you separate {{1}} from writing. After the outline, you are no longer writing one 2,000-word piece into the void. You are writing eight chunks of about 250 words, each with a clear {{2}}, which is a much easier task.",
+  "blanks": [
+    { "id": "1", "answer": "structure", "alternatives": ["the structure", "structuring"] },
+    { "id": "2", "answer": "purpose", "alternatives": ["job", "point"] }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Pick a piece of content you've been avoiding. Do phases 1 and 2 above. Does having 5 structural options change how you think about the piece?

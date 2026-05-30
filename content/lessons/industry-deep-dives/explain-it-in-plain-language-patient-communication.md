@@ -28,6 +28,51 @@ The constraints are the point. You are asking it to simplify the wording, not th
 
 **Privacy:** keep instructions generic or de-identified unless your tool is approved for protected health information.
 
+## multiple_choice
+
+```json
+{
+  "stem": "The plain-language rewrite prompt says 'simplify the wording, not the substance.' What does that mean in practice?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Use short sentences and everyday words, but keep every dose, time, and warning sign exactly as written and remove no safety information.",
+      "is_correct": true,
+      "explanation": "Correct. Plain language is about how it reads, not what it says. The medical instructions, especially doses, timing, and red flags, stay precise. You are changing vocabulary, not meaning."
+    },
+    {
+      "id": "b",
+      "label": "Drop the technical details so the patient is not overwhelmed.",
+      "is_correct": false,
+      "explanation": "Dropping details is simplifying the substance, which is exactly what you must not do. A patient who loses a dose or a warning sign is less safe, not less overwhelmed."
+    },
+    {
+      "id": "c",
+      "label": "Round the doses to easier numbers so they are simpler to remember.",
+      "is_correct": false,
+      "explanation": "Changing a dose changes the instruction. Doses stay exact; only the surrounding language gets simpler."
+    },
+    {
+      "id": "d",
+      "label": "Let the AI add general health advice to make the instructions more helpful.",
+      "is_correct": false,
+      "explanation": "The prompt says add no new advice. Adding content the clinician did not write is a different error from simplifying language, and it can mislead the patient."
+    }
+  ]
+}
+```
+
+## try_it_live [personalizable]
+
+```json
+{
+  "instructions": "Rewrite this discharge instruction in plain language at about a 6th-grade reading level. Keep the dose, timing, and warning signs exactly accurate, use short everyday sentences, and add no new advice. Instruction: 'Administer amoxicillin 500mg PO every 8 hours for 10 days. Return to the ED for fever exceeding 101F, worsening erythema, or purulent drainage at the incision site.'",
+  "system_prompt": "You rewrite clinical instructions into plain language at about a 6th-grade reading level. Keep every dose, timing, and warning sign exactly accurate. Use short sentences and everyday words. Remove no safety information and add no new advice. No em dashes.",
+  "ideal_output": "Take one amoxicillin pill (500 mg) by mouth every 8 hours. Take it for 10 full days, even if you feel better. Come back to the emergency room right away if you have: a fever over 101F, redness around the cut that is spreading, or yellow or green fluid leaking from the cut.",
+  "input_placeholder": "Paste the clinical instruction you want rewritten in plain language..."
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Take a set of standard discharge instructions and run the rewrite prompt. Read both versions out loud as if to a nervous patient. Which one would you actually understand if you were scared and tired? Confirm every dose and warning survived the rewrite intact.

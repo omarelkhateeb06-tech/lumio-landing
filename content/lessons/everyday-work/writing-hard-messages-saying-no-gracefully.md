@@ -46,3 +46,31 @@ Then do the thing you always do: read it once, adjust the one detail only you kn
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson names one common failure that makes hard messages worse. Which is it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The soft no that sounds like a maybe, which only prolongs the discomfort for both people instead of closing the loop.",
+      "is_correct": true,
+      "explanation": "Correct. A no dressed up to feel gentle but read as a maybe leaves the other person hoping and drags the awkwardness out. Telling the AI to be clear and not leave a false door open is what actually resolves it."
+    },
+    {
+      "id": "b",
+      "label": "Being too direct, since any clear no will damage the relationship no matter how it is worded.",
+      "is_correct": false,
+      "explanation": "The lesson argues the opposite: a clear, warm no protects the relationship better than a vague one. Clarity and kindness are not in conflict here."
+    },
+    {
+      "id": "c",
+      "label": "Making the message too short, because hard news needs a long, thorough explanation to feel respectful.",
+      "is_correct": false,
+      "explanation": "The lesson advises brevity, noting hard messages get worse the longer they ramble. A tight message under 100 words is the goal, not a long one."
+    }
+  ]
+}
+```

@@ -36,3 +36,31 @@ The mindset shift is to stop treating the conversation as one question and one a
   "input_placeholder": "Paste a generic AI answer and I'll write the prompts that dig past it..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "AI gives you a safe, generic first answer to a strategy question. Which follow-up best pushes it past the surface, as this lesson teaches?",
+  "options": [
+    {
+      "id": "a",
+      "label": "'That's the obvious take. What's the angle most people miss, and now give me the strongest case against what you just said.'",
+      "is_correct": true,
+      "explanation": "Correct. Asking for the non-obvious angle and forcing a counterargument are exactly the moves that drive past the consensus answer to the trade-offs and edge the first reply skipped."
+    },
+    {
+      "id": "b",
+      "label": "'Thanks, that's helpful.' and then using the first answer as-is.",
+      "is_correct": false,
+      "explanation": "Stopping at the first answer is the whole problem. It is the consensus view everyone already knows, the cost of entry, not the result."
+    },
+    {
+      "id": "c",
+      "label": "'Can you say that again but shorter?'",
+      "is_correct": false,
+      "explanation": "Shortening a generic answer just gives you a shorter generic answer. Depth comes from non-obvious angles, specifics, and counterarguments, not concision."
+    }
+  ]
+}
+```

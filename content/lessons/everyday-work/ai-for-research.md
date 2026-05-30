@@ -53,3 +53,18 @@ Done this way, AI does not replace research. It makes you a faster, better-orien
   ]
 }
 ```
+
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same unfamiliar topic, two prompts. One invites confident guesses, the other gets orientation you can safely verify. Notice the difference.",
+  "before_prompt": "Tell me everything I need to know about the new data privacy regulation, including the exact effective dates, the fine amounts, and which companies it applies to.",
+  "after_prompt": "I'm new to this area. Explain, in plain language, how the new data privacy regulation generally works: the main concepts, the key terms I should know, and how the pieces fit together. Then give me a short list of the specific facts (exact dates, fine amounts, who it applies to) that I should confirm against the official source before I rely on them.",
+  "changes": [
+    "Stops demanding hard specifics as settled fact, which is exactly where AI invents confident, wrong details.",
+    "Asks for orientation, the concepts, terms, and shape of the topic, which is what AI does genuinely well.",
+    "Turns the risky specifics into a verify list aimed at the official source, so you get oriented fast without trusting the guess-prone parts."
+  ]
+}
+```

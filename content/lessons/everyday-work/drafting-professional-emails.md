@@ -42,3 +42,31 @@ One habit worth keeping: always read before you send. The AI does not know your 
   "input_placeholder": "Situation, key points, and the tone you want..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does a bare 'Write a professional email' tend to produce a hollow draft, and what fixes it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It gives the AI no specifics; feeding it the situation, the two or three key points, the tone, and a length is what produces a draft that's 90 percent there.",
+      "is_correct": true,
+      "explanation": "Correct. The good stuff comes from the raw material you supply. The four inputs turn a generic template into a draft you can send after a quick read."
+    },
+    {
+      "id": "b",
+      "label": "The AI simply can't write emails well, so you should always write them from scratch.",
+      "is_correct": false,
+      "explanation": "AI drafts emails well once you give it the inputs. The blank result comes from a vague request, not a limitation of the tool."
+    },
+    {
+      "id": "c",
+      "label": "You need a longer prompt full of formal language to sound professional.",
+      "is_correct": false,
+      "explanation": "Length and formality aren't the fix. Specifics are: the situation, the key points, the tone, and the constraints."
+    }
+  ]
+}
+```

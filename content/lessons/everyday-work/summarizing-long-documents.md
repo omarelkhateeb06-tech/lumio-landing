@@ -46,3 +46,31 @@ One caution: for anything important, spot-check the summary against the real doc
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does a plain 'Summarize this' usually disappoint, and what's the better approach?",
+  "options": [
+    {
+      "id": "a",
+      "label": "A plain summary is just a shorter, generic version; telling the AI who you are, what you need to decide, and the format you want shapes it to what actually matters.",
+      "is_correct": true,
+      "explanation": "Correct. A good summary is shaped by your purpose. Framing it with your role, your decision, and the structure filters noise and surfaces what you can act on."
+    },
+    {
+      "id": "b",
+      "label": "'Summarize this' is fine; the real problem is the document is simply too long for AI to handle.",
+      "is_correct": false,
+      "explanation": "Length isn't the issue. The issue is an unaimed request returns a generic recap instead of the few points tied to your decision."
+    },
+    {
+      "id": "c",
+      "label": "You should ask the AI to reproduce the full document word for word so you miss nothing.",
+      "is_correct": false,
+      "explanation": "That defeats the purpose of a summary. The value is a purpose-shaped, actionable few points, then a spot-check of key numbers against the source."
+    }
+  ]
+}
+```

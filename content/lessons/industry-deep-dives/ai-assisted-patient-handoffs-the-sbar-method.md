@@ -26,6 +26,55 @@ That last sentence matters. You are asking the tool to organize your words, not 
 
 **Then read it back.** You are the clinician. The AI gives you a clean draft; you confirm every line is accurate before it becomes the handoff.
 
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same shift notes, two prompts. Notice which one protects the patient from invented findings.",
+  "before_prompt": "Turn my notes into an SBAR handoff: 72yo, hip surgery, BP a bit low this afternoon, seemed more confused at 1500, family worried.",
+  "after_prompt": "Reformat these de-identified shift notes into an SBAR handoff for the oncoming nurse: 72yo post-op day 1, left hip ORIF, BP 96/58 at 1500 (baseline ~130/80), new confusion noted 1500, family at bedside expressing concern. Situation, Background, Assessment, Recommendation. Use only what I gave you. Do not add clinical details, vitals, or interventions I did not state.",
+  "changes": [
+    "Gives concrete de-identified facts (values, baseline, timing) so the SBAR is built on what actually happened, not vague impressions.",
+    "Adds the critical constraint to use only the stated facts and invent nothing, which stops the tool from fabricating a med, a vital, or an intervention.",
+    "Keeps the clinical read in the nurse's words, so the tool organizes the handoff rather than authoring findings it never witnessed."
+  ]
+}
+```
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does the SBAR prompt end with 'Use only what I gave you. Do not add clinical details I did not state'?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the tool will otherwise fill gaps with plausible-sounding findings that were never observed, and a handoff with an invented detail is dangerous.",
+      "is_correct": true,
+      "explanation": "Correct. Without that constraint the model 'completes the picture' with realistic but fabricated vitals or interventions. In a handoff, an invented finding can drive the next nurse to the wrong action."
+    },
+    {
+      "id": "b",
+      "label": "Because it makes the SBAR shorter.",
+      "is_correct": false,
+      "explanation": "Brevity is a side effect, not the reason. The point is preventing fabricated clinical content from entering the handoff."
+    },
+    {
+      "id": "c",
+      "label": "Because the tool is not allowed to use the SBAR format otherwise.",
+      "is_correct": false,
+      "explanation": "The format is set by the rest of the prompt. This sentence is about accuracy: organize my words, do not invent new findings."
+    },
+    {
+      "id": "d",
+      "label": "Because it speeds up the model's response time.",
+      "is_correct": false,
+      "explanation": "It has nothing to do with speed. It is the guardrail that keeps the tool organizing your facts instead of inventing its own."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Take the rough notes from one patient on your next shift (de-identified). Run them through the SBAR prompt above. Compare the output to how you would have given that handoff verbally. What did the structure surface that you might have glossed over?

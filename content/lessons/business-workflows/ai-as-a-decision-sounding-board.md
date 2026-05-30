@@ -36,3 +36,31 @@ Then the line that runs through all responsible AI use: you decide. The AI does 
   "input_placeholder": "Describe the decision you're weighing and I'll help you think it through..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson calls one move the most valuable way to use AI as a decision sounding board. Which is it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Have it ask you the hard questions a sharp, skeptical advisor would ask, then answer them honestly, which forces out the assumptions and blind spots you would walk past.",
+      "is_correct": true,
+      "explanation": "Correct. Making it interrogate you, and making it argue the side you are avoiding, is where a sounding board earns its keep. The final call still stays with you, grounded in context the AI does not have."
+    },
+    {
+      "id": "b",
+      "label": "Ask it to make the decision for you, since it can weigh the options more objectively than you can.",
+      "is_correct": false,
+      "explanation": "The lesson is explicit that the AI does not get to choose. It does not know your gut read, your team's bandwidth, or the values you will not trade away. It sharpens your thinking; you decide."
+    },
+    {
+      "id": "c",
+      "label": "Have it confirm the choice you already prefer so you can move forward with confidence.",
+      "is_correct": false,
+      "explanation": "That defeats the purpose. The lesson tells you to have it make the strongest case for the option you are leaning against, precisely so your choice survives scrutiny rather than just feeling comfortable."
+    }
+  ]
+}
+```

@@ -40,3 +40,17 @@ The fix is not to write everything from scratch. It is to let AI draft, then spe
   ]
 }
 ```
+
+## fill_blank
+
+```json
+{
+  "template": "To strip the AI sound, delete the throat-clearing {{1}} so you start with the actual point, swap inflated words like 'utilize' and 'leverage' for {{2}} ones, and add one specific human {{3}} that only you would know.",
+  "blanks": [
+    { "id": "1", "accept": ["opening", "intro", "introduction"], "ideal": "opening" },
+    { "id": "2", "accept": ["plain", "simple", "plainer"], "ideal": "plain" },
+    { "id": "3", "accept": ["detail", "fact"], "ideal": "detail" }
+  ],
+  "explanation": "The three biggest AI tells: a warm-up opening, inflated vocabulary, and a total absence of specific human detail. Cut the first two and add the third to sound like a person."
+}
+```

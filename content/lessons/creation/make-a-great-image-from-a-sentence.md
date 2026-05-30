@@ -33,6 +33,34 @@ Example: "Product designer at a wooden desk, morning light from a large window, 
 
 Start with the formula, run it, then iterate on whichever lever produced the wrong output.
 
+## multiple_choice
+
+```json
+{
+  "stem": "Of the five levers in the image prompt formula, this lesson calls one the highest-leverage descriptor. Which is it, and why?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Lighting, because it changes the entire emotional register of the image. 'Golden hour' versus 'overcast flat light' produces a completely different feel.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson singles out lighting as the highest-leverage descriptor precisely because it shifts the whole emotional register, not just one detail of the scene."
+    },
+    {
+      "id": "b",
+      "label": "The technical parameters like aspect ratio and version flags, since they control the final file the most.",
+      "is_correct": false,
+      "explanation": "Technical parameters cue composition and format, but the lesson names lighting, not the flags, as the descriptor that most changes how the image lands."
+    },
+    {
+      "id": "c",
+      "label": "The negative prompt, because excluding artifacts is what makes an image usable at all.",
+      "is_correct": false,
+      "explanation": "Negative prompts clear common artifacts, which is useful cleanup, but they do not set the mood. Lighting is the lever that drives the emotional register."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Think of an image you need for work. Build a prompt using the formula above. Run it in DALL-E (free in ChatGPT). What do you need to change in round 2?

@@ -42,3 +42,31 @@ The underlying skill is recognizing that AI does not push back on a loose reques
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson explains the root cause of both AI bloat and format drift. What is it, and what fixes them?",
+  "options": [
+    {
+      "id": "a",
+      "label": "AI does not push back on a loose request, it fills the gap with padding and loses track of earlier instructions over long outputs. Hard limits, banned filler, and a quick format correction fix it.",
+      "is_correct": true,
+      "explanation": "Correct. Bloat comes from vague, open instructions, and drift comes from long outputs and weak cues. Setting a hard cap, banning the windup, and pointing it back to the format when it wanders are the levers."
+    },
+    {
+      "id": "b",
+      "label": "The model is simply too weak to follow instructions, so the only fix is to write everything yourself.",
+      "is_correct": false,
+      "explanation": "The lesson shows these are controllable with the right instructions, not a sign you must abandon the tool. Tight limits and a quick correction get lean, on-format writing."
+    },
+    {
+      "id": "c",
+      "label": "Bloat and drift are random, so you just keep regenerating until you get a clean version.",
+      "is_correct": false,
+      "explanation": "They are not random. They have specific causes: open instructions and long ungrounded outputs. Regenerating wastes time when a word cap and a sharp format cue solve it directly."
+    }
+  ]
+}
+```

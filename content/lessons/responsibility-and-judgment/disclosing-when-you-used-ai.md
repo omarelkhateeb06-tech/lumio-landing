@@ -53,3 +53,7 @@ The underlying principle is simple respect: people are entitled to an accurate s
   ]
 }
 ```
+
+## mini_project
+
+Build your own disclosure rule of thumb using the one test that decides it: would this person feel misled if they found out? First, list six things you actually use AI for, mixing routine work with anything personal or high-stakes (for example: cleaning up internal emails, summarizing reports for yourself, drafting a personal recommendation, a condolence message, an academic submission, a client deliverable). Second, run each through the misled test and sort it into one of three buckets: no disclosure needed (routine assistance nobody expects to be handwritten), disclose or keep it genuinely yours (authorship and effort are part of the value), and disclosure likely required (a policy, professional standard, or real stakes apply). Third, for anything in the middle bucket, write the one light line you would actually use, such as "I drafted this with some AI help and reviewed it." The deliverable is your sorted list plus that reusable disclosure line, so the call is already made before you are in the moment.

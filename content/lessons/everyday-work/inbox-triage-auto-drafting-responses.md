@@ -26,6 +26,34 @@ The mistake people make is applying Tier 3 effort to Tier 1 emails. A meeting co
 
 **The voice trick:** For Tier 1 emails, voice-dictate your thoughts in 30 seconds. That dictation becomes your brief.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to this lesson, what's the most common mistake people make with email triage?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Applying Tier 3 effort (full hand-writing and agonizing) to Tier 1 emails like meeting confirmations that just need a 30-second auto-draft.",
+      "is_correct": true,
+      "explanation": "Correct. Around 80 percent of email is Tier 1. Spending your full creative attention on a routine confirmation wastes the cognitive load you need for the 20 percent that matters."
+    },
+    {
+      "id": "b",
+      "label": "Auto-drafting the sensitive, relationship-critical emails to save the most time.",
+      "is_correct": false,
+      "explanation": "Those are Tier 2 or 3, where nuance matters and you edit substantively or write yourself. Auto-drafting is for the routine Tier 1 messages."
+    },
+    {
+      "id": "c",
+      "label": "Reading every incoming email carefully before deciding how to respond.",
+      "is_correct": false,
+      "explanation": "The point of triage is classifying first so you don't over-invest. The mistake the lesson names is mismatched effort, not careful reading."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Find 3 emails in your drafts or inbox that you've been avoiding. Classify each as Tier 1, 2, or 3. Draft the Tier 1 ones using the auto-draft method above. Send at least one.

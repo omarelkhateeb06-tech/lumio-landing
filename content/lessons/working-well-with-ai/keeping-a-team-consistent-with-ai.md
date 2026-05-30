@@ -26,6 +26,34 @@ The skill here is moving AI from a personal tool to a team asset, so the good pr
 
 The payoff is leverage that compounds. Instead of each person slowly learning the same lessons alone, the team's best discoveries become everyone's starting point, and the work that ships looks like it came from one capable group rather than ten strangers.
 
+## multiple_choice
+
+```json
+{
+  "stem": "Your team's AI output is all over the place: warm from one person, robotic from another, some of it unchecked. Which single shared asset most directly fixes the inconsistent voice?",
+  "options": [
+    {
+      "id": "a",
+      "label": "A one-page voice and standards guide that everyone pastes in or loads as shared custom instructions.",
+      "is_correct": true,
+      "explanation": "Correct. Capturing how the team's writing should sound and what it must never do, then sharing it, is what turns ten voices into one. It targets the voice problem directly."
+    },
+    {
+      "id": "b",
+      "label": "Telling each person to prompt more carefully on their own.",
+      "is_correct": false,
+      "explanation": "Leaving it to individual effort is exactly how the inconsistency arose. The fix is moving standards out of one person's head into a shared asset."
+    },
+    {
+      "id": "c",
+      "label": "A rule that only the manager is allowed to use AI for team writing.",
+      "is_correct": false,
+      "explanation": "Bottlenecking through one person kills the leverage. The goal is shared assets so everyone produces consistent work, not restricting access."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Draft the first version of a shared AI kit for your team, even if your "team" is just you and two colleagues. First, collect three prompts that have worked well for recurring team tasks, clean them up, and put them in one shared document labeled by job (writing, summarizing, client replies). Second, write a one-page voice and standards guide: five to eight plain rules covering how your team's writing should sound and the hard "never do this" lines, including at least one verification rule. Third, write one shared custom-instructions block the team can paste in so every chat starts tuned to your standards. Put all three in a single shared location and tell the team where it lives. Ask one colleague to use it for a real task this week and tell you what was missing, then update it. The first version does not need to be complete, it needs to exist and be findable.

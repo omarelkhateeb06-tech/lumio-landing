@@ -55,3 +55,18 @@ Privacy is not about avoiding AI. It is about being deliberate with what you fee
   ]
 }
 ```
+
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same goal, summarizing a sensitive document, two prompts for a free public tool. Notice which one keeps the confidential parts off the server.",
+  "before_prompt": "Summarize this performance review for me: 'Maria Lopez, Senior Analyst, has missed three deadlines this quarter and her manager David Chen is recommending a performance improvement plan before her March 15 review.'",
+  "after_prompt": "Help me summarize a performance review. Genericized: an employee has missed several deadlines this quarter and their manager is recommending a performance improvement plan before an upcoming review. Give me a clear, neutral summary and suggest how to phrase the concerns constructively. I'll add the real names and dates myself, offline.",
+  "changes": [
+    "Strips the employee name, the manager name, and the specific date before anything reaches a public tool, so no identifiable personnel record leaves your control.",
+    "Replaces the specifics with a generic description the AI can summarize and improve just as well.",
+    "Reserves the confidential details for offline work, treating the public tool like a postcard a stranger could read rather than a sealed letter."
+  ]
+}
+```

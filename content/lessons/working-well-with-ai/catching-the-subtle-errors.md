@@ -38,3 +38,31 @@ The point is not to distrust every word. It is to convert a smooth, undifferenti
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "You asked AI to summarize a report whose only relevant line says 'revenue grew in Q3.' The summary reads: 'Revenue grew 12% in Q3, driven by strong international sales.' What is the subtle error to catch?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The summary added a specific figure (12%) and a cause (international sales) the source never stated, which is invented detail dressed as fact.",
+      "is_correct": true,
+      "explanation": "Correct. This is the classic subtle error: the AI filled a gap the document left open, turning a vague 'grew' into a precise number and a reason. Forcing fact apart from inference would have caught it."
+    },
+    {
+      "id": "b",
+      "label": "Nothing, since the summary is more detailed and therefore more useful than the original.",
+      "is_correct": false,
+      "explanation": "Extra detail the source does not support is not useful, it is fabricated. A summary should never contain claims the original did not make."
+    },
+    {
+      "id": "c",
+      "label": "The summary is too short to be trustworthy.",
+      "is_correct": false,
+      "explanation": "Length is not the issue. The problem is that specific, plausible-sounding claims were added, which is exactly the kind of smooth error that sails into a final draft."
+    }
+  ]
+}
+```

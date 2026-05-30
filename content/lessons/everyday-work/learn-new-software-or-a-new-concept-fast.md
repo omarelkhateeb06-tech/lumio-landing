@@ -36,3 +36,31 @@ One honest caution for software especially: tools change their menus and feature
   "input_placeholder": "What do you want to learn, and what's your starting level?..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "You're following AI's step-by-step instructions for a software feature, but step 3 mentions a menu you don't see on your screen. What does this lesson tell you to do?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Trust the screen over the AI, since tools change menus and the model's knowledge has a cutoff date, then ask the AI to help you find the current location.",
+      "is_correct": true,
+      "explanation": "Correct. Software menus and features move, and the AI may describe an older version. When a step doesn't match, trust what you see and ask the AI to help you relocate the option."
+    },
+    {
+      "id": "b",
+      "label": "Trust the AI's instructions and keep clicking until the menu appears, since it read the documentation.",
+      "is_correct": false,
+      "explanation": "The AI hasn't read your current version's screen. Forcing its outdated steps onto a changed interface leads you in circles. The live screen is the authority."
+    },
+    {
+      "id": "c",
+      "label": "Abandon the task, since the AI's instructions are outdated and can't be trusted at all.",
+      "is_correct": false,
+      "explanation": "Overcorrection. The instructions are a strong guide; you just reconcile them with the live screen and ask the AI to point you to where the option moved."
+    }
+  ]
+}
+```

@@ -40,3 +40,31 @@ The goal is not to convert a believer overnight. It is to move someone from "thi
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "A colleague tried AI once, got a bad answer, and wrote it off. Based on this lesson, what is most likely to move them?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Showing AI do the tedious 80 percent of a task they personally hate, while they keep the judgment and an easy exit.",
+      "is_correct": true,
+      "explanation": "Correct. Skeptics are won by a relevant, concrete result on a task they care about, with their concern respected, not by enthusiasm or feature lists."
+    },
+    {
+      "id": "b",
+      "label": "Listing everything AI can do and warning they'll be left behind if they don't adopt it.",
+      "is_correct": false,
+      "explanation": "Leading with hype and feature lists lands as pressure and deepens resistance. It is the exact mistake the lesson warns against."
+    },
+    {
+      "id": "c",
+      "label": "Hiding the tool's flaws so they don't get discouraged before they're hooked.",
+      "is_correct": false,
+      "explanation": "Backwards. Being honest about the limits and showing how you check it is what makes skeptics trust you, because you are clearly not selling them."
+    }
+  ]
+}
+```

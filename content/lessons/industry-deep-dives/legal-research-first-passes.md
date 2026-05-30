@@ -36,3 +36,41 @@ The workflow in one line: AI helps you understand the territory and ask sharper 
   "input_placeholder": "Describe the legal topic you need to get oriented on..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "AI explains a legal concept clearly and gives you a tidy list of the 'elements courts look at,' including a specific statute number. How should you use this?",
+  "options": [
+    {
+      "id": "a",
+      "label": "As orientation to understand the territory and frame sharper questions, then confirm every element, rule, and the statute itself in an authoritative source.",
+      "is_correct": true,
+      "explanation": "Correct. Orientation from the tool, authority from the law. The explanation helps you stop starting cold, but the statute number and the elements are exactly the kind of thing AI fabricates or gets outdated, so they get verified in a real source."
+    },
+    {
+      "id": "b",
+      "label": "Cite the statute in your memo, since the AI gave a specific number.",
+      "is_correct": false,
+      "explanation": "A specific-looking statute number is not evidence it is real or current. AI invents and misstates citations; none of it is authority until confirmed in the primary source."
+    },
+    {
+      "id": "c",
+      "label": "Rely on the elements list because the explanation was clearly written and internally consistent.",
+      "is_correct": false,
+      "explanation": "Fluent and consistent is not the same as correct or jurisdiction-specific. The list is a starting map to verify, not a finding."
+    },
+    {
+      "id": "d",
+      "label": "Ask the AI which jurisdiction the statute applies to and trust that answer.",
+      "is_correct": false,
+      "explanation": "The model does not reliably know your jurisdiction's current law or what changed recently. Jurisdiction and currency are precisely what you confirm in an authoritative database."
+    }
+  ]
+}
+```
+
+## mini_project
+
+Your 5-minute exercise: Pick a legal topic you are not fluent in and run the orientation prompt to get the concept and a list of issues and questions to investigate. Then take one specific factual claim it made (a rule, an element, a deadline) and verify it in an authoritative legal source. Did the orientation hold up? Note where the tool was a useful starting map and where relying on it as authority would have led you wrong.

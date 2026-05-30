@@ -46,3 +46,31 @@ The simplest way to start: list the tasks you do every week, then circle the one
   "explanation": "Repetitive, text-based, pattern-following tasks where you can quickly check the output are the safest, highest-value place to start with AI."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "Which of these tasks does this lesson say is a poor fit for handing to AI, or one that needs real caution?",
+  "options": [
+    {
+      "id": "a",
+      "label": "A task where the cost of an error is high and hard to catch, like a legal filing or a financial commitment, so AI should assist but never act alone.",
+      "is_correct": true,
+      "explanation": "Correct. High-stakes work where mistakes are expensive and hard to spot, work needing facts the AI cannot know, and work needing genuine human judgment are all poor fits for handing over. AI can help you prepare, but the judgment stays yours."
+    },
+    {
+      "id": "b",
+      "label": "Sorting incoming emails into categories each morning, a repetitive text task you can glance at and check.",
+      "is_correct": false,
+      "explanation": "That is a strong candidate, not a poor fit. It repeats, it is about text, it follows a pattern, and you can quickly check the result, which is exactly the profile the lesson says to hand over first."
+    },
+    {
+      "id": "c",
+      "label": "Reformatting messy meeting notes into a consistent structure every week.",
+      "is_correct": false,
+      "explanation": "This is a good fit. It is repetitive, text-based, pattern-following, and easy to verify at a glance, so it belongs in your first wave of automation, not the caution pile."
+    }
+  ]
+}
+```

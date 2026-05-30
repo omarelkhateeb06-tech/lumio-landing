@@ -52,3 +52,7 @@ The principle for the whole healthcare track lands here: AI handles the language
   ]
 }
 ```
+
+## mini_project
+
+Design your think-first, draft-second workflow for one task you actually do, such as writing a progress note or reviewing a chart before a visit. Write down the order you will follow so the clinical reasoning stays yours: first, what you assess and conclude on your own before opening any AI tool; second, exactly what you hand the tool to do (organize, phrase, summarize, surface items to double-check) with explicit instructions not to diagnose or recommend; third, the verification step where you confirm anything decision-relevant against the source. Then write one sentence naming the deskilling risk for this task, the judgment you must keep practicing yourself so it does not get rusty. The deliverable is a short three-step workflow plus that one-sentence guardrail, so the tool carries the words while your clinical judgment stays in the driver's seat.

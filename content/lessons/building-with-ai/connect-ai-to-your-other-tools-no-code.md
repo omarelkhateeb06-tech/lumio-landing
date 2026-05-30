@@ -25,6 +25,34 @@ An API (Application Programming Interface) is a way for one piece of software to
 
 **The one concept to understand:** Tokens. API calls are priced by tokens (roughly 4 characters = 1 token). A short email costs $0.001. This is not expensive.
 
+## multiple_choice
+
+```json
+{
+  "stem": "A colleague insists that calling an LLM API must require real coding skills. Based on this lesson's mental model, what's the most accurate reframe?",
+  "options": [
+    {
+      "id": "a",
+      "label": "An API call is just a structured message to the model, a system prompt, a user message, and a few parameters, and no-code tools like Make or Zapier can send it for you.",
+      "is_correct": true,
+      "explanation": "Correct. The whole mental model is that an API call is a formal version of typing into a chat. Visual tools handle the call, so non-coders can automate without writing code."
+    },
+    {
+      "id": "b",
+      "label": "They're right; without writing code you genuinely cannot make API calls.",
+      "is_correct": false,
+      "explanation": "No-code platforms exist precisely to make API calls through a visual interface. Coding is not a prerequisite."
+    },
+    {
+      "id": "c",
+      "label": "It's only worth it for large companies, since each call is expensive.",
+      "is_correct": false,
+      "explanation": "Calls are priced by tokens and a short request costs around a tenth of a cent. Cost is not the barrier the lesson is addressing."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Go to platform.openai.com or console.anthropic.com and create an API key. Open the API playground and make one test call using the visual interface. What did the call cost?

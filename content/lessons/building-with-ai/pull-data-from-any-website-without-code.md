@@ -26,6 +26,34 @@ Web scraping sounds like a developer task. It's increasingly not. Several no-cod
 
 **Legal note:** Always check a site's robots.txt and Terms of Service before scraping. Public data ≠ permitted to scrape.
 
+## multiple_choice
+
+```json
+{
+  "stem": "Before running a no-code scraper on a public website, what does this lesson say you must do?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Check the site's robots.txt and Terms of Service, since public data is not the same as data you're permitted to scrape.",
+      "is_correct": true,
+      "explanation": "Correct. The legal note is explicit: publicly visible does not mean permitted. Checking robots.txt and the Terms is the responsible first step."
+    },
+    {
+      "id": "b",
+      "label": "Nothing, because anything publicly visible is free to scrape at any scale.",
+      "is_correct": false,
+      "explanation": "Public visibility and permission to scrape are different things. Ignoring the site's terms can put you on the wrong side of them."
+    },
+    {
+      "id": "c",
+      "label": "Hire a developer to review your code, since scraping always requires programming.",
+      "is_correct": false,
+      "explanation": "The whole point of the lesson is that no-code tools handle the scraping. The real prerequisite is checking that you're allowed to."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Go to browse.ai and extract a list from any public website. What does the structured output look like? What could you do with it?

@@ -59,3 +59,17 @@ The honest summary: the tool is almost never the problem. What you feed it and w
   ]
 }
 ```
+
+## fill_blank
+
+```json
+{
+  "template": "Using AI at work almost never gets you in trouble for the tool itself. The two real risks are leaking {{1}} or personal data into a public tool, and being dishonest by hiding your AI {{2}} when it would matter to someone. When no policy exists, assume a {{3}} one.",
+  "blanks": [
+    { "id": "1", "accept": ["confidential", "sensitive"], "ideal": "confidential" },
+    { "id": "2", "accept": ["use", "usage"], "ideal": "use" },
+    { "id": "3", "accept": ["strict"], "ideal": "strict" }
+  ],
+  "explanation": "The lesson's core: trouble comes from data leaks and dishonesty, not the tool. With no policy, default to strict, no confidential or personal data in public tools, and be transparent about AI use when it matters."
+}
+```

@@ -57,3 +57,7 @@ A simple way to hold this: ask "could the AI actually know this, and what happen
   ]
 }
 ```
+
+## mini_project
+
+Build a trust map for the AI work you actually do, so calibration becomes automatic instead of a fresh judgment each time. First, list six real things you have recently asked AI to do (for example: reword an email, summarize a report, look up a statistic, explain a concept, draft a contract clause, brainstorm names). Second, place each one on two axes: could the AI actually know this reliably, and what happens if it is wrong? Mark each as high-trust (skim and move on) or low-trust (verify before relying on it). Third, for every item you marked low-trust, write the one source you would check it against. Finally, circle any item where the stakes alone push it into verify-even-if-it-feels-safe territory, like a number headed for a board deck or a client. Keep the map nearby for a week and notice where your instinct was miscalibrated, then adjust it.

@@ -36,3 +36,31 @@ The one caution, as always: for anything binding or high-stakes, AI gives you un
   "input_placeholder": "Paste a confusing clause or paragraph and I'll translate it..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "AI gives you a clear plain-English translation of a binding contract clause. According to this lesson, how far does that get you?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It gives you understanding so you can ask smart questions, but for anything binding you still confirm the consequential parts with the actual professional before you sign or act.",
+      "is_correct": true,
+      "explanation": "Correct. Understanding from AI, decisions from you and the right expert. The translation helps you grasp the text; it is not authority to act on a high-stakes document."
+    },
+    {
+      "id": "b",
+      "label": "It's authoritative, so you can sign based on the AI's explanation alone.",
+      "is_correct": false,
+      "explanation": "AI gives understanding, not authority. It can misread a clause, so a binding decision needs confirmation from the actual professional."
+    },
+    {
+      "id": "c",
+      "label": "It's useless for legal text, so you should never use AI on contracts.",
+      "is_correct": false,
+      "explanation": "Too far the other way. AI is an excellent plain-language translator that helps you understand and ask smart questions; you just verify the consequential parts."
+    }
+  ]
+}
+```

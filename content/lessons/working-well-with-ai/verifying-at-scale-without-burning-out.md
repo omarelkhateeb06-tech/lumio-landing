@@ -24,6 +24,34 @@ The fix is to stop treating verification as one big chore and turn it into tiers
 
 The skill is sorting incoming AI work into the right tier in two seconds, so you spend your limited checking energy on the 10 percent that can actually hurt you. Done consistently, this is what lets you use AI heavily and still sleep at night.
 
+## multiple_choice
+
+```json
+{
+  "stem": "You used AI to reword a short, casual email you had already drafted to a colleague. No new facts or figures were added. Which verification tier does this belong in?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Tier 1, the glance: one read for sense and tone, then send.",
+      "is_correct": true,
+      "explanation": "Correct. Low-stakes output with no AI-introduced facts to source is exactly Tier 1. Forensically checking it is the wasted effort that causes verification burnout."
+    },
+    {
+      "id": "b",
+      "label": "Tier 3, the full verify: confirm every claim against a primary source and get a second reviewer.",
+      "is_correct": false,
+      "explanation": "Full verification is reserved for high-stakes legal, medical, financial, or public work. Spending it on a reworded internal email is the over-checking the tiers exist to prevent."
+    },
+    {
+      "id": "c",
+      "label": "Tier 2, the targeted check: pull every claim and check it against the source.",
+      "is_correct": false,
+      "explanation": "Tier 2 is for output that matters and carries checkable specifics, like a client draft or a report summary. A casual reword you already wrote does not clear that bar."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Build your own three-tier verification routine and write it down so it becomes a habit instead of a daily decision. First, list the five most common types of AI output you produce in a typical week (for example: internal emails, meeting summaries, client-facing drafts, data lookups, social posts). Second, assign each one to a tier: glance, targeted check, or full verify, and write one sentence on what "done checking" means for that tier. Third, for your Tier 2 work, write a reusable instruction you can paste into the AI to make its claims easy to check, such as asking it to list every number and name separately. Keep the finished routine somewhere visible for two weeks and adjust any item that turns out to be in the wrong tier. The goal is a system you actually follow, not a perfect one you abandon.

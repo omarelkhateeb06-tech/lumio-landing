@@ -40,3 +40,31 @@ Used this way, you respond from a calm, professional footing even when you are p
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "What's the single most important move when drafting a reply to an angry customer, according to this lesson?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Genuinely acknowledge their frustration before giving the solution, since a reply that leads with the fix and skips empathy reads as cold.",
+      "is_correct": true,
+      "explanation": "Correct. Make the person feel heard before you explain anything. Even a good solution lands badly if it skips the acknowledgment."
+    },
+    {
+      "id": "b",
+      "label": "Lead immediately with the solution to show efficiency, and leave out the emotional part.",
+      "is_correct": false,
+      "explanation": "Leading with the fix and skipping empathy reads as cold and can keep the customer angry, even when the fix itself is fine."
+    },
+    {
+      "id": "c",
+      "label": "Explain in detail why the customer is mistaken about what happened.",
+      "is_correct": false,
+      "explanation": "That's the defensive instinct the lesson warns against. It pours fuel on the fire instead of de-escalating."
+    }
+  ]
+}
+```

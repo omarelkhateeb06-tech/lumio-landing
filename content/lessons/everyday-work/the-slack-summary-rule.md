@@ -26,6 +26,19 @@ This takes 15 seconds and gives you a better read of the thread than reading it 
 
 The rule works because it forces you to extract meaning rather than consume content.
 
+## fill_blank
+
+```json
+{
+  "template": "Never read a long Slack thread {{1}}. Copy the messages and ask AI to {{2}} them into five bullets, which surfaces the signal under the noise. The one exception is a thread where you need to feel the emotional {{3}} of the conversation: read that one yourself.",
+  "blanks": [
+    { "id": "1", "answer": "linearly", "alternatives": ["top to bottom", "in order"] },
+    { "id": "2", "answer": "summarize", "alternatives": ["summarise"] },
+    { "id": "3", "answer": "temperature", "alternatives": ["tone"] }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Find the longest Slack thread from the past 48 hours. Copy all the messages and run the summary prompt. How long would reading it have taken vs. the 15 seconds this took?

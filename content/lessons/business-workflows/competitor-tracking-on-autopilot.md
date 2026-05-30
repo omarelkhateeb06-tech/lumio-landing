@@ -29,6 +29,18 @@ Every quarter, give ChatGPT each competitor's current homepage copy, pricing pag
 
 The stack requires setup once and 20 minutes weekly. Most teams track competitors 0 hours per week until they're surprised.
 
+## fill_blank
+
+```json
+{
+  "template": "Competitive intelligence usually fails not because people doubt its value but because of {{1}}: someone has to keep checking the sources on a cadence and most people stop after two weeks. The stack fixes this by automating collection, synthesizing every {{2}}, and running a deep dive every quarter.",
+  "blanks": [
+    { "id": "1", "answer": "collection", "alternatives": ["the collection", "gathering"] },
+    { "id": "2", "answer": "week", "alternatives": ["weekly"] }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Set up Google Alerts for your two main competitors right now. While you're there, write one sentence describing each competitor's current positioning.

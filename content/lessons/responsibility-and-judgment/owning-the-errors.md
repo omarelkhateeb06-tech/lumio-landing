@@ -40,3 +40,31 @@ The freeing part is this: you cannot control whether AI occasionally invents som
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "An AI-assisted error reached a client under your name despite your usual habits. Which response best protects your credibility, according to this lesson?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Acknowledge it, correct it, name the real gap (you skipped verifying that detail), and commit to a concrete process fix.",
+      "is_correct": true,
+      "explanation": "Correct. People forgive a caught-and-owned mistake quickly. Owning the gap and closing it with a process change rebuilds trust and turns the error into a stronger system."
+    },
+    {
+      "id": "b",
+      "label": "Explain that the AI tool generated the wrong information and these tools aren't always reliable.",
+      "is_correct": false,
+      "explanation": "Blaming the tool signals you don't accept that catching it was your job, which reads as 'I'll do this again.' Accountability does not transfer to the AI."
+    },
+    {
+      "id": "c",
+      "label": "Quietly fix it and hope the client didn't notice the original.",
+      "is_correct": false,
+      "explanation": "Hiding the error risks a much larger trust breach if it surfaces. A clean, owned correction is what protects credibility, not concealment."
+    }
+  ]
+}
+```

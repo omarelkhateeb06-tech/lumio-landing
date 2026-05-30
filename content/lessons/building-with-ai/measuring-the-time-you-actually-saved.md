@@ -26,6 +26,34 @@ The trap to avoid is counting only the fast part. AI writes the first draft in t
 
 The point is not to turn your job into a time-and-motion study. It is to replace a vague feeling with something you can defend, so you invest your AI effort where it truly pays off and can make the case to anyone who asks.
 
+## multiple_choice
+
+```json
+{
+  "stem": "AI drafts your weekly report in 20 seconds, but you then spend 10 minutes editing it and checking a figure it got wrong. What's the honest net saving to record?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The full new-way time, editing and checking included, compared against the old-way total, since counting only the 20-second draft overstates the gain.",
+      "is_correct": true,
+      "explanation": "Correct. The trap is counting only the fast part. The real number is total new time versus total old time, or you'll overstate the saving and get caught."
+    },
+    {
+      "id": "b",
+      "label": "The 20-second draft time, because that's the part AI actually did for you.",
+      "is_correct": false,
+      "explanation": "That ignores the ten minutes of editing and verifying, which is exactly the inflation this lesson warns against."
+    },
+    {
+      "id": "c",
+      "label": "No need to measure; if the task feels faster, it's clearly saving time.",
+      "is_correct": false,
+      "explanation": "A vague feeling is what the lesson tells you to replace. Sometimes the honest measurement shows zero or negative saving, which is useful to know."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Prove your real AI time savings with a two-week measurement, then write up the result. First, pick three or four recurring tasks you do often and currently use or could use AI for, such as a weekly report, routine emails, or document summaries. Second, for each task, time the old way honestly start to finish at least once to set a baseline, then time the AI way including prompt writing, editing, and fact-checking, and record the net minutes saved per instance. Third, over two weeks, keep a simple running tally of how many times you did each task and the minutes saved each time, and flag any task where AI saved little or nothing. Finally, total it into a single clear figure with a short breakdown, for example "about four hours a week saved, mostly on reporting and first drafts, with customer replies saving almost nothing." The deliverable is a one-paragraph, numbers-backed summary of your real weekly time saving that you could hand to a manager, plus a short note on which tasks are not worth using AI for.

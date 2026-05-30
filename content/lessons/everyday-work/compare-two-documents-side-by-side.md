@@ -26,6 +26,21 @@ AI is excellent at this, because comparing text is squarely in its wheelhouse. H
 
 One important caution: for anything legal, financial, or binding, AI's comparison is your fast first pass, not your final authority. It can miss a subtle change or misread a clause. Use it to find what to look at, then read those specific sections yourself, or have the right expert confirm them. The AI saves you from reading 20 pages; you still read the 3 that count.
 
+## before_after [personalizable]
+
+```json
+{
+  "question": "Two versions of a contract to compare, two prompts. One buries you in trivia, the other triages what matters. Notice the difference.",
+  "before_prompt": "Here are two versions of our contract. What changed?",
+  "after_prompt": "Here is version A, our current contract, and version B, the one they sent back. Compare them, focusing only on changes to payment terms, deadlines, and liability, and ignore formatting and wording tweaks that don't change meaning. Group the changes as critical, moderate, and minor, and for each critical one, explain in plain language what it means for me.",
+  "changes": [
+    "Labels which document is which, so the AI doesn't get the direction of changes backwards.",
+    "Aims the comparison at the clauses that carry money and risk and tells it to ignore noise, so you get signal.",
+    "Asks for changes grouped by importance and explained in plain language, turning a flat diff into a triage you can act on."
+  ]
+}
+```
+
 ## mini_project
 
 Use AI to compare two real versions of a document you actually need to review. First, gather both versions (a current and a revised policy, two drafts of a proposal, an original and an edited document) and remove any confidential names or details if you are using a public tool. Second, paste both in clearly labeled as A and B, and ask the AI to list what changed, focusing only on the differences that affect meaning, not formatting. Third, ask it to group the changes by importance (critical, moderate, minor) and to explain in plain language what each critical change means for you. Finally, take the AI's list of critical changes and read those specific sections in the real document yourself to confirm them. The goal is to go from "I have to read both of these end to end" to "I know the three changes that matter and I verified them," in a fraction of the time.

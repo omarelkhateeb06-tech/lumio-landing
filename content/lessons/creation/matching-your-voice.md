@@ -42,3 +42,31 @@ The goal is not to hand your writing over to a machine. It is to get a first dra
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "AI writing keeps coming back sounding generic and over-formal. According to this lesson, what is the most effective fix?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Paste two or three samples of your real writing and name your specific style traits, so the model copies your actual voice instead of its default.",
+      "is_correct": true,
+      "explanation": "Correct. Showing real samples teaches the model more than description alone, and naming traits like short sentences and banned phrases steers it hard. The two together work best."
+    },
+    {
+      "id": "b",
+      "label": "Ask it to 'sound more human' and 'be less robotic' and trust it to figure out the rest.",
+      "is_correct": false,
+      "explanation": "Vague instructions like that give the model nothing concrete to imitate. It writes generically by default because you have not shown it whose voice to use."
+    },
+    {
+      "id": "c",
+      "label": "Accept that AI cannot match a personal voice and rewrite every draft from scratch yourself.",
+      "is_correct": false,
+      "explanation": "The lesson's whole point is that this is a fixable problem. With samples and named traits, you get a first draft that already sounds like you and needs only light editing."
+    }
+  ]
+}
+```

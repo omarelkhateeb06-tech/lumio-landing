@@ -40,3 +40,31 @@ The principle underneath all of this: adoption beats cleverness. A simple templa
   "input_placeholder": "Name a frequent team task and I'll build a template for it..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "You built a sophisticated, clever prompt and shared it with your team, but weeks later almost no one uses it. Based on this lesson, what most likely went wrong?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It optimized for cleverness over adoption: too vague or buried, when a simple fill-in-the-blank template stored where work happens would have stuck.",
+      "is_correct": true,
+      "explanation": "Correct. Adoption beats cleverness. A simple template with obvious blanks, built-in instructions, and an easy-to-find home gets used; a brilliant one that requires interpretation or hunting does not."
+    },
+    {
+      "id": "b",
+      "label": "The prompt wasn't advanced enough, so the team needs an even more sophisticated version.",
+      "is_correct": false,
+      "explanation": "More sophistication usually lowers adoption, not raises it. The person reaching for it on a busy Tuesday wants less thinking required, not more."
+    },
+    {
+      "id": "c",
+      "label": "Team templates rarely work, so prompts should stay personal.",
+      "is_correct": false,
+      "explanation": "Shared templates multiply value when built for adoption. The failure was in the design and placement, not in the idea of sharing."
+    }
+  ]
+}
+```

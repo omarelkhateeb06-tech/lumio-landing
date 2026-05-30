@@ -44,3 +44,31 @@ Using AI is not the lazy choice. Using it to avoid thinking is. The same tool ca
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "Which of these uses of AI crosses the line from authentic into lazy, as this lesson draws it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Asking AI a question, pasting its unread answer into a report as your considered analysis, and being unable to defend a single line if questioned.",
+      "is_correct": true,
+      "explanation": "Correct. Handing over the thinking, rubber-stamping output you never examined, and being unable to stand behind it is exactly the lazy side of the line."
+    },
+    {
+      "id": "b",
+      "label": "Supplying your own points and angle, having AI draft from them, then editing it into your voice.",
+      "is_correct": false,
+      "explanation": "This is authentic use. You brought the substance and judgment and reclaimed authorship through editing, which is no more cheating than a calculator."
+    },
+    {
+      "id": "c",
+      "label": "Using AI to reorganize your own messy notes into a clearer structure you then refine.",
+      "is_correct": false,
+      "explanation": "Organizing your own material and refining the result keeps you in the author's chair. The substance is yours; the tool just helped you express it."
+    }
+  ]
+}
+```

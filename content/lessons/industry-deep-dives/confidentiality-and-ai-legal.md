@@ -57,3 +57,22 @@ None of this means avoiding AI. It means being deliberate: generic inputs in pub
   ]
 }
 ```
+
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same memo request, two prompts. Notice which one keeps you inside your duty of confidentiality.",
+  "before_prompt": "Help me draft a memo on the issues in Jennifer Walsh's employment dispute with Riverside Manufacturing, where she alleges she was fired after reporting safety violations on the night shift.",
+  "after_prompt": "Help me draft an issue memo for an employment matter. The setup, genericized: [an employee] alleges termination shortly after [reporting workplace safety concerns] to [the employer]. Organize the likely issues to analyze and the questions to investigate. Use only this generic description; I will add the confidential specifics in our approved private tool.",
+  "changes": [
+    "Strips the real client name, the employer, and identifying facts before anything reaches a public tool, which is what keeps a privileged matter from leaving your control.",
+    "Replaces specifics with bracketed placeholders so the AI can still produce a useful structure from the generic version.",
+    "Reserves the confidential details for an approved private tool, treating the public tool like a crowded room where privileged information is never spoken."
+  ]
+}
+```
+
+## mini_project
+
+Your 5-minute exercise: Take a real (or realistic) active matter and practice genericizing it for safe AI use. Write out the matter in one or two sentences as you normally would, then rewrite it replacing the client name with [client], the company with a generic descriptor like [a manufacturing company], and every figure, date, and identifying fact with a placeholder. Read the genericized version and confirm that nothing left in it could identify the client or the matter. Then note which parts of the work you could safely do in a public tool with the generic version, and which parts must wait for your firm's approved private tool.

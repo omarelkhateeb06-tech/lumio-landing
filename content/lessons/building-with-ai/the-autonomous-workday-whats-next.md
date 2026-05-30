@@ -29,6 +29,34 @@ We've spent 29 lessons building AI fluency: using models to draft, synthesize, r
 
 The 5 minutes you've invested each day for 30 days isn't about individual productivity tricks. It's about building the mental model to navigate a decade of change.
 
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson says to start preparing for autonomous agents now. Which preparation does it emphasize most?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Documenting your decision rules, because agents can follow explicit rules but can't infer preferences that stay in your head.",
+      "is_correct": true,
+      "explanation": "Correct. The processes you make explicit are the candidates for automation. Undocumented preferences can't be handed to an agent, so they stay manual."
+    },
+    {
+      "id": "b",
+      "label": "Waiting for the technology to mature before changing anything about how you work.",
+      "is_correct": false,
+      "explanation": "The lesson is about preparing now. Waiting leaves your rules undocumented, which is the exact thing that keeps work manual."
+    },
+    {
+      "id": "c",
+      "label": "Automating your highest-stakes task first to prove the value quickly.",
+      "is_correct": false,
+      "explanation": "Backwards. The advice is to start small and high-frequency on low-stakes tasks, not to put your riskiest work on autopilot first."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your final exercise: Write down 3 recurring tasks in your workday that follow clear, documentable rules. For each, write the rules as if you were briefing an agent. These are your automation roadmap for the next 6 months.

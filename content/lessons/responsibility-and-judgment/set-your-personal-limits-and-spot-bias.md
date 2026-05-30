@@ -51,3 +51,18 @@ The throughline of responsible AI use is staying in charge: of where the tool be
   ]
 }
 ```
+
+## before_after [personalizable]
+
+```json
+{
+  "question": "Same research question, two prompts. One inherits the AI's bias as neutral fact, the other forces it into the open. Notice what the second one asks for.",
+  "before_prompt": "Describe the qualities and typical background of a successful startup founder.",
+  "after_prompt": "Describe the qualities of a successful startup founder. Then tell me: whose viewpoint does this profile reflect, what assumptions about background, gender, age, or geography are baked into it, and whose paths to success it leaves out. Finish with the strongest counterexamples to the 'typical' profile.",
+  "changes": [
+    "Stops treating the first fluent answer as neutral truth, which is how you would otherwise inherit the skews in the training data without noticing.",
+    "Asks directly whose viewpoint the profile reflects and what it assumes, surfacing the stereotypes a smooth answer quietly encodes.",
+    "Requests counterexamples to the 'typical' founder, steering the model off the majority pattern toward a more balanced picture."
+  ]
+}
+```

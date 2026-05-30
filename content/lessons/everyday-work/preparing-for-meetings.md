@@ -28,6 +28,34 @@ For meetings you are running, you can also use AI afterward to turn your rough n
 
 A reminder: the AI does not know your manager or your office politics. Use its suggestions as a starting checklist, then adjust with what only you know about the people in the room.
 
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson calls one meeting-prep move the high-value one. Which is it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Asking AI for the three most likely reasons the other person will push back and how to respond to each, so objections don't catch you off guard.",
+      "is_correct": true,
+      "explanation": "Correct. Anticipating objections is the high-value move. It takes you from being caught off guard to walking in ready for the pushback that actually comes."
+    },
+    {
+      "id": "b",
+      "label": "Asking AI to write the longest possible agenda so the meeting fills the whole time slot.",
+      "is_correct": false,
+      "explanation": "A focused agenda with time estimates is useful, but length for its own sake isn't the point, and it isn't the high-value move the lesson highlights."
+    },
+    {
+      "id": "c",
+      "label": "Asking AI what your manager personally thinks, since it knows your office dynamics.",
+      "is_correct": false,
+      "explanation": "The AI doesn't know your manager or your office politics. Its prep is a starting checklist you adjust with what only you know about the people in the room."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Pick a real meeting on your calendar this week. In one AI chat, prepare three things back to back: first ask for a tight agenda with time estimates, then ask what questions you should be ready for, then ask for the three most likely objections and how to handle each. Read through the results, cross out anything that does not fit your situation, and keep the rest as your prep sheet. The whole exercise should take under ten minutes and you will walk in noticeably more ready.

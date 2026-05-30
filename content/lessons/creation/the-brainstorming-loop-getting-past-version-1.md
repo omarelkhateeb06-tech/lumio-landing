@@ -26,6 +26,34 @@ Brainstorming with AI works best when you treat it as an iterative loop rather t
 
 The whole loop takes 15 minutes and produces something genuinely yours, because you made every curatorial decision. The AI generated the clay; you shaped it.
 
+## multiple_choice
+
+```json
+{
+  "stem": "What is the core reason brainstorming with AI works better as a multi-round loop than as a single prompt?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The first output is almost always too generic, so the value comes from interrogating, constraining, and combining the raw options across rounds, with you making every curatorial decision.",
+      "is_correct": true,
+      "explanation": "Correct. The AI generates the clay and you shape it. Asking for ten options, probing the interesting ones, adding a constraint, then combining is where the genuinely good, genuinely yours idea emerges."
+    },
+    {
+      "id": "b",
+      "label": "Because running more prompts uses the model harder, and a tired model eventually produces better ideas.",
+      "is_correct": false,
+      "explanation": "That is not how it works. The loop helps because each round adds your judgment and a new angle, not because of any effect on the model itself."
+    },
+    {
+      "id": "c",
+      "label": "Because the best idea is reliably in the first batch, and the later rounds just confirm it.",
+      "is_correct": false,
+      "explanation": "The lesson says the opposite: the best idea is almost never in the first output. The combine round, where you fuse the tension of one option with the specificity of another, is often where it lives."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Pick a problem you've been stuck on. Run all 4 rounds above, spending about 2 minutes per round. What did you arrive at that you didn't have going in?

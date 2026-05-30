@@ -26,6 +26,34 @@ The skill in this lesson is workflow fit: getting AI to live inside the work you
 
 The test of whether AI has stuck is simple: a month from now, are you still reaching for it without thinking? That only happens when it is wired into a real, recurring task, not floating as a good intention.
 
+## multiple_choice
+
+```json
+{
+  "stem": "You learned AI could help, used it enthusiastically for a week, then drifted back to the old way. According to this lesson, what is the most likely reason?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Reaching for AI never became automatic, because it wasn't attached to a recurring task with a trigger to cue you.",
+      "is_correct": true,
+      "explanation": "Correct. The hard part is remembering, not prompting. Without bolting AI onto an existing habit and creating a cue, willpower fades and you drift back to the old way."
+    },
+    {
+      "id": "b",
+      "label": "The AI kept giving you bad answers, so the tool let you down.",
+      "is_correct": false,
+      "explanation": "The lesson is explicit that people usually stop not because the tool failed, but because reaching for it never became a habit."
+    },
+    {
+      "id": "c",
+      "label": "You needed to learn more advanced prompting techniques first.",
+      "is_correct": false,
+      "explanation": "Better prompting is not the issue. Workflow fit and a reliable trigger are what make AI stick, not more technique."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Wire AI into one real, recurring task this week so it becomes a habit instead of a novelty. First, pick a single task you already do on a predictable schedule (a weekly report, a recurring type of email, a standing meeting prep) and write down exactly when it happens. Second, design the trigger: decide where the reminder will live (a pinned tab, a saved prompt at the top of the relevant doc, a calendar note) so the task itself cues you to use AI. Third, write and save the specific prompt you will reuse for that task, with your context already baked in, so there is no friction next time. Run it through one full cycle of the task this week, note what felt clunky, and fix that one piece of friction. Do not add a second task until this one runs on autopilot.

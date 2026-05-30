@@ -25,6 +25,21 @@ This gives you editorial feedback without homogenizing your writing.
 
 **What to watch for:** AI has a reflex toward parallel structure and clean transitions. These can smooth out the intentional roughness that makes writing interesting. Read the output critically before accepting.
 
+## before_after [personalizable]
+
+```json
+{
+  "question": "You have a blog post draft you like the wording of but the flow feels off. One prompt erases your voice, the other keeps it. Notice the difference between rewrite and restructure.",
+  "before_prompt": "Here's my draft. Rewrite it so it flows better and reads more professionally. [pastes the draft]",
+  "after_prompt": "Here is a draft I have written. Do not rewrite the language, I want to keep my voice. Instead: tell me if the structure makes logical sense, point out where I have buried the lede, suggest a better order for the sections, and flag any paragraph that repeats a point I already made. Keep my exact wording unless I specifically ask you to change a section. [pastes the draft]",
+  "changes": [
+    "Asks for structural feedback instead of a rewrite, so the model diagnoses the flow without replacing your words with its own.",
+    "Names the specific structural problems to look for, like a buried lede and repeated points, so the feedback is concrete and actionable.",
+    "Tells it to keep your exact wording unless asked, which preserves the voice that a full rewrite would homogenize away."
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Take something you've written in the past month. Run the structural edit prompt above. Focus only on the structure feedback. Does it surface something you already half-knew wasn't working?

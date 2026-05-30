@@ -38,3 +38,31 @@ Always sanity-check the standout claims against your source material before you 
   "input_placeholder": "Paste real competitor text and I'll organize and analyze it..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson opens with one rule it calls the most important for competitive research. Which is it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Do not ask AI for facts about a specific competitor from memory, because it will confidently invent prices, features, and claims. Gather the real material yourself, then use AI to organize and analyze it.",
+      "is_correct": true,
+      "explanation": "Correct. The division of labor is the whole point: you bring the real facts, AI brings the organization and pattern-spotting. Because you gathered the source text, you can trust the analysis."
+    },
+    {
+      "id": "b",
+      "label": "Always ask AI for the most recent pricing and feature data, since it stays current with competitor websites.",
+      "is_correct": false,
+      "explanation": "The lesson warns directly against this. The model does not have reliable current data on a specific competitor and will fabricate it. You must paste in the real material."
+    },
+    {
+      "id": "c",
+      "label": "Once AI organizes the comparison into a table, you can present it as is, because structure guarantees accuracy.",
+      "is_correct": false,
+      "explanation": "Organized does not mean accurate. The lesson says to sanity-check the standout claims against your source material before putting the analysis in front of anyone."
+    }
+  ]
+}
+```

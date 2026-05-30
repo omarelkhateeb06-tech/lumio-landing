@@ -30,6 +30,34 @@ Instead of learning VLOOKUP or writing Python, describe what you want. Paste a s
 
 You don't need to become a data analyst. You need to describe your data problem clearly.
 
+## multiple_choice
+
+```json
+{
+  "stem": "You ran an AI-generated formula to standardize a column of customer names. What does this lesson tell you to do before trusting the result?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Spot-check about 10 random rows, because edge cases like unusual characters or empty cells can produce unexpected results.",
+      "is_correct": true,
+      "explanation": "Correct. AI handles the bulk transformation well, but odd inputs slip through. Checking a sample of rows is the safety net that catches the cases the formula mishandled."
+    },
+    {
+      "id": "b",
+      "label": "Nothing, because describing the problem in plain English means the formula is guaranteed correct.",
+      "is_correct": false,
+      "explanation": "Plain-English description makes the formula easy to generate, not guaranteed correct. Edge cases still need a spot-check before you rely on the output."
+    },
+    {
+      "id": "c",
+      "label": "Re-learn the underlying Excel or pandas syntax so you can audit every cell by hand.",
+      "is_correct": false,
+      "explanation": "The whole point is you do not need to master the syntax. A quick spot-check of a sample of rows is enough to catch the edge cases without auditing everything manually."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Find a messy spreadsheet. Pick one specific cleaning problem. Paste a sample and run the prompt above. Does it solve the problem?

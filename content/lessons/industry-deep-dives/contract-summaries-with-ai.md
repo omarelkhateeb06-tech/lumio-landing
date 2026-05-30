@@ -44,3 +44,41 @@ Used this way, AI turns hours of dense reading into a quick, focused review wher
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "An AI summary of a contract reads: 'The tenant may terminate with 30 days notice.' The actual clause says the tenant 'shall not terminate' within the first year. Why does this happen and what does it teach?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The model can misread a negation like 'shall not' as 'shall,' flipping the meaning, so every summarized term must be checked against the exact clause before you rely on it.",
+      "is_correct": true,
+      "explanation": "Correct. A single dropped 'not' inverts a contract term, and the summary will still read smoothly. That is why the summary is a fast way to find the right clauses, never a substitute for reading them."
+    },
+    {
+      "id": "b",
+      "label": "The AI is usually right, so you can trust the summary and skip re-reading the clause.",
+      "is_correct": false,
+      "explanation": "In contracts, 'usually right' is not safe enough. A flipped negation changes the legal effect entirely, and only checking the source catches it."
+    },
+    {
+      "id": "c",
+      "label": "It means AI should never be used for contracts at all.",
+      "is_correct": false,
+      "explanation": "Too far. AI is genuinely useful for a fast first read; the discipline is verifying each summarized term against the actual text, not abandoning the tool."
+    },
+    {
+      "id": "d",
+      "label": "You should ask the AI to re-summarize until two summaries agree.",
+      "is_correct": false,
+      "explanation": "Two summaries can agree and both be wrong. The authority is the contract clause itself, so verification means reading the source, not comparing AI outputs."
+    }
+  ]
+}
+```
+
+## mini_project
+
+Your 5-minute exercise: Take a real contract or clause (genericized if it is confidential) and run the focused summary prompt, naming the specific terms you care about and asking the AI to quote the exact clause for anything it flags. Then check each summarized term against the source line by line, paying special attention to negations, dates, and dollar figures. Note any place the summary and the clause diverge, and how long the verification took compared to reading the whole document cold.

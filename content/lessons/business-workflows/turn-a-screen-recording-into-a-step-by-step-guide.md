@@ -26,6 +26,34 @@ Standard Operating Procedures (SOPs) are one of the most valuable and most-negle
 
 The bottleneck shifts from "writing it" to "recording it." Recording is fast because people can speak their process naturally.
 
+## multiple_choice
+
+```json
+{
+  "stem": "After adopting the record-transcribe-prompt workflow for SOPs, where does the lesson say the bottleneck moves to?",
+  "options": [
+    {
+      "id": "a",
+      "label": "From writing the SOP to recording the walkthrough, and recording is fast because people can speak their process naturally.",
+      "is_correct": true,
+      "explanation": "Correct. Writing SOPs from scratch was the tedious part. Once a spoken walkthrough plus transcription plus a structuring prompt does the drafting, the only real effort left is recording, which is quick."
+    },
+    {
+      "id": "b",
+      "label": "To the transcription step, which is the slowest and most error-prone part of the workflow.",
+      "is_correct": false,
+      "explanation": "Transcription is largely automated by tools like Whisper or Otter. The lesson points to recording, not transcription, as where the remaining effort sits."
+    },
+    {
+      "id": "c",
+      "label": "Nowhere, because the workflow removes all human effort from creating SOPs.",
+      "is_correct": false,
+      "explanation": "Effort does not disappear. It shifts to recording, and the original person still spends about ten minutes reviewing the draft to catch anything wrong or missing."
+    }
+  ]
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Record a 5-minute Loom of any repetitive process you do regularly. Run it through a transcriber and paste the transcript into the SOP prompt above. Is the output usable?

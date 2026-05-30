@@ -40,3 +40,31 @@ The honest truth: a first draft from AI is usually a B-minus. But a B-minus you 
   "input_placeholder": "My angle, my audience, my key points, the shape I want..."
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson argues that an AI first draft is usually a B-minus. Why is that still worth using?",
+  "options": [
+    {
+      "id": "a",
+      "label": "A B-minus you can edit beats an A-plus you never start, because editing something rough is far easier than creating from a blank page, and the editing is where your taste makes it good.",
+      "is_correct": true,
+      "explanation": "Correct. AI flips the hard part: it gives you a draft to react to. Once you feed it your angle, audience, key points, and shape, the rough draft is genuinely yours to sharpen."
+    },
+    {
+      "id": "b",
+      "label": "Because a B-minus draft is good enough to send as is, so you save the editing time entirely.",
+      "is_correct": false,
+      "explanation": "The lesson is clear that the draft is a starting block, not a finish line. You still cut the weak parts, add the specific example only you know, and make it sound like you."
+    },
+    {
+      "id": "c",
+      "label": "Because asking for a draft about a broad topic like 'productivity' reliably produces strong, original writing.",
+      "is_correct": false,
+      "explanation": "A bare topic produces bland, forgettable filler. The draft is only worth editing when you feed it your point of view, audience, key points, and desired shape first."
+    }
+  ]
+}
+```

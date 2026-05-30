@@ -24,6 +24,54 @@ So the line is simple. Use AI to organize, rephrase, summarize, and draft your o
 
 These two rules are what let you use everything else in this track without putting a patient or your license at risk.
 
+## multiple_choice
+
+```json
+{
+  "stem": "While drafting patient teaching, the AI states a specific medication dose for an adult. You are fairly sure it is right. What does Rule 1 require?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Treat the dose as a question to verify, and confirm it against an approved drug reference before it goes anywhere near a patient.",
+      "is_correct": true,
+      "explanation": "Correct. AI does not look doses up; it predicts text and will state a wrong dose with total confidence. Any clinical fact, especially a dose, is something to verify against a real reference, never a number to trust because it sounds right."
+    },
+    {
+      "id": "b",
+      "label": "Use it, since it matches what you already expected.",
+      "is_correct": false,
+      "explanation": "A fluent answer that matches your expectation is the easiest one to wave through, and that is exactly the trap. Doses come from your approved reference, every time."
+    },
+    {
+      "id": "c",
+      "label": "Ask the AI to double-check its own dose.",
+      "is_correct": false,
+      "explanation": "The tool cannot reliably check itself; it may confidently confirm a wrong number. Verification has to come from an authoritative clinical source."
+    },
+    {
+      "id": "d",
+      "label": "Use it but add a disclaimer that it came from AI.",
+      "is_correct": false,
+      "explanation": "A disclaimer does not make an unverified dose safe. The rule is to confirm clinical facts against a real reference before relying on them, not to label the risk."
+    }
+  ]
+}
+```
+
+## fill_blank
+
+```json
+{
+  "template": "Rule 1: AI is a {{1}} tool, never a clinical {{2}}, so any drug dose or guideline it produces must be confirmed against an approved reference. Rule 2: patient {{3}} like names and medical record numbers never go into a tool your organization has not approved.",
+  "blanks": [
+    { "id": "1", "accept": ["drafting", "writing"], "ideal": "drafting" },
+    { "id": "2", "accept": ["reference", "source", "authority"], "ideal": "reference" },
+    { "id": "3", "accept": ["identifiers", "identifier", "data", "information"], "ideal": "identifiers" }
+  ],
+  "explanation": "The whole track rests on these two rules: use AI to draft and organize, verify every clinical fact against a real source, and keep identifiable patient data out of unapproved tools."
+}
+```
+
 ## mini_project
 
 Your 5-minute exercise: Ask an AI tool a specific clinical question you already know the answer to cold (a standard dose or a common interaction). Then check its answer against your approved reference. Did it get it right, partly right, or confidently wrong? Write down what that tells you about where you can and cannot rely on it.

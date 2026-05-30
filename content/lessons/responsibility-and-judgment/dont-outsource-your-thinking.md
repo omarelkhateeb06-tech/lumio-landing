@@ -40,3 +40,31 @@ The goal is a partnership where you stay the more capable one over time. AI shou
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "You notice you can no longer start writing a report without asking AI for the first draft, and you're not sure you could tell whether its output is any good. What does this signal, and what's the fix this lesson recommends?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Dependency creep, and the fix is to do a few unassisted reps to rebuild the underlying skill.",
+      "is_correct": true,
+      "explanation": "Correct. Losing the ability to start a task, or to judge the output, is the warning sign the lesson names. The remedy is unassisted practice to bring the skill back."
+    },
+    {
+      "id": "b",
+      "label": "Efficiency working as intended, so lean in and hand the whole task to AI from now on.",
+      "is_correct": false,
+      "explanation": "That is the atrophy the lesson warns against. A tool that makes you faster this month can make you worse over a year if it replaces the thinking instead of sharpening it."
+    },
+    {
+      "id": "c",
+      "label": "A prompting problem, fixable with a better template so the first draft needs less editing.",
+      "is_correct": false,
+      "explanation": "A slicker prompt does not rebuild a skill you've stopped using. The issue is that you've stopped doing the thinking yourself, which only unassisted reps restore."
+    }
+  ]
+}
+```

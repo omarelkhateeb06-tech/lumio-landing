@@ -50,3 +50,31 @@ Start with one task you do every week. Turn it into a workflow once, and it pays
   ]
 }
 ```
+
+## multiple_choice
+
+```json
+{
+  "stem": "This lesson lists the habits that make an AI workflow reliable. Which best captures them?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Make each step do one thing, save your prompts so you do not rewrite them, and keep a checkpoint where you review the output before it goes anywhere.",
+      "is_correct": true,
+      "explanation": "Correct. Small single-purpose steps are easier to get right than one giant prompt, saved prompts are what make the workflow actually save time, and the checkpoint keeps you approving the result."
+    },
+    {
+      "id": "b",
+      "label": "Combine every step into one large prompt so the AI can do the whole task in a single pass.",
+      "is_correct": false,
+      "explanation": "The lesson advises the opposite. One giant prompt that tries to do everything is harder to get right than small, single-purpose steps you can check along the way."
+    },
+    {
+      "id": "c",
+      "label": "Rewrite the prompts fresh each week so they stay tailored to that week's data.",
+      "is_correct": false,
+      "explanation": "Rewriting each time defeats the purpose. A workflow only pays you back if you save the prompts and reuse them, dropping in the new data each run."
+    }
+  ]
+}
+```

@@ -32,6 +32,21 @@ The communication moments most worth templating:
 
 The payoff is twofold: less time spent on routine writing, and more consistent, professional communication across the whole team. Build the templates once, and the quality holds even on a busy day.
 
+## before_after [personalizable]
+
+```json
+{
+  "question": "You need to tell stakeholders a project is slipping. One prompt writes a one-time message, the other builds a reusable asset. Notice what the second one creates.",
+  "before_prompt": "Write a message telling stakeholders our launch is delayed by two weeks.",
+  "after_prompt": "Create a reusable template for a delay or bad-news notice to stakeholders. It should always open by stating the change plainly, give the reason without getting defensive, lay out the new plan, and close with what we are doing to prevent it next time. Calm, accountable tone. Mark every part I fill in each time with brackets, like [what slipped] and [new date], so I can reuse this whenever a delay comes up.",
+  "changes": [
+    "Asks for a reusable template rather than a one-off message, so the next delay notice is fill-in-the-blank instead of a blank page.",
+    "Bakes in the structure that keeps bad news calm and accountable, which is exactly when it is tempting to ramble or get defensive.",
+    "Marks the fill-in parts with brackets, so the quality holds every time even on a busy day."
+  ]
+}
+```
+
 ## mini_project
 
 Identify the three messages your team sends most often. Common picks: a weekly status update, a meeting recap with action items, and a delay or bad-news notice. For each one, ask AI to build a reusable template: describe the audience, the tone, and what the message must always include, and ask it to mark the fill-in parts with brackets. Review each template, adjust the wording to fit how your team actually talks, and save all three somewhere your team can find them. You now have a starter communication library that turns routine writing into quick fill-in-the-blank work.
