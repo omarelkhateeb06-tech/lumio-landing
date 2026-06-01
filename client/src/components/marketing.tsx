@@ -6,6 +6,7 @@
 import { useState, type ReactNode, type FormEvent } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { C, SHADOW_PILL, FOCUS_RING, FOCUS_WITHIN, FONT_MONO, displayFV } from "@/lib/theme";
+import { truncateEmail } from "@/lib/format";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BrandNav — fixed header with the Lumio wordmark + a single right-side action.
@@ -58,6 +59,37 @@ export function BrandNav({
         {right}
       </div>
     </header>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AppNavRight — the signed-in nav action: a left slot (or truncated email) plus
+// a Sign out button. Shared by the cert overview, cert submit, and profile pages.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function AppNavRight({
+  email,
+  onSignOut,
+  left,
+}: {
+  email?: string;
+  onSignOut: () => void;
+  /** Optional content shown before the divider (e.g. Profile's "Dashboard" link). */
+  left?: ReactNode;
+}) {
+  return (
+    <div className={`flex items-center ${left ? "gap-3" : "gap-2"} text-[13px]`} style={{ color: C.umber, fontFamily: FONT_MONO }}>
+      {left}
+      {email && <span className="hidden sm:block">{truncateEmail(email)}</span>}
+      {email && <span className="hidden sm:block" style={{ opacity: 0.4 }}>·</span>}
+      <button
+        onClick={onSignOut}
+        className={`font-medium hover:underline cursor-pointer ${FOCUS_RING}`}
+        style={{ color: C.ink }}
+      >
+        Sign out
+      </button>
+    </div>
   );
 }
 

@@ -9,9 +9,10 @@ import {
   fetchCurriculum,
   fetchCompletedLessonIds,
   fetchActivePath,
+  fetchProfileSummary,
   generateUserPath,
 } from "@/lib/supabase";
-import type { Curriculum, CurriculumLesson } from "@/lib/supabase";
+import type { Curriculum, CurriculumLesson, ProfileSummary, OnboardingGoal } from "@/lib/supabase";
 import {
   fetchUserStats,
   fetchBadgeDefinitions,
@@ -23,10 +24,12 @@ import {
   levelCheckFor,
 } from "@/lib/gamification";
 import type { UserStats, BadgeDefinition, MasteryCheckSummary } from "@/lib/gamification";
-import { fetchDashboardCerts, CERT_STATUS_LABEL } from "@/lib/certs";
-import type { CertDashboardCard, CertStatus } from "@/lib/certs";
+import { fetchDashboardCerts, CERT_STATUS_LABEL, dollars, isLessonsDoneUnpaid } from "@/lib/certs";
+import type { CertDashboardCard } from "@/lib/certs";
+import { CERT_STATUS_TONE } from "@/lib/certStatusUi";
 import { C, FOCUS_RING, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT_SOFT, PILL } from "@/lib/theme";
 import { dur, ease } from "@/lib/motion";
+import { truncateEmail } from "@/lib/format";
 import { BrandNav } from "@/components/marketing";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -40,9 +43,47 @@ function greeting(): string {
   return "Good evening.";
 }
 
-function truncateEmail(email: string, max = 20): string {
-  if (email.length <= max) return email;
-  return email.slice(0, max) + "…";
+// The subline carries the emotional job of the product: "I'm not behind
+// anymore." We reflect the dream outcome the learner named at onboarding back at
+// them, so the dashboard's center of gravity is who they're becoming, not a
+// fraction of a 124-lesson catalog. The progress bar below already shows counts.
+function goalSubline(
+  goal: OnboardingGoal | null,
+  goalOther: string | null,
+  started: boolean,
+): string {
+  switch (goal) {
+    case "save_time":
+      return started
+        ? "You're building the skills that give your time back."
+        : "Let's start giving your time back.";
+    case "stay_relevant":
+      return started
+        ? "You're keeping pace with where work is heading."
+        : "A few minutes a day, and you're keeping pace with where work is heading.";
+    case "impress_team":
+      return started
+        ? "You're becoming the person your team turns to."
+        : "Let's build the skills your team will notice.";
+    case "other": {
+      // The learner typed their own dream outcome at onboarding. Echo it back
+      // after a colon, where any free-text fragment stays grammatical. Skip
+      // overlong entries that would wrap awkwardly.
+      const aim = goalOther?.trim();
+      if (aim && aim.length <= 60) {
+        return started
+          ? `Still moving toward what you came here for: ${aim}.`
+          : `Let's move toward what you came here for: ${aim}.`;
+      }
+      return started
+        ? "You're making real progress. Keep going."
+        : "Your first lesson is ready.";
+    }
+    default:
+      return started
+        ? "You're making real progress. Keep going."
+        : "Your first lesson is ready.";
+  }
 }
 
 const LEVEL_LABEL: Record<CurriculumLesson["level"], string> = {
@@ -51,15 +92,44 @@ const LEVEL_LABEL: Record<CurriculumLesson["level"], string> = {
   confident: "Confident",
 };
 
+// The Industry Deep Dives module is presented grouped by profession rather than
+// as one 42-lesson card. The DB keeps it as a single module slug.
+const IDD_MODULE_SLUG = "industry-deep-dives";
+
+const INDUSTRY_LABEL: Record<string, string> = {
+  healthcare: "Healthcare",
+  legal: "Legal",
+  education: "Education",
+  finance: "Finance",
+  hr: "HR",
+  "customer-service": "Customer service",
+  general: "General and cross-field",
+};
+
+// Operations is no longer a selectable field and has no certificate, so its
+// lone deep-dive lesson folds into the general bucket for display.
+function industryDisplayKey(slug: string | null): string {
+  if (!slug || slug === "operations") return "general";
+  return slug;
+}
+
+function industryLabel(key: string): string {
+  return INDUSTRY_LABEL[key] ?? key;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Nav action (right side of the brand nav)
 // ─────────────────────────────────────────────────────────────────────────────
 
 function NavActions({ email, onSignOut }: { email: string; onSignOut: () => void }) {
   return (
-    <div className="flex items-center gap-2 text-[13px]" style={{ color: C.umber, fontFamily: FONT_MONO }}>
+    <div className="flex items-center gap-3 text-[13px]" style={{ color: C.umber, fontFamily: FONT_MONO }}>
       {email && <span className="hidden sm:block">{truncateEmail(email)}</span>}
       {email && <span className="hidden sm:block" style={{ opacity: 0.4 }}>·</span>}
+      <a href="/app/profile" className={`font-medium hover:underline ${FOCUS_RING}`} style={{ color: C.umber }}>
+        Profile
+      </a>
+      <span style={{ opacity: 0.4 }}>·</span>
       <button
         onClick={onSignOut}
         className={`font-medium hover:underline cursor-pointer ${FOCUS_RING}`}
@@ -77,12 +147,19 @@ function NavActions({ email, onSignOut }: { email: string; onSignOut: () => void
 
 function TodayCard({
   lesson,
+  certName,
   total,
   rm,
+  demoted = false,
 }: {
   lesson: CurriculumLesson | null;
+  certName?: string | null;
   total: number;
   rm: boolean;
+  // When a "ready to certify" callout owns the loud orange button below, today's
+  // lesson steps down to a quiet link so one screen carries one loud action
+  // (First Principles H1: don't stack two orange CTAs at the buy moment).
+  demoted?: boolean;
 }) {
   if (!lesson) {
     return (
@@ -141,24 +218,44 @@ function TodayCard({
       >
         {lesson.title}
       </h2>
+      {/* Just the time. A difficulty stamp ("Confident") on the one lesson we're
+          nudging the learner into reads as a test of ability, not an invitation;
+          the level still structures the module grid below where it aids planning. */}
       <div
         className="mt-2 text-sm"
         style={{ color: C.umber, fontFamily: FONT_MONO }}
       >
-        {lesson.estimated_minutes} min · {LEVEL_LABEL[lesson.level]}
+        {lesson.estimated_minutes} min
       </div>
       {lesson.hook && (
         <p className="mt-4 italic text-sm leading-relaxed" style={{ color: C.umber }}>
           {lesson.hook}
         </p>
       )}
-      <a
-        href={`/lesson/${lesson.slug}`}
-        className={`inline-block mt-6 ${PILL} ${FOCUS_RING}`}
-        style={{ backgroundColor: C.orange, color: C.ink }}
-      >
-        Start lesson →
-      </a>
+      {/* Make the lesson → certificate link explicit so a 5-minute lesson
+          visibly moves the named finish line the hero bar is tracking. */}
+      {certName && (
+        <p className="mt-4 text-sm" style={{ color: C.forest }}>
+          Counts toward {certName}
+        </p>
+      )}
+      {demoted ? (
+        <a
+          href={`/lesson/${lesson.slug}`}
+          className={`inline-block mt-6 text-sm font-medium ${FOCUS_RING}`}
+          style={{ color: C.orangeInk }}
+        >
+          Start lesson →
+        </a>
+      ) : (
+        <a
+          href={`/lesson/${lesson.slug}`}
+          className={`inline-block mt-6 ${PILL} ${FOCUS_RING}`}
+          style={{ backgroundColor: C.orange, color: C.ink }}
+        >
+          Start lesson →
+        </a>
+      )}
     </motion.div>
   );
 }
@@ -181,6 +278,11 @@ function ModuleGrid({
   rm: boolean;
 }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  // The full library is a reference, not the home. Keep it one click away so the
+  // dashboard greets the learner with one next move instead of a wall of every
+  // lesson, which is the exact "I'm behind" feeling this product exists to calm
+  // (Naval: subtract; the catalog stays reachable, just not fronted).
+  const [showAll, setShowAll] = useState(false);
 
   // Level checks let a confident learner test out of an entire level at once.
   const levelChecks = LEVEL_ORDER.map((lvl) => ({ lvl, check: levelCheckFor(checks, lvl) }))
@@ -193,21 +295,41 @@ function ModuleGrid({
       transition={{ duration: dur.base, delay: 0.55, ease: ease.ink }}
       className="mt-16"
     >
-      <h2
-        className="font-serif mb-6"
-        style={{
-          color: C.espresso,
-          fontSize: 22,
-          fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT),
-        }}
-      >
-        Your progress
-      </h2>
+      {/* "All lessons", not "Your progress": progress is anchored to the active
+          certificate up top. This section is the full library to browse, so it
+          shouldn't compete for the headline-progress framing (First Principles). */}
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <h2
+          className="font-serif"
+          style={{
+            color: C.espresso,
+            fontSize: 22,
+            fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT),
+          }}
+        >
+          All lessons
+        </h2>
+        <button
+          type="button"
+          onClick={() => setShowAll((v) => !v)}
+          aria-expanded={showAll}
+          aria-controls="all-lessons-body"
+          className={`text-sm font-medium cursor-pointer ${FOCUS_RING}`}
+          style={{ color: C.orangeInk }}
+        >
+          {showAll ? "Hide" : "Browse all lessons →"}
+        </button>
+      </div>
 
+      {showAll && (
+      <div id="all-lessons-body">
       {levelChecks.length > 0 && (
         <div className="mb-6 flex items-center gap-2 flex-wrap">
+          {/* Reassure right at the click, not just inside the check (Outsider HIGH):
+              an anxious learner reads "skip ahead" as a test they could fail and
+              lose progress on. Name that nothing is lost. */}
           <span className="text-xs mr-1" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
-            Already know this? Test out:
+            Already comfortable? Answer a few questions to skip these lessons. Nothing is lost if you don't:
           </span>
           {levelChecks.map(({ lvl, check }) => (
             <a
@@ -222,7 +344,9 @@ function ModuleGrid({
         </div>
       )}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {curriculum.modules.map((mod) => {
+        {curriculum.modules
+          .filter((mod) => mod.slug !== IDD_MODULE_SLUG)
+          .map((mod) => {
           const moduleLessons = curriculum.lessons.filter((l) => l.module_slug === mod.slug);
           const moduleTotal = moduleLessons.length;
           const completedInModule = moduleLessons.filter((l) => completed.has(l.id)).length;
@@ -265,16 +389,13 @@ function ModuleGrid({
                     &#x25BE;
                   </span>
                 </div>
-                <div
-                  className="text-xs mb-3"
-                  style={{ color: C.inkSoft, fontFamily: FONT_MONO }}
-                >
-                  {completedInModule}/{moduleTotal} complete
-                </div>
-                {/* Per-lesson dots — completed dots are solid-filled, incomplete
-                    are hollow rings, so done/not-done reads without relying on
-                    color alone (colorblind-safe). */}
-                <div className="flex items-center gap-1.5 flex-wrap">
+                {/* Per-lesson dots carry the progress visually; the precise count
+                    is kept for screen readers only so the row reads as one idea,
+                    not a number repeated next to its own picture (Rubin). */}
+                <span className="sr-only">{completedInModule} of {moduleTotal} complete</span>
+                {/* Completed dots are solid-filled, incomplete are hollow rings, so
+                    done/not-done reads without relying on color alone. */}
+                <div className="flex items-center gap-1.5 flex-wrap mt-1">
                   {moduleLessons.map((l) => {
                     const done = completed.has(l.id);
                     return (
@@ -313,8 +434,12 @@ function ModuleGrid({
                           )}
                           <a
                             href={`/lesson/${l.slug}`}
-                            className="text-sm hover:underline"
-                            style={{ color: C.umber }}
+                            className="font-serif hover:underline"
+                            style={{
+                              color: C.espresso,
+                              fontSize: 15,
+                              fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT),
+                            }}
                             onClick={(e) => e.stopPropagation()}
                           >
                             {l.title}
@@ -335,7 +460,7 @@ function ModuleGrid({
                           style={{ color: C.orangeInk }}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          Test out of this module →
+                          Already know this? Skip ahead →
                         </a>
                       );
                     })()}
@@ -346,6 +471,231 @@ function ModuleGrid({
           );
         })}
       </div>
+      </div>
+      )}
+    </motion.section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Industry deep dives — the 42-lesson module presented grouped by profession.
+// The learner's own field is surfaced first and opened by default; the other
+// fields are collapsed under "Explore other fields" so the section reads as
+// "a path made for someone like me" rather than one undifferentiated pile.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function LessonRow({ lesson, done }: { lesson: CurriculumLesson; done: boolean }) {
+  return (
+    <li className="flex items-center gap-2">
+      {done && (
+        <span aria-hidden="true" style={{ color: C.forest, fontSize: 12, flexShrink: 0 }}>&#x2713;</span>
+      )}
+      <a
+        href={`/lesson/${lesson.slug}`}
+        className="font-serif hover:underline"
+        style={{
+          color: C.espresso,
+          fontSize: 15,
+          fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT),
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {lesson.title}
+        {done && <span className="sr-only"> (completed)</span>}
+      </a>
+    </li>
+  );
+}
+
+function FieldGroup({
+  label,
+  lessons,
+  completed,
+  open,
+  onToggle,
+  rm,
+}: {
+  label: string;
+  lessons: CurriculumLesson[];
+  completed: Set<string>;
+  open: boolean;
+  onToggle: () => void;
+  rm: boolean;
+}) {
+  const total = lessons.length;
+  const doneCount = lessons.filter((l) => completed.has(l.id)).length;
+  const panelId = `field-panel-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  return (
+    <div
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
+    >
+      <button
+        type="button"
+        className={`w-full text-left cursor-pointer ${FOCUS_RING}`}
+        aria-expanded={open}
+        aria-controls={panelId}
+        aria-label={`${label} - ${doneCount} of ${total} complete`}
+        onClick={onToggle}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <div className="text-base font-medium leading-tight" style={{ color: C.espresso }}>
+            {label}
+          </div>
+          <span
+            aria-hidden="true"
+            style={{
+              color: C.inkSoft,
+              fontSize: 12,
+              transition: rm ? undefined : "transform 0.32s cubic-bezier(0.22,1,0.36,1)",
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+              display: "inline-block",
+              flexShrink: 0,
+            }}
+          >
+            &#x25BE;
+          </span>
+        </div>
+        <div className="text-xs mt-1" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+          {doneCount}/{total} complete
+        </div>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            id={panelId}
+            role="region"
+            aria-label={`${label} lessons`}
+            initial={rm ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: dur.base, ease: ease.ink }}
+            style={{ overflow: "hidden" }}
+          >
+            <ul className="mt-3 pt-3 space-y-1.5" style={{ borderTop: `1px solid ${C.hairline}` }}>
+              {lessons.map((l) => (
+                <LessonRow key={l.id} lesson={l} done={completed.has(l.id)} />
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function IndustryDeepDives({
+  lessons,
+  completed,
+  userIndustry,
+  moduleCheck,
+  rm,
+}: {
+  lessons: CurriculumLesson[];
+  completed: Set<string>;
+  userIndustry: string | null;
+  moduleCheck: MasteryCheckSummary | undefined;
+  rm: boolean;
+}) {
+  // Group the module's lessons by their industry tag (operations folds into general).
+  const groups = new Map<string, CurriculumLesson[]>();
+  for (const l of lessons) {
+    const key = industryDisplayKey(l.industry);
+    const arr = groups.get(key);
+    if (arr) arr.push(l);
+    else groups.set(key, [l]);
+  }
+
+  const userKey = industryDisplayKey(userIndustry);
+  const hasUserField = userKey !== "general" && groups.has(userKey);
+
+  // Order the "other" fields: largest first, with the general bucket always last.
+  const otherKeys = Array.from(groups.keys())
+    .filter((k) => k !== userKey)
+    .sort((a, b) => {
+      if (a === "general") return 1;
+      if (b === "general") return -1;
+      return (groups.get(b)?.length ?? 0) - (groups.get(a)?.length ?? 0);
+    });
+
+  // The user's own field opens by default; other fields start collapsed.
+  const [openKey, setOpenKey] = useState<string | null>(hasUserField ? userKey : null);
+
+  const allDone = lessons.length > 0 && lessons.every((l) => completed.has(l.id));
+
+  if (lessons.length === 0) return null;
+
+  return (
+    <motion.section
+      initial={rm ? false : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: dur.base, delay: 0.6, ease: ease.ink }}
+      className="mt-16"
+    >
+      {/* Secondary section: lighter than the two "earning" headings (Certificates,
+          Your progress) so the resting screen has one clear spine, not four equal
+          serif headings competing for the eye (Rubin). */}
+      <h2
+        className="font-serif mb-2"
+        style={{ color: C.umber, fontSize: 17, fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT) }}
+      >
+        Lessons for your line of work
+      </h2>
+      <p className="text-sm mb-6" style={{ color: C.umber }}>
+        {hasUserField
+          ? `Lessons built for ${industryLabel(userKey).toLowerCase()} work, plus every other field whenever you want to explore.`
+          : "Real-world lessons grouped by profession. Open the field closest to your work."}
+      </p>
+
+      {/* The learner's own field, prominent and open by default */}
+      {hasUserField && (
+        <div className="mb-4">
+          <FieldGroup
+            label={industryLabel(userKey)}
+            lessons={groups.get(userKey) ?? []}
+            completed={completed}
+            open={openKey === userKey}
+            onToggle={() => setOpenKey(openKey === userKey ? null : userKey)}
+            rm={rm}
+          />
+        </div>
+      )}
+
+      {otherKeys.length > 0 && (
+        <>
+          {hasUserField && (
+            <div
+              className="text-[12px] uppercase tracking-[0.14em] mb-3 mt-6"
+              style={{ color: C.umber, fontFamily: FONT_MONO }}
+            >
+              Explore other fields
+            </div>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {otherKeys.map((key) => (
+              <FieldGroup
+                key={key}
+                label={industryLabel(key)}
+                lessons={groups.get(key) ?? []}
+                completed={completed}
+                open={openKey === key}
+                onToggle={() => setOpenKey(openKey === key ? null : key)}
+                rm={rm}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {moduleCheck && !allDone && (
+        <a
+          href={`/check/${moduleCheck.slug}`}
+          className={`inline-block mt-5 text-xs font-medium ${FOCUS_RING}`}
+          style={{ color: C.orangeInk }}
+        >
+          Already know this? Skip ahead →
+        </a>
+      )}
     </motion.section>
   );
 }
@@ -381,12 +731,13 @@ function WelcomeCard({ total, rm, onDismiss }: { total: number; rm: boolean; onD
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Stats row — points + streak. Daily-viewed surface, so motion stays a single
-// subtle fade-in (Emil restraint); the numbers themselves carry the weight.
+// Stats row — points only. We deliberately dropped the day-streak: a streak is a
+// fear mechanic ("don't fall behind") that reinstalls the exact anxiety this
+// product exists to relieve ("I'm not behind anymore"). Points stay because they
+// reward forward motion without punishing a missed day.
 // ─────────────────────────────────────────────────────────────────────────────
 
 function StatsRow({ stats, rm }: { stats: UserStats; rm: boolean }) {
-  const streak = stats.current_streak_days;
   return (
     <motion.div
       initial={rm ? false : { opacity: 0, y: 10 }}
@@ -402,18 +753,6 @@ function StatsRow({ stats, rm }: { stats: UserStats; rm: boolean }) {
           {stats.total_points.toLocaleString()}
         </span>
         <span className="text-sm" style={{ color: C.umber }}>points</span>
-      </div>
-      <div
-        className="flex items-baseline gap-2 px-4 py-2.5 rounded-full"
-        style={{ backgroundColor: C.surface, border: `1px solid ${C.hairline}` }}
-      >
-        <span aria-hidden="true" style={{ fontSize: 15 }}>{streak > 0 ? "🔥" : "·"}</span>
-        <span className="text-lg font-medium" style={{ color: C.espresso, fontFamily: FONT_MONO }}>
-          {streak}
-        </span>
-        <span className="text-sm" style={{ color: C.umber }}>
-          day{streak === 1 ? "" : "s"}
-        </span>
       </div>
     </motion.div>
   );
@@ -448,7 +787,6 @@ function BadgeGrid({
   rm: boolean;
 }) {
   if (badges.length === 0) return null;
-  const earnedCount = badges.filter((b) => earned.has(b.id)).length;
   return (
     <motion.section
       initial={rm ? false : { opacity: 0, y: 16 }}
@@ -456,20 +794,18 @@ function BadgeGrid({
       transition={{ duration: dur.base, delay: 0.7, ease: ease.ink }}
       className="mt-16"
     >
-      <div className="flex items-baseline justify-between mb-6">
+      <div className="mb-6">
+        {/* Secondary section, deliberately lighter than the earning headings (Rubin). */}
         <h2
           className="font-serif"
           style={{
-            color: C.espresso,
-            fontSize: 22,
-            fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT),
+            color: C.umber,
+            fontSize: 17,
+            fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT),
           }}
         >
           Badges
         </h2>
-        <span className="text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
-          {earnedCount}/{badges.length} earned
-        </span>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {badges.map((badge) => {
@@ -513,48 +849,81 @@ function BadgeGrid({
 // status-aware call to action.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CERT_STATUS_TONE: Record<CertStatus, { bg: string; border: string; ink: string }> = {
-  "not-started": { bg: C.surface, border: C.hairline, ink: C.umber },
-  "in-progress": { bg: C.surface, border: C.orangeWashBorder, ink: C.orangeInk },
-  "capstone-unlocked": { bg: C.surface, border: C.orangeWashBorder, ink: C.orangeInk },
-  submitted: { bg: C.orangeWash, border: C.orangeWashBorder, ink: C.orangeInk },
-  certified: { bg: C.surface, border: C.orangeWashBorder, ink: C.forest },
-};
+// CERT_STATUS_TONE now lives in @/lib/certStatusUi so the dashboard pill and the
+// cert overview badge share one source of truth.
 
 function certCta(card: CertDashboardCard): { label: string; href: string } {
   const { cert, status, nextLessonSlug, completedCount, total } = card;
   const overview = `/app/cert/${cert.slug}`;
   if (status === "certified") return { label: "View certificate →", href: overview };
   if (status === "submitted") return { label: "View status →", href: overview };
-  if (status === "capstone-unlocked") return { label: "Submit capstone →", href: `${overview}/submit` };
+  if (status === "needs-revision") return { label: "Revise and resubmit →", href: `${overview}/submit` };
+  if (status === "capstone-unlocked") return { label: "Submit final project →", href: `${overview}/submit` };
+  if (isLessonsDoneUnpaid(card))
+    return { label: `Earn my certificate (${dollars(cert.price_cents)}) →`, href: overview };
+  // Every lesson done but no payment link wired yet: don't dangle a buy CTA we
+  // can't honor. Point at the overview, which explains what's next (Contrarian M1).
   if (status === "in-progress" && total > 0 && completedCount === total)
-    return { label: "Unlock capstone →", href: overview };
+    return { label: "See what's next →", href: overview };
   if (status === "in-progress" && nextLessonSlug)
     return { label: "Continue learning →", href: `/lesson/${nextLessonSlug}` };
   return { label: "Start earning →", href: overview };
 }
 
-function CertWidget({ certs, rm }: { certs: CertDashboardCard[]; rm: boolean }) {
+function CertWidget({
+  certs,
+  rm,
+  calloutCertId,
+}: {
+  certs: CertDashboardCard[];
+  rm: boolean;
+  // The cert the "ready to certify" callout already owns. Its card here drops to
+  // the plain in-progress treatment so the loud unlock lives in exactly one place
+  // (First Principles H2, Naval H1, Rubin #2).
+  calloutCertId?: string;
+}) {
   if (certs.length === 0) return null;
   return (
     <motion.section
       initial={rm ? false : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: dur.base, delay: 0.62, ease: ease.ink }}
+      transition={{ duration: dur.base, delay: 0.5, ease: ease.ink }}
       className="mt-16"
     >
       <h2
-        className="font-serif mb-6"
+        className="font-serif mb-2"
         style={{ color: C.espresso, fontSize: 22, fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT) }}
       >
         Certificates
       </h2>
+      <p className="mb-6 text-sm leading-relaxed" style={{ color: C.umber, maxWidth: 560 }}>
+        Each certificate ends with one real task from your own work. You finish it, and it becomes
+        proof you can show.
+      </p>
       <div className="grid sm:grid-cols-2 gap-4">
         {certs.map((card) => {
           const { cert, total, completedCount, status } = card;
           const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
-          const tone = CERT_STATUS_TONE[status];
+          // A learner who finished every lesson but has not paid is in "in-progress"
+          // with a 100% bar. The plain "In progress" pill makes a done card look
+          // stalled and hides that money is the only thing left. Surface a distinct
+          // "lessons done, unlock" signal so the card sells the capstone instead
+          // (Contrarian: the dashboard should not look dead at the buy moment). But
+          // if the callout above already owns this cert, stay plain so the loud
+          // unlock isn't duplicated within one viewport.
+          const lessonsDoneUnpaid = isLessonsDoneUnpaid(card) && cert.id !== calloutCertId;
+          const tone = lessonsDoneUnpaid
+            ? { bg: C.orangeWash, border: C.orangeWashBorder, ink: C.orangeInk }
+            : CERT_STATUS_TONE[status];
+          const pillLabel = lessonsDoneUnpaid ? "Lessons done" : CERT_STATUS_LABEL[status];
           const cta = certCta(card);
+          // One loud next action, not seven. The single loud "start" lives in
+          // TodayCard at the top of the page; here, only certificates the learner
+          // has ALREADY started get the filled button. Untouched certificates
+          // demote to a quiet text link so the dashboard points at one obvious
+          // move (First Principles, Naval). The callout cert also demotes here
+          // because its loud unlock already lives in CertifyCallout above.
+          const isPrimary = status !== "not-started" && cert.id !== calloutCertId;
           return (
             <div
               key={cert.id}
@@ -578,7 +947,7 @@ function CertWidget({ certs, rm }: { certs: CertDashboardCard[]; rm: boolean }) 
                     fontFamily: FONT_MONO,
                   }}
                 >
-                  {CERT_STATUS_LABEL[status]}
+                  {pillLabel}
                 </span>
               </div>
 
@@ -602,20 +971,75 @@ function CertWidget({ certs, rm }: { certs: CertDashboardCard[]; rm: boolean }) 
                   }}
                 />
               </div>
-              <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
-                {completedCount} of {total} lessons
-              </p>
 
-              <a
-                href={cta.href}
-                className={`inline-block mt-5 text-sm font-medium ${FOCUS_RING}`}
-                style={{ color: C.orangeInk }}
-              >
-                {cta.label}
-              </a>
+              {isPrimary ? (
+                <a
+                  href={cta.href}
+                  className={`inline-block mt-5 text-sm font-medium px-4 py-2 rounded-full self-start ${FOCUS_RING}`}
+                  style={{ backgroundColor: C.orange, color: C.ink }}
+                >
+                  {cta.label}
+                </a>
+              ) : (
+                <a
+                  href={cta.href}
+                  className={`inline-block mt-5 text-sm font-medium self-start ${FOCUS_RING}`}
+                  style={{ color: C.orangeInk }}
+                >
+                  {cta.label}
+                </a>
+              )}
             </div>
           );
         })}
+      </div>
+    </motion.section>
+  );
+}
+
+// The single highest-value moment in the funnel: every lesson done, only the
+// paid human review left. Hormozi + Naval: lift it above the noise. Rendered
+// directly under TodayCard so the buy moment is not buried four sections down.
+// Links to the cert overview, which carries the "Already paid?" reassurance and
+// arms the checkout flag, so the dashboard never implies a second charge
+// (Contrarian #4). Only renders when there's a live payment link (Executor H3).
+function CertifyCallout({ ready, rm }: { ready: CertDashboardCard | undefined; rm: boolean }) {
+  if (!ready) return null;
+  return (
+    <motion.section
+      initial={rm ? false : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: dur.base, delay: 0.2, ease: ease.ink }}
+      className="mt-6 rounded-2xl p-6"
+      style={{ backgroundColor: C.orangeWash, border: `1px solid ${C.orangeWashBorder}` }}
+    >
+      <p className="text-[12px] font-medium mb-2" style={{ color: C.orangeInk, fontFamily: FONT_MONO }}>
+        One thing left.
+      </p>
+      <h2
+        className="font-serif"
+        style={{ color: C.espresso, fontSize: 22, fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT) }}
+      >
+        You finished every lesson in {ready.cert.name}.
+      </h2>
+      {/* One job for this callout: you're done, the proof is next. The guarantee
+          and the review window live on the overview, so they aren't restated here
+          (Rubin HIGH: the same promise on two screens dilutes it). */}
+      <p className="mt-2 text-sm leading-relaxed" style={{ color: C.umber, maxWidth: 560 }}>
+        All that's left is the proof: a real person reviews your final project, then you earn the
+        certificate. This is the part you can show your manager.
+      </p>
+      <div className="mt-4 flex flex-col items-start gap-1.5">
+        <a
+          href={`/app/cert/${ready.cert.slug}`}
+          className={`inline-block text-sm font-medium px-4 py-2 rounded-full ${FOCUS_RING}`}
+          style={{ backgroundColor: C.orange, color: C.ink }}
+        >
+          Get my certificate →
+        </a>
+        <span className="text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+          {dollars(ready.cert.price_cents)} one time, no subscription
+        </span>
       </div>
     </motion.section>
   );
@@ -637,49 +1061,86 @@ export default function Dashboard() {
   const [earnedBadges, setEarnedBadges] = useState<Set<string>>(new Set());
   const [checks, setChecks] = useState<MasteryCheckSummary[]>([]);
   const [certs, setCerts] = useState<CertDashboardCard[]>([]);
+  const [profile, setProfile] = useState<ProfileSummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    // Fire-and-forget: stamp today's activity so the streak advances on visit.
+    // Fire-and-forget: stamp today's activity (feeds badge/activity logic
+    // server-side). We no longer surface a day-streak in the UI.
     recordActivity();
     (async () => {
-      const [curr, done, masteredIds, userStats, badgeDefs, earnedIds, allChecks, certCards] =
-        await Promise.all([
-          fetchCurriculum(),
-          fetchCompletedLessonIds(),
-          fetchMasteredLessonIds(),
-          fetchUserStats(),
-          fetchBadgeDefinitions(),
-          fetchEarnedBadgeIds(),
-          fetchMasteryChecks(),
-          fetchDashboardCerts(),
-        ]);
-      // The personalized path drives lesson ordering. If the user has none yet
-      // (onboarded before rules_v1 shipped), generate it lazily, then read back.
-      let path = await fetchActivePath();
-      if (path.length === 0) {
-        const gen = await generateUserPath();
-        if (gen.ok) path = await fetchActivePath();
-      }
-      if (cancelled) return;
-      setCurriculum(curr);
-      setCompleted(done);
-      setMastered(masteredIds);
-      setStats(userStats);
-      setBadges(badgeDefs);
-      setEarnedBadges(earnedIds);
-      setChecks(allChecks);
-      setCerts(certCards);
-      setPathOrder(path);
-      setLoading(false);
-      if (done.size === 0 && masteredIds.size === 0 && !localStorage.getItem("lumio_welcomed")) {
-        setShowWelcome(true);
+      // A rejected fetch here used to leave setLoading(false) unreached, hanging
+      // the learner on the skeleton forever. try/finally guarantees we always
+      // exit the loading state, even if a read fails.
+      try {
+        const [curr, done, masteredIds, userStats, badgeDefs, earnedIds, allChecks, certCards, prof] =
+          await Promise.all([
+            fetchCurriculum(),
+            fetchCompletedLessonIds(),
+            fetchMasteredLessonIds(),
+            fetchUserStats(),
+            fetchBadgeDefinitions(),
+            fetchEarnedBadgeIds(),
+            fetchMasteryChecks(),
+            fetchDashboardCerts(),
+            fetchProfileSummary(),
+          ]);
+        // The personalized path drives lesson ordering. If the user has none yet
+        // (onboarded before rules_v1 shipped), generate it lazily, then read back.
+        let path = await fetchActivePath();
+        if (path.length === 0) {
+          const gen = await generateUserPath();
+          if (gen.ok) path = await fetchActivePath();
+        }
+        if (cancelled) return;
+        setCurriculum(curr);
+        setCompleted(done);
+        setMastered(masteredIds);
+        setStats(userStats);
+        setBadges(badgeDefs);
+        setEarnedBadges(earnedIds);
+        setChecks(allChecks);
+        setCerts(certCards);
+        setProfile(prof);
+        setPathOrder(path);
+        if (done.size === 0 && masteredIds.size === 0 && !localStorage.getItem("lumio_welcomed")) {
+          setShowWelcome(true);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Dashboard load failed", err);
+          setLoadFailed(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     })();
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  // Payment is confirmed out of band: a learner pays through a Stripe link
+  // (often in another tab), and an admin stamps paid_at by hand. When the
+  // learner switches back to this tab, quietly refetch just the cert cards so
+  // the newly unlocked state appears without making them reload (Executor H1).
+  useEffect(() => {
+    let cancelled = false;
+    function onVisible() {
+      if (document.visibilityState !== "visible") return;
+      fetchDashboardCerts()
+        .then((cards) => {
+          if (!cancelled) setCerts(cards);
+        })
+        .catch(() => {});
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 
@@ -705,6 +1166,74 @@ export default function Dashboard() {
   const nextLesson: CurriculumLesson | null =
     orderedLessons.find((l) => !effectiveCompleted.has(l.id)) ?? null;
   const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+
+  // Hero progress anchor: the certificate the learner is actively working
+  // toward, closest to completion. The top bar tracks this achievable unit
+  // (8-12 lessons) instead of the full 124-lesson catalog, so a paying learner
+  // sees real forward motion rather than a 2% sliver against a mountain.
+  const userIndustry = profile?.industry ?? null;
+
+  const activeCert =
+    certs
+      .filter((c) => c.status === "in-progress" || c.status === "capstone-unlocked")
+      .sort((a, b) => {
+        const pa = a.total > 0 ? a.completedCount / a.total : 0;
+        const pb = b.total > 0 ? b.completedCount / b.total : 0;
+        return pb - pa;
+      })[0] ?? null;
+
+  // For a learner with no cert in motion yet, anchor the hero to a concrete,
+  // named target rather than the 124-lesson catalog: prefer one matching their
+  // industry, then the most achievable (fewest lessons, cheapest). First
+  // Principles: a payer should always see a finish line that has a name on it.
+  const spineCert =
+    activeCert ??
+    [...certs]
+      // Only suggest certs the learner could actually start now. A cert that is
+      // already certified, awaiting review, or sent back for revision must never
+      // be offered as "your fastest path: start this" — that misdirects them at
+      // the worst moment (Contrarian/First Principles regression catch).
+      .filter(
+        (c) =>
+          c.status !== "certified" &&
+          c.status !== "submitted" &&
+          c.status !== "needs-revision",
+      )
+      .sort((a, b) => {
+        const industryMatch =
+          Number(b.cert.industry === userIndustry) - Number(a.cert.industry === userIndustry);
+        if (industryMatch !== 0) return industryMatch;
+        if (a.total !== b.total) return a.total - b.total;
+        return a.cert.price_cents - b.cert.price_cents;
+      })[0] ?? null;
+  // True only when spineCert is a suggestion the learner hasn't begun.
+  const spineIsTarget = !activeCert && !!spineCert;
+  const anchorTotal = spineCert ? spineCert.total : total;
+  const anchorDone = spineCert ? spineCert.completedCount : completedCount;
+  const anchorPct = anchorTotal > 0 ? Math.round((anchorDone / anchorTotal) * 100) : 0;
+
+  // "Today's lesson" must advance the exact cert the hero bar is tracking, or
+  // the headline target and the primary button point at different lessons and a
+  // 5-minute lesson leaves the named finish line unmoved (First Principles).
+  // Prefer the spine cert's next required lesson; fall back to the global
+  // personalized path only when the spine has no next lesson (cert complete) or
+  // that lesson is not in the catalog.
+  const spineNextSlug = spineCert?.nextLessonSlug ?? null;
+  const todayLesson: CurriculumLesson | null = spineNextSlug
+    ? (curriculum.lessons.find((l) => l.slug === spineNextSlug) ?? nextLesson)
+    : nextLesson;
+  // Name the cert on the card only when the lesson genuinely earns it.
+  const todayCertName =
+    spineCert && todayLesson?.slug === spineNextSlug ? spineCert.cert.name : null;
+
+  // The one cert sitting at the buy moment (all lessons done, payment open).
+  // Computed once and threaded through so TodayCard demotes, the callout owns the
+  // loud CTA, and CertWidget stays plain for it (First Principles H1/H2).
+  const readyCert = certs.find(isLessonsDoneUnpaid);
+
+  // Industry Deep Dives is rendered as its own profession-grouped section.
+  const iddLessons = curriculum.lessons.filter((l) => l.module_slug === IDD_MODULE_SLUG);
+  const iddCheck = moduleCheckFor(checks, IDD_MODULE_SLUG);
 
   async function handleSignOut() {
     await signOut();
@@ -741,13 +1270,12 @@ export default function Dashboard() {
           className="mt-2 text-lg"
           style={{ color: C.umber }}
         >
-          {completedCount === 0
-            ? "Your first lesson is ready."
-            : `You've completed ${completedCount} of ${total} lessons.`}
+          {goalSubline(profile?.goal ?? null, profile?.goal_other ?? null, completedCount > 0)}
         </motion.p>
 
-        {/* Points + streak */}
-        {!loading && stats && <StatsRow stats={stats} rm={rm} />}
+        {/* Points — held back until the learner has actually done something, so a
+            brand-new payer is never greeted by a zero score. */}
+        {!loading && stats && completedCount > 0 && <StatsRow stats={stats} rm={rm} />}
 
         {/* Progress bar */}
         <motion.div
@@ -760,19 +1288,25 @@ export default function Dashboard() {
             className="w-full rounded-full overflow-hidden"
             style={{ height: 8, backgroundColor: C.hairline }}
             role="progressbar"
-            aria-valuenow={pct}
+            aria-valuenow={anchorPct}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label={`${completedCount} of ${total} lessons complete`}
+            aria-label={
+              spineCert
+                ? spineIsTarget
+                  ? `${spineCert.cert.name}: ${anchorTotal} lessons to your first certificate`
+                  : `${spineCert.cert.name}: ${anchorDone} of ${anchorTotal} lessons complete`
+                : `${completedCount} of ${total} lessons complete`
+            }
           >
             <div
               style={{
-                width: `${pct}%`,
+                width: `${anchorPct}%`,
                 height: "100%",
                 backgroundColor: C.orange,
                 borderRadius: 9999,
                 transition: rm ? undefined : "width 0.6s cubic-bezier(0.22,1,0.36,1)",
-                minWidth: completedCount > 0 ? 8 : 0,
+                minWidth: anchorDone > 0 ? 8 : 0,
               }}
             />
           </div>
@@ -780,7 +1314,13 @@ export default function Dashboard() {
             className="mt-2 text-xs"
             style={{ color: C.inkSoft, fontFamily: FONT_MONO }}
           >
-            {completedCount} of {total} lessons complete · {pct}%
+            {spineCert
+              ? spineIsTarget
+                ? `Start here: ${spineCert.cert.name} · ${anchorTotal} lessons`
+                : `${spineCert.cert.name} · ${anchorDone} of ${anchorTotal} lessons`
+              : completedCount === 0
+                ? `${total} lessons waiting whenever you're ready`
+                : `${completedCount} ${completedCount === 1 ? "lesson" : "lessons"} complete`}
           </p>
         </motion.div>
 
@@ -797,6 +1337,14 @@ export default function Dashboard() {
             />
           )}
         </AnimatePresence>
+
+        {/* Persistent live region so screen readers hear the skeleton→content
+            swap. The failure case is intentionally silent here — the role="alert"
+            error panel below owns that announcement, so AT hears it once, not
+            twice (Executor). */}
+        <p className="sr-only" role="status" aria-live="polite">
+          {loading ? "Loading your dashboard." : loadFailed || total === 0 ? "" : "Your dashboard is ready."}
+        </p>
 
         {/* Today's lesson + module grid — skeleton while curriculum loads */}
         {loading ? (
@@ -823,11 +1371,55 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+        ) : loadFailed || total === 0 ? (
+          // The published curriculum is never genuinely empty, so an empty
+          // result after loading means a fetch failed (RLS, network). We show an
+          // honest retry instead of falsely congratulating a paying learner for
+          // "finishing all 0 lessons."
+          <motion.div
+            initial={rm ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: dur.base, ease: ease.ink }}
+            className="rounded-2xl p-8 mt-10"
+            style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
+            role="alert"
+          >
+            <h2
+              className="font-serif text-2xl"
+              style={{ color: C.espresso, fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT) }}
+            >
+              We could not load your lessons.
+            </h2>
+            <p className="mt-3 text-sm" style={{ color: C.umber }}>
+              Your progress is safe. This is on our end, not yours. Give it a moment and try again.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className={`inline-block mt-6 ${PILL} ${FOCUS_RING} cursor-pointer`}
+              style={{ backgroundColor: C.ink, color: C.paper }}
+            >
+              Try again
+            </button>
+          </motion.div>
         ) : (
           <>
-            <TodayCard lesson={nextLesson} total={total} rm={rm} />
+            <TodayCard
+              lesson={todayLesson}
+              certName={todayCertName}
+              total={total}
+              rm={rm}
+              demoted={!!readyCert}
+            />
+            <CertifyCallout ready={readyCert} rm={rm} />
+            <CertWidget certs={certs} rm={rm} calloutCertId={readyCert?.cert.id} />
             <ModuleGrid curriculum={curriculum} completed={effectiveCompleted} checks={checks} rm={rm} />
-            <CertWidget certs={certs} rm={rm} />
+            <IndustryDeepDives
+              lessons={iddLessons}
+              completed={effectiveCompleted}
+              userIndustry={userIndustry}
+              moduleCheck={iddCheck}
+              rm={rm}
+            />
             <BadgeGrid badges={badges} earned={earnedBadges} rm={rm} />
           </>
         )}

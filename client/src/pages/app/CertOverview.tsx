@@ -11,6 +11,12 @@ import {
   enrollInCert,
   deriveCertStatus,
   CERT_STATUS_LABEL,
+  dollars,
+  businessDaysSince,
+  CAPSTONE_RUBRIC,
+  REVIEW_OVERDUE_AFTER_BUSINESS_DAYS,
+  REVIEW_WINDOW_COPY,
+  formatCertDate,
 } from "@/lib/certs";
 import type {
   Cert,
@@ -19,6 +25,7 @@ import type {
   CapstoneSubmission,
   CertStatus,
 } from "@/lib/certs";
+import { CERT_STATUS_TONE } from "@/lib/certStatusUi";
 import {
   C,
   FOCUS_RING,
@@ -29,24 +36,22 @@ import {
   PILL,
 } from "@/lib/theme";
 import { dur, ease } from "@/lib/motion";
-import { BrandNav } from "@/components/marketing";
+import { BrandNav, AppNavRight } from "@/components/marketing";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function dollars(cents: number): string {
-  const v = cents / 100;
-  return Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`;
-}
+// How long after starting checkout we treat the intent flag as a recent
+// attempt. Long enough to bridge the out-of-band paid_at delay, short enough
+// that an abandoned checkout reverts to the normal unlock button.
+const CHECKOUT_WINDOW_MS = 3 * 60 * 60 * 1000;
 
-const STATUS_TONE: Record<CertStatus, { bg: string; border: string; ink: string }> = {
-  "not-started": { bg: C.surface, border: C.hairline, ink: C.umber },
-  "in-progress": { bg: C.surface, border: C.orangeWashBorder, ink: C.orangeInk },
-  "capstone-unlocked": { bg: C.surface, border: C.orangeWashBorder, ink: C.orangeInk },
-  submitted: { bg: C.orangeWash, border: C.orangeWashBorder, ink: C.orangeInk },
-  certified: { bg: C.surface, border: C.orangeWashBorder, ink: C.forest },
-};
+// dollars() and businessDaysSince() now live in @/lib/certs so they share one
+// definition with the dashboard and submit page (no drift, one correctness fix).
+
+// Status pill tone now lives in @/lib/certStatusUi (shared with the dashboard).
+const STATUS_TONE = CERT_STATUS_TONE;
 
 function StatusBadge({ status }: { status: CertStatus }) {
   const tone = STATUS_TONE[status];
@@ -64,28 +69,6 @@ function StatusBadge({ status }: { status: CertStatus }) {
     </span>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// How certification works — static three-step explainer
-// ─────────────────────────────────────────────────────────────────────────────
-
-const STEPS: { n: string; title: string; body: string }[] = [
-  {
-    n: "01",
-    title: "Complete the lessons",
-    body: "Work through every lesson in this certificate at your own pace. Your progress saves automatically.",
-  },
-  {
-    n: "02",
-    title: "Submit your capstone",
-    body: "Apply what you learned to a real task and submit it for review. This is where the certificate is earned.",
-  },
-  {
-    n: "03",
-    title: "Receive your credential",
-    body: "Get a verifiable badge with a public verification link you can share on LinkedIn or with an employer.",
-  },
-];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
@@ -133,6 +116,31 @@ export default function CertOverview() {
     };
   }, [slug]);
 
+  // This is the page a payer actually sits on after clicking the Stripe link.
+  // Payment is confirmed out of band (an admin stamps paid_at by hand), so when
+  // the learner switches back to this tab, quietly refetch the cert state so the
+  // unlocked action appears without a manual reload (Executor H2; mirrors the
+  // dashboard's visibilitychange refetch, which did not cover this page).
+  useEffect(() => {
+    if (!cert) return;
+    const c = cert;
+    let cancelled = false;
+    async function onVisible() {
+      if (document.visibilityState !== "visible") return;
+      const [uc, ls] = await Promise.all([getUserCert(c.id), getCertLessonsWithCompletion(c.id)]);
+      const sub = uc ? await getCapstoneSubmission(uc.id) : null;
+      if (cancelled) return;
+      setUserCert(uc);
+      setLessons(ls);
+      setSubmission(sub);
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [cert]);
+
   async function handleSignOut() {
     await signOut();
     window.location.href = "/";
@@ -159,11 +167,50 @@ export default function CertOverview() {
     else setUserCert(await getUserCert(cert.id));
   }
 
+  // Stripe Payment Links mark paid_at out of band (an admin sets it), so a
+  // learner returning straight from checkout can still briefly see the unpaid
+  // state. We remember the moment they STARTED checkout (a timestamp, not a
+  // payment fact) so we can show an honest "if you just paid, this is
+  // unlocking" bridge instead of the same pay button. The flag is a recent
+  // intent signal only: it expires so an abandoned or declined checkout reverts
+  // to the normal unlock button rather than implying payment forever.
+  const paidFlagKey = cert ? `lumio_paid_${cert.id}` : "";
+  const [checkoutPending, setCheckoutPending] = useState(false);
+  useEffect(() => {
+    if (!cert) return;
+    const urlPaid = new URLSearchParams(window.location.search).get("paid") === "1";
+    if (urlPaid) {
+      localStorage.setItem(paidFlagKey, String(Date.now()));
+      // Strip ?paid=1 so a later refresh or bookmark cannot re-arm the window.
+      const url = new URL(window.location.href);
+      url.searchParams.delete("paid");
+      window.history.replaceState({}, "", url.toString());
+    }
+    const raw = localStorage.getItem(paidFlagKey);
+    const ts = raw ? Number(raw) : 0;
+    const recent = ts > 0 && Date.now() - ts < CHECKOUT_WINDOW_MS;
+    if (raw && !recent) localStorage.removeItem(paidFlagKey);
+    setCheckoutPending(urlPaid || recent);
+  }, [cert, paidFlagKey]);
+
+  // Once the admin propagates paid_at (status advances past in-progress), the
+  // intent flag has done its job, so clear it for clean future visits.
+  useEffect(() => {
+    if (!cert) return;
+    if (status !== "not-started" && status !== "in-progress") {
+      localStorage.removeItem(paidFlagKey);
+    }
+  }, [status, cert, paidFlagKey]);
+
+  function markCheckoutStarted() {
+    if (paidFlagKey) localStorage.setItem(paidFlagKey, String(Date.now()));
+  }
+
   // ── Loading / not-found ──────────────────────────────────────────────────--
   if (loading) {
     return (
       <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
-        <BrandNav maxWidth={860} right={<NavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
+        <BrandNav maxWidth={860} right={<AppNavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
         <div className="max-w-[860px] mx-auto px-6 pt-28 pb-20 md:pt-36">
           <div className="rounded-2xl animate-pulse" style={{ backgroundColor: C.hairline, height: 240 }} />
         </div>
@@ -174,7 +221,7 @@ export default function CertOverview() {
   if (!cert) {
     return (
       <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
-        <BrandNav maxWidth={860} right={<NavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
+        <BrandNav maxWidth={860} right={<AppNavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
         <div className="max-w-[860px] mx-auto px-6 pt-28 pb-20 md:pt-36 text-center">
           <h1
             className="font-serif"
@@ -200,7 +247,7 @@ export default function CertOverview() {
   return (
     <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
       <a href="#main-content" className={SKIP_LINK}>Skip to content</a>
-      <BrandNav maxWidth={860} right={<NavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
+      <BrandNav maxWidth={860} right={<AppNavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
 
       <div id="main-content" className="max-w-[860px] mx-auto px-6 pt-28 pb-20 md:pt-36 md:pb-28">
         <a href="/app" className={`text-[13px] font-medium ${FOCUS_RING}`} style={{ color: C.umber }}>
@@ -240,14 +287,67 @@ export default function CertOverview() {
               {cert.description}
             </p>
           )}
-          <div className="mt-5 flex items-baseline gap-2">
-            <span className="text-2xl font-medium" style={{ color: C.espresso, fontFamily: FONT_MONO }}>
-              {dollars(cert.price_cents)}
-            </span>
-            <span className="text-sm" style={{ color: C.inkSoft }}>
-              one time, unlocks your capstone review
-            </span>
-          </div>
+          {/* Price + guarantee = the buy surface. Hidden once the capstone is in
+              review or the cert is earned, so the "3 business days" promise lives
+              in exactly one place (the status-aware ActionPanel) at a time. */}
+          {status !== "submitted" && status !== "needs-revision" && status !== "certified" && (
+            <>
+              {/* Dream outcome before the number (Hormozi H2 + Contrarian HIGH):
+                  at the buy moment the cert sells standing, not relief. "Not behind"
+                  keeps the buyer in a deficit identity right where money and public
+                  reputation are on the line, so we lead with what they can do, not
+                  what they were afraid of. Not a fabricated claim. */}
+              <p className="mt-6 text-base leading-relaxed" style={{ color: C.espresso, maxWidth: 560 }}>
+                Proof you can put in front of your manager that you ship real work with AI, not just talk
+                about it. A real person reviews one real task from your job, not a machine grading a quiz.
+              </p>
+              {/* Reframe the honesty, don't bury it (Contrarian MED): accreditation
+                  is the wrong axis for "can you use AI." Turn the admission into the
+                  differentiator instead of a pre-price apology. Still no fabrication. */}
+              <p className="mt-3 text-sm leading-relaxed" style={{ color: C.umber, maxWidth: 520 }}>
+                Not a college credential, and better for this. Accredited courses test what you memorized.
+                Here, a real person confirms you did real work from your actual job.
+              </p>
+              <div className="mt-5 flex items-baseline gap-2">
+                <span className="text-2xl font-medium" style={{ color: C.espresso, fontFamily: FONT_MONO }}>
+                  {dollars(cert.price_cents)}
+                </span>
+                <span className="text-sm" style={{ color: C.inkSoft }}>
+                  one time
+                </span>
+              </div>
+              {/* Anchor the price (Hormozi H1): a number alone has nothing to weigh
+                  against. The honest, durable contrast is structural, not a brand or
+                  a figure we would have to keep accurate: subscription forever versus
+                  pay once. The "real person" promise is made once below, in the
+                  guarantee, so it isn't restated five ways here (Rubin HIGH). */}
+              <p className="mt-2 text-sm leading-relaxed" style={{ color: C.inkSoft, maxWidth: 520 }}>
+                A subscription learning site charges you every year, whether you use it or not. The lessons
+                here are free. You pay once, when you're ready, and only if you want the certificate.
+              </p>
+              {/* Risk reversal, given real visual weight (Hormozi): a named,
+                  bordered guarantee reads as a promise, not fine print. */}
+              <div
+                className="mt-5 rounded-2xl p-5"
+                style={{ backgroundColor: C.orangeWash, border: `1px solid ${C.orangeWashBorder}`, maxWidth: 520 }}
+              >
+                <p className="text-sm font-medium" style={{ color: C.espresso }}>
+                  Our guarantee
+                </p>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: C.umber }}>
+                  If your project isn't approved the first time, we tell you exactly what to fix and review it
+                  again, free. Keep going and we'll keep reviewing. You keep your money and you keep working
+                  toward the certificate.
+                </p>
+              </div>
+              {/* One honest, gentle reason to not put it off, without restating the
+                  "reviewed by a real person" promise yet again (Rubin HIGH). The
+                  review window copy is single-sourced. */}
+              <p className="mt-3 text-sm leading-relaxed" style={{ color: C.inkSoft, maxWidth: 520 }}>
+                You'll hear back {REVIEW_WINDOW_COPY}. The earlier you submit, the sooner that is.
+              </p>
+            </>
+          )}
         </motion.div>
 
         {/* ── Primary status-aware action ─────────────────────────────────── */}
@@ -263,12 +363,17 @@ export default function CertOverview() {
           nextLesson={nextLesson}
           enrolling={enrolling}
           onStart={startEarning}
+          checkoutPending={checkoutPending && status === "in-progress" && allComplete}
+          onUnlockClick={markCheckoutStarted}
           rm={rm}
         />
 
         {/* ── What you'll learn ───────────────────────────────────────────── */}
         {cert.outcomes.length > 0 && (
-          <Section title="What you'll learn" rm={rm} delay={0.2}>
+          <Section title="What you'll walk away with" rm={rm} delay={0.2}>
+            <p className="text-sm mb-4" style={{ color: C.umber }}>
+              By the time you submit your final project, you'll be able to:
+            </p>
             <ul className="space-y-3">
               {cert.outcomes.map((o, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm" style={{ color: C.espresso }}>
@@ -314,8 +419,12 @@ export default function CertOverview() {
                     </span>
                     <a
                       href={`/lesson/${l.slug}`}
-                      className="text-sm truncate hover:underline"
-                      style={{ color: C.espresso }}
+                      className="font-serif truncate hover:underline"
+                      style={{
+                        color: C.espresso,
+                        fontSize: 15,
+                        fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT),
+                      }}
                     >
                       {l.title}
                       {l.completed && <span className="sr-only"> (completed)</span>}
@@ -331,42 +440,49 @@ export default function CertOverview() {
         </Section>
 
         {/* ── Capstone ────────────────────────────────────────────────────── */}
-        <Section title="Your capstone project" rm={rm} delay={0.36}>
+        <Section title="Your final project" rm={rm} delay={0.36}>
           <div
             className="rounded-2xl p-6"
             style={{ backgroundColor: C.orangeWash, border: `1px solid ${C.orangeWashBorder}` }}
           >
+            <p className="text-xs mb-3" style={{ color: C.umber }}>
+              This is your final project: the one real task you do at the end to earn the certificate.
+            </p>
             <p className="text-sm leading-relaxed" style={{ color: C.espresso }}>
               {cert.capstone_spec.description}
             </p>
             {cert.capstone_spec.min_words != null && (
-              <p className="mt-3 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
-                Minimum {cert.capstone_spec.min_words} words.
+              <p className="mt-3 text-xs" style={{ color: C.inkSoft }}>
+                Aim for about {cert.capstone_spec.min_words} words, a few short paragraphs. This is not an essay test.
               </p>
             )}
-          </div>
-        </Section>
-
-        {/* ── How certification works ─────────────────────────────────────── */}
-        <Section title="How certification works" rm={rm} delay={0.44}>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {STEPS.map((s) => (
-              <div
-                key={s.n}
-                className="rounded-2xl p-5"
-                style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
-              >
-                <div className="text-sm font-medium mb-2" style={{ color: C.orangeInk, fontFamily: FONT_MONO }}>
-                  {s.n}
-                </div>
-                <div className="text-sm font-medium mb-1.5" style={{ color: C.espresso }}>
-                  {s.title}
-                </div>
-                <p className="text-xs leading-relaxed" style={{ color: C.umber }}>
-                  {s.body}
-                </p>
-              </div>
-            ))}
+            {/* What passing looks like, stated plainly before you pay (Hormozi:
+                a visible bar turns "will I pass?" dread into a checklist). Shared
+                CAPSTONE_RUBRIC so the bar shown here matches the submit page. */}
+            <div className="mt-4 pt-4" style={{ borderTop: `1px solid ${C.orangeWashBorder}` }}>
+              <p className="text-sm font-medium" style={{ color: C.espresso }}>
+                What a good submission looks like
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {CAPSTONE_RUBRIC.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: C.umber }}>
+                    <span aria-hidden="true" style={{ color: C.forest, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    <span style={{ lineHeight: 1.5 }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* One crisp human-review line (Naval: the page said this five ways;
+                Contrarian: a single reviewer, not "our team"). */}
+            <div
+              className="mt-4 flex items-start gap-2.5 pt-4"
+              style={{ borderTop: `1px solid ${C.orangeWashBorder}` }}
+            >
+              <span aria-hidden="true" style={{ color: C.forest, fontSize: 14, flexShrink: 0, marginTop: 1 }}>✓</span>
+              <p className="text-sm" style={{ color: C.espresso, lineHeight: 1.5 }}>
+                A real person reads every submission. They're checking that you did the work, not that it's flawless.
+              </p>
+            </div>
           </div>
         </Section>
       </div>
@@ -423,6 +539,8 @@ function ActionPanel({
   nextLesson,
   enrolling,
   onStart,
+  checkoutPending,
+  onUnlockClick,
   rm,
 }: {
   cert: Cert;
@@ -436,6 +554,8 @@ function ActionPanel({
   nextLesson: CertLessonItem | null;
   enrolling: boolean;
   onStart: () => void;
+  checkoutPending: boolean;
+  onUnlockClick: () => void;
   rm: boolean;
 }) {
   return (
@@ -446,8 +566,11 @@ function ActionPanel({
       className="rounded-2xl p-6 mt-8"
       style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
     >
-      {/* Progress bar (always shown except for the certified state) */}
-      {status !== "certified" && (
+      {/* Progress bar. Hidden for the certified state, and also for not-started:
+          a 0-of-N bar at 0% on the buy surface is a small deflation before the
+          learner has committed (mirrors the dashboard withholding the points row
+          until there is real progress). */}
+      {status !== "certified" && status !== "not-started" && (
         <div className="mb-5">
           <div
             className="w-full rounded-full overflow-hidden"
@@ -499,23 +622,78 @@ function ActionPanel({
         </a>
       )}
 
-      {/* lessons done but not paid: unlock capstone via Stripe link */}
-      {status === "in-progress" && allComplete && (
+      {/* lessons done but not paid: unlock the review via Stripe link. If the
+          learner recently started checkout, bridge the out-of-band paid_at gap
+          with an honest, conditional message (never asserting payment as fact,
+          since the flag is set on click, not on a confirmed charge) and keep a
+          clear way to finish paying if they did not complete it. */}
+      {status === "in-progress" && allComplete && checkoutPending && (
+        <div>
+          <p className="text-sm mb-2 font-medium" style={{ color: C.espresso }}>
+            If you just paid, your final project is unlocking now.
+          </p>
+          <p className="text-sm mb-4" style={{ color: C.umber }}>
+            It can take a few minutes to confirm. Refresh and your final project
+            will be ready to submit.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className={`inline-block ${PILL} ${FOCUS_RING}`}
+            style={{ backgroundColor: C.orange, color: C.ink }}
+          >
+            Refresh →
+          </button>
+          {cert.stripe_payment_link && (
+            <p className="mt-4 text-sm" style={{ color: C.umber }}>
+              Didn't finish checking out?{" "}
+              <a
+                href={cert.stripe_payment_link}
+                onClick={onUnlockClick}
+                className={`font-medium underline underline-offset-2 ${FOCUS_RING}`}
+                style={{ color: C.orangeInk }}
+              >
+                Complete your payment ({dollars(cert.price_cents)})
+              </a>
+            </p>
+          )}
+        </div>
+      )}
+      {status === "in-progress" && allComplete && !checkoutPending && (
         <div>
           <p className="text-sm mb-4" style={{ color: C.espresso }}>
-            You finished every lesson. Unlock the capstone review to earn your certificate.
+            You finished every lesson. One step left: a real person reviews your final project, then the certificate is yours.
           </p>
           {cert.stripe_payment_link ? (
-            <a
-              href={cert.stripe_payment_link}
-              className={`inline-block ${PILL} ${FOCUS_RING}`}
-              style={{ backgroundColor: C.orange, color: C.ink }}
-            >
-              Unlock capstone ({dollars(cert.price_cents)}) →
-            </a>
+            /* Lead the click with the outcome, not the cost (Hormozi H4). The price
+               sits just beneath as a sub-label so the button reads as a decision
+               already made, not a payment form. */
+            <div className="flex flex-col items-start gap-1.5">
+              <a
+                href={cert.stripe_payment_link}
+                onClick={onUnlockClick}
+                className={`inline-block ${PILL} ${FOCUS_RING}`}
+                style={{ backgroundColor: C.orange, color: C.ink }}
+              >
+                Get my certificate →
+              </a>
+              <span className="text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+                {dollars(cert.price_cents)} one time, no subscription
+              </span>
+            </div>
           ) : (
             <p className="text-sm" style={{ color: C.umber }}>
-              Capstone checkout is not available yet. Check back soon.
+              Checkout is not available yet. Check back soon.
+            </p>
+          )}
+          {/* Cross-device payers and anyone past the local checkout window land
+              here with only a pay button. A real person confirms payment by hand,
+              so reassure plainly about a double charge first (Outsider HIGH), then
+              set the honest expectation on timing. */}
+          {cert.stripe_payment_link && (
+            <p className="mt-4 text-sm" style={{ color: C.umber }}>
+              Already paid? You won't be charged again. We confirm payments by hand, so it can take up to
+              a day to show here. Refresh this page, and reach us if it has been longer.
             </p>
           )}
         </div>
@@ -525,14 +703,14 @@ function ActionPanel({
       {status === "capstone-unlocked" && (
         <div>
           <p className="text-sm mb-4" style={{ color: C.espresso }}>
-            Your capstone is unlocked. Submit your project to earn your certificate.
+            Your final project is unlocked. Submit it to earn your certificate.
           </p>
           <a
             href={`/app/cert/${cert.slug}/submit`}
             className={`inline-block ${PILL} ${FOCUS_RING}`}
             style={{ backgroundColor: C.orange, color: C.ink }}
           >
-            Submit your capstone →
+            Submit your final project →
           </a>
         </div>
       )}
@@ -540,12 +718,59 @@ function ActionPanel({
       {/* submitted: under review */}
       {status === "submitted" && submission && (
         <div>
+          {/* "approved" is set when the reviewer passes the work, but the cert is
+              only earned once completed_at is stamped (out of band, like paid_at).
+              Without this branch an approved learner sees "under review" until that
+              stamp lands (Executor MED). Speak to the real, good news instead. */}
           <p className="text-sm" style={{ color: C.espresso }}>
-            Your capstone is under review. You'll receive your badge within 3 business days.
+            {submission.status === "approved"
+              ? "Your final project was approved. Your certificate is being finalized and will appear here shortly."
+              : businessDaysSince(submission.submitted_at) >= REVIEW_OVERDUE_AFTER_BUSINESS_DAYS
+                ? "Your final project is still with our reviewer. Thanks for your patience, we have not forgotten it. If you would like an update, just reach out."
+                : `Your final project is under review. A real person reviews every project, ${REVIEW_WINDOW_COPY}.`}
           </p>
-          <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
-            Submitted {new Date(submission.submitted_at).toLocaleDateString()}
+          {submission.submitted_at && (
+            <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+              Submitted {formatCertDate(submission.submitted_at)}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* needs-revision: reviewer sent it back. Distinguish a true rejection from
+          a light revision so the copy is honest (Contrarian), while both keep the
+          free-resubmit path the earn-it guarantee promises. */}
+      {status === "needs-revision" && submission && (
+        <div>
+          <p className="text-sm" style={{ color: C.espresso }}>
+            {submission.status === "rejected"
+              ? "Our reviewer could not pass your final project this time. The notes below explain what is missing. Reworking it and resubmitting is free, and we will review it again."
+              : "Our reviewer sent your final project back with notes so you can earn it. Revising and resubmitting is free, and we want you to pass."}
           </p>
+          {submission.reviewer_notes ? (
+            <div
+              className="mt-4 rounded-2xl p-4"
+              style={{ backgroundColor: C.surface, border: `1px solid ${C.orangeWashBorder}` }}
+            >
+              <p className="text-[12px] uppercase tracking-[0.18em] mb-2" style={{ color: C.umber, fontFamily: FONT_MONO }}>
+                What to revise
+              </p>
+              <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: C.espresso }}>
+                {submission.reviewer_notes}
+              </p>
+            </div>
+          ) : (
+            <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+              Check your email for the reviewer's notes.
+            </p>
+          )}
+          <a
+            href={`/app/cert/${cert.slug}/submit`}
+            className={`inline-block mt-4 ${PILL} ${FOCUS_RING}`}
+            style={{ backgroundColor: C.orange, color: C.ink }}
+          >
+            Revise and resubmit →
+          </a>
         </div>
       )}
 
@@ -564,23 +789,31 @@ function ActionPanel({
 function CertifiedPanel({ cert, userCert }: { cert: Cert; userCert: UserCert }) {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const verifyUrl = `${origin}/verify/${userCert.verify_token}`;
-  const awarded = userCert.completed_at ? new Date(userCert.completed_at) : new Date();
-  const year = awarded.getFullYear();
-  const month = awarded.getMonth() + 1;
 
-  const linkedInUrl =
-    "https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME" +
-    `&name=${encodeURIComponent(cert.name)}` +
-    "&organizationId=" +
-    `&issueYear=${year}` +
-    `&issueMonth=${month}` +
-    `&certUrl=${encodeURIComponent(verifyUrl)}` +
-    `&certId=${encodeURIComponent(userCert.id)}`;
+  // A feed share posts the public Verify page where a network actually sees it.
+  // We deliberately use share-offsite (which works today) instead of LinkedIn's
+  // add-to-profile flow, which silently fails without a real organizationId.
+  const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`;
+
+  // Pre-written, on-brand post so sharing is one tap, not a blank box. The win is
+  // the emotional peak ("I'm not behind anymore") — make it effortless to voice.
+  const sharePost = `I just earned my ${cert.name} from Lumio. Proof I can actually use AI at work, reviewed by a real person. Verify it here: ${verifyUrl}`;
+
+  // One-tap share to X, the highest-velocity channel, reusing the same on-brand
+  // copy. Pure intent URL, zero infra (Expansionist).
+  const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(sharePost)}`;
 
   function copyVerify() {
     navigator.clipboard.writeText(verifyUrl).then(
       () => toast.success("Verification link copied."),
       () => toast.error("Could not copy the link."),
+    );
+  }
+
+  function copyPost() {
+    navigator.clipboard.writeText(sharePost).then(
+      () => toast.success("Post copied. Paste it anywhere."),
+      () => toast.error("Could not copy the post."),
     );
   }
 
@@ -594,7 +827,7 @@ function CertifiedPanel({ cert, userCert }: { cert: Cert; userCert: UserCert }) 
       </div>
       <div className="flex items-center gap-3 flex-wrap">
         <a
-          href={linkedInUrl}
+          href={linkedInShareUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={`inline-block ${PILL} ${FOCUS_RING}`}
@@ -602,6 +835,23 @@ function CertifiedPanel({ cert, userCert }: { cert: Cert; userCert: UserCert }) 
         >
           Share on LinkedIn →
         </a>
+        <a
+          href={xShareUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-block ${PILL} ${FOCUS_RING}`}
+          style={{ backgroundColor: C.ink, color: C.paper }}
+        >
+          Share on X →
+        </a>
+        <button
+          type="button"
+          onClick={copyPost}
+          className={`inline-block ${PILL} ${FOCUS_RING}`}
+          style={{ backgroundColor: C.orange, color: C.ink }}
+        >
+          Copy a post
+        </button>
         <button
           type="button"
           onClick={copyVerify}
@@ -617,26 +867,18 @@ function CertifiedPanel({ cert, userCert }: { cert: Cert; userCert: UserCert }) 
       >
         {verifyUrl}
       </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Nav right (matches Dashboard)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function NavRight({ email, onSignOut }: { email: string; onSignOut: () => void }) {
-  return (
-    <div className="flex items-center gap-2 text-[13px]" style={{ color: C.umber, fontFamily: FONT_MONO }}>
-      {email && <span className="hidden sm:block">{email.length > 20 ? email.slice(0, 20) + "…" : email}</span>}
-      {email && <span className="hidden sm:block" style={{ opacity: 0.4 }}>·</span>}
-      <button
-        onClick={onSignOut}
-        className={`font-medium hover:underline cursor-pointer ${FOCUS_RING}`}
-        style={{ color: C.ink }}
+      {/* Capture intent at the peak (Expansionist). Frame the next cert as range,
+          not catch-up: the buyer just resolved "I'm not behind," so a second cert
+          can't sell that same relief again. It sells reach across their work
+          (Contrarian #2). Zero-infra nudge to the hub. */}
+      <a
+        href="/app"
+        className={`inline-block mt-5 text-sm font-medium ${FOCUS_RING}`}
+        style={{ color: C.orangeInk }}
       >
-        Sign out
-      </button>
+        Prove it in another part of your work →
+      </a>
     </div>
   );
 }
+

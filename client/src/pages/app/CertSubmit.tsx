@@ -8,6 +8,12 @@ import {
   getUserCert,
   getCapstoneSubmission,
   submitCapstone,
+  businessDaysSince,
+  formatCertDate,
+  CAPSTONE_RUBRIC,
+  REVIEW_OVERDUE_AFTER_BUSINESS_DAYS,
+  REVIEW_WINDOW_COPY,
+  SUBMISSION_STATUS_LABEL,
 } from "@/lib/certs";
 import type { Cert, UserCert, CapstoneSubmission, CapstoneSubmissionContent } from "@/lib/certs";
 import {
@@ -20,20 +26,18 @@ import {
   PILL,
 } from "@/lib/theme";
 import { dur, ease } from "@/lib/motion";
-import { BrandNav } from "@/components/marketing";
+import { BrandNav, AppNavRight } from "@/components/marketing";
 
-const SUBMISSION_STATUS_LABEL: Record<string, string> = {
-  submitted: "Submitted",
-  under_review: "Under review",
-  approved: "Approved",
-  needs_revision: "Needs revision",
-  rejected: "Not approved",
-};
+// SUBMISSION_STATUS_LABEL now lives in @/lib/certs, reconciled with the derived
+// status pill so the same review state never reads two different ways.
 
 function wordCount(s: string): number {
   const t = s.trim();
   return t ? t.split(/\s+/).length : 0;
 }
+
+// businessDaysSince() now lives in @/lib/certs so the overdue-review fallback
+// shares one (date-only, correct) definition with the overview and dashboard.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
@@ -75,10 +79,16 @@ export default function CertSubmit() {
         return;
       }
       const uc = await getUserCert(c.id);
-      // Payment gate: no paid enrollment → bounce back to the overview.
+      // Payment gate: the DB requires paid_at before a submission is allowed.
+      // Since paid_at is confirmed by hand, a learner who just paid may land here
+      // before it posts, so the copy speaks to payment, not lessons (Contrarian).
       if (!uc || !uc.paid_at) {
         if (!cancelled) {
-          toast.error("Complete your cert lessons and unlock the capstone to submit.");
+          // Drop the loading state before redirecting. Wouter's navigate is a
+          // client-side route change, not a hard unload, so without this the
+          // learner could be left staring at the skeleton forever (Executor H1).
+          setLoading(false);
+          toast.error("We haven't confirmed your payment for this certificate yet. Once it's in, you can submit your final project.");
           navigate(`/app/cert/${slug}`);
         }
         return;
@@ -95,6 +105,27 @@ export default function CertSubmit() {
     };
   }, [slug, navigate]);
 
+  // Out-of-band review changes: a reviewer can flip the submission's status
+  // (approve, or send it back again) while this tab sits in the background. The
+  // sibling overview/dashboard pages already refetch on visibilitychange; this
+  // page didn't, so a learner could keep seeing a stale "under review" screen
+  // until a hard reload (Executor HIGH). Refetch the latest submission on refocus.
+  useEffect(() => {
+    if (!userCert) return;
+    const uc = userCert;
+    let cancelled = false;
+    async function onVisible() {
+      if (document.visibilityState !== "visible") return;
+      const sub = await getCapstoneSubmission(uc.id);
+      if (!cancelled) setExisting(sub);
+    }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [userCert]);
+
   // A prior submission that is not open for revision blocks resubmission.
   const locked = useMemo(
     () => existing != null && existing.status !== "needs_revision" && existing.status !== "rejected",
@@ -107,6 +138,14 @@ export default function CertSubmit() {
     aiTools.trim().length > 0 &&
     attestation &&
     !submitting;
+
+  // Spell out exactly what is still missing, so the disabled submit button is
+  // never a silent dead end at the finish line.
+  const missing: string[] = [];
+  if (title.trim().length === 0) missing.push("add a title");
+  if (descWords < minWords) missing.push(`reach ${minWords} words (${descWords} so far)`);
+  if (aiTools.trim().length === 0) missing.push("name the AI tool you used");
+  if (!attestation) missing.push("confirm you did this task yourself");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -122,9 +161,12 @@ export default function CertSubmit() {
     const res = await submitCapstone(userCert.id, content);
     setSubmitting(false);
     if (!res.ok) {
-      toast.error("Could not submit your capstone. Please try again.");
+      toast.error("Could not submit your final project. Please try again.");
       return;
     }
+    // Reflect the freshly inserted row so a return to this page (or a refocus
+    // refetch) reads the true new state instead of the old attempt (Executor).
+    if (res.submission) setExisting(res.submission);
     setSubmitted(true);
     toast.success("Your submission is under review.");
   }
@@ -134,12 +176,40 @@ export default function CertSubmit() {
     window.location.href = "/";
   }
 
-  if (loading || !cert) {
+  if (loading) {
     return (
       <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
-        <BrandNav maxWidth={720} right={<NavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
+        <BrandNav maxWidth={720} right={<AppNavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
         <div className="max-w-[720px] mx-auto px-6 pt-28 pb-20 md:pt-36">
           <div className="rounded-2xl animate-pulse" style={{ backgroundColor: C.hairline, height: 320 }} />
+        </div>
+      </div>
+    );
+  }
+
+  // Loading finished but the cert is missing or unpublished. Show an honest
+  // not-found state instead of an endless skeleton.
+  if (!cert) {
+    return (
+      <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
+        <BrandNav maxWidth={720} right={<AppNavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
+        <div className="max-w-[720px] mx-auto px-6 pt-28 pb-20 md:pt-36 text-center">
+          <h1
+            className="font-serif"
+            style={{ color: C.espresso, fontSize: 28, fontVariationSettings: displayFV(96, DISPLAY_WEIGHT_SOFT) }}
+          >
+            We couldn't find that certificate
+          </h1>
+          <p className="mt-3 text-sm" style={{ color: C.umber }}>
+            It may have moved or is not available yet.
+          </p>
+          <a
+            href="/app"
+            className={`inline-block mt-6 ${PILL} ${FOCUS_RING}`}
+            style={{ backgroundColor: C.ink, color: C.paper }}
+          >
+            Back to dashboard
+          </a>
         </div>
       </div>
     );
@@ -148,7 +218,7 @@ export default function CertSubmit() {
   return (
     <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
       <a href="#main-content" className={SKIP_LINK}>Skip to content</a>
-      <BrandNav maxWidth={720} right={<NavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
+      <BrandNav maxWidth={720} right={<AppNavRight onSignOut={handleSignOut} email={user?.email ?? ""} />} />
 
       <div id="main-content" className="max-w-[720px] mx-auto px-6 pt-28 pb-20 md:pt-36 md:pb-28">
         <a href={`/app/cert/${cert.slug}`} className={`text-[13px] font-medium ${FOCUS_RING}`} style={{ color: C.umber }}>
@@ -168,7 +238,7 @@ export default function CertSubmit() {
             fontVariationSettings: displayFV(120, DISPLAY_WEIGHT_SOFT),
           }}
         >
-          Submit your capstone
+          Your final project
         </motion.h1>
 
         {/* Success state */}
@@ -188,7 +258,7 @@ export default function CertSubmit() {
               Submission received
             </h2>
             <p className="mt-3 text-sm" style={{ color: C.umber }}>
-              Your submission is under review. You'll receive your badge within 3 business days.
+              Your submission is under review. A real person reviews every project, {REVIEW_WINDOW_COPY}.
             </p>
             <a
               href={`/app/cert/${cert.slug}`}
@@ -219,11 +289,17 @@ export default function CertSubmit() {
               {SUBMISSION_STATUS_LABEL[existing.status] ?? existing.status}
             </span>
             <p className="mt-4 text-sm" style={{ color: C.espresso }}>
-              You've already submitted your capstone for this certificate. You'll receive your badge within 3 business days of approval.
+              {existing.status === "approved"
+                ? "Your project was approved. Your certificate is being finalized and will appear on your certificate page shortly."
+                : businessDaysSince(existing.submitted_at) >= REVIEW_OVERDUE_AFTER_BUSINESS_DAYS
+                  ? "You've already submitted your final project. It's still with our reviewer. Thanks for your patience, we have not forgotten it. Reach out any time for an update."
+                  : `You've already submitted your final project for this certificate. Once it's approved, the certificate is yours, ${REVIEW_WINDOW_COPY}.`}
             </p>
-            <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
-              Submitted {new Date(existing.submitted_at).toLocaleDateString()}
-            </p>
+            {existing.submitted_at && (
+              <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+                Submitted {formatCertDate(existing.submitted_at)}
+              </p>
+            )}
             <a
               href={`/app/cert/${cert.slug}`}
               className={`inline-block mt-6 ${PILL} ${FOCUS_RING}`}
@@ -245,6 +321,33 @@ export default function CertSubmit() {
               {cert.capstone_spec.description}
             </p>
 
+            <div
+              className="flex items-start gap-2.5 rounded-xl px-4 py-3"
+              style={{ backgroundColor: C.orangeWash, border: `1px solid ${C.orangeWashBorder}` }}
+            >
+              <span aria-hidden="true" style={{ color: C.forest, fontSize: 14, flexShrink: 0, marginTop: 1 }}>✓</span>
+              <p className="text-sm" style={{ color: C.espresso, lineHeight: 1.5 }}>
+                A real person reads every submission. You'll hear back, {REVIEW_WINDOW_COPY}.
+              </p>
+            </div>
+
+            {/* The pass criteria, shown while writing (not just on the sales page)
+                so the learner can aim at the bar. Shared CAPSTONE_RUBRIC so the
+                bar here is byte-identical to the overview (First Principles). */}
+            <div>
+              <p className="text-sm font-medium" style={{ color: C.espresso }}>
+                What a good submission looks like
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {CAPSTONE_RUBRIC.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: C.umber }}>
+                    <span aria-hidden="true" style={{ color: C.forest, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    <span style={{ lineHeight: 1.5 }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
             <Field label="Project title" htmlFor="title">
               <input
                 id="title"
@@ -262,7 +365,7 @@ export default function CertSubmit() {
               htmlFor="description"
               hint={
                 <span style={{ color: descWords >= minWords ? C.forest : C.inkSoft }}>
-                  {descWords} / {minWords} words minimum
+                  {descWords} of about {minWords} words
                 </span>
               }
             >
@@ -273,11 +376,11 @@ export default function CertSubmit() {
                 rows={8}
                 className={`w-full px-4 py-3 rounded-xl text-sm ${FOCUS_RING}`}
                 style={{ backgroundColor: C.surface, border: `1px solid ${C.hairline}`, color: C.ink, resize: "vertical" }}
-                placeholder="Describe the task, the prompt or brief you wrote, the result you got, and your reflection."
+                placeholder="Just tell us what you did, what you asked the AI, and what came back. Write like you'd tell a coworker."
               />
             </Field>
 
-            <Field label="AI tool(s) used" htmlFor="aiTools">
+            <Field label="Which AI did you use?" htmlFor="aiTools">
               <input
                 id="aiTools"
                 type="text"
@@ -309,8 +412,14 @@ export default function CertSubmit() {
                 className="mt-0.5"
                 style={{ accentColor: C.orange, width: 16, height: 16, flexShrink: 0 }}
               />
-              <span>This is my own original work.</span>
+              <span>I did this task myself. Using AI to do it is fine, that is the point.</span>
             </label>
+
+            {!submitting && missing.length > 0 && (
+              <p className="text-sm" style={{ color: C.umber }}>
+                Just one or two things first: {missing.join(", ")}.
+              </p>
+            )}
 
             <button
               type="submit"
@@ -323,7 +432,7 @@ export default function CertSubmit() {
                 cursor: canSubmit ? "pointer" : "not-allowed",
               }}
             >
-              {submitting ? "Submitting…" : "Submit for review →"}
+              {submitting ? "Sending…" : "Send it in →"}
             </button>
           </motion.form>
         )}
@@ -356,22 +465,6 @@ function Field({
         {hint && <span className="text-xs" style={{ fontFamily: FONT_MONO }}>{hint}</span>}
       </div>
       {children}
-    </div>
-  );
-}
-
-function NavRight({ email, onSignOut }: { email: string; onSignOut: () => void }) {
-  return (
-    <div className="flex items-center gap-2 text-[13px]" style={{ color: C.umber, fontFamily: FONT_MONO }}>
-      {email && <span className="hidden sm:block">{email.length > 20 ? email.slice(0, 20) + "…" : email}</span>}
-      {email && <span className="hidden sm:block" style={{ opacity: 0.4 }}>·</span>}
-      <button
-        onClick={onSignOut}
-        className={`font-medium hover:underline cursor-pointer ${FOCUS_RING}`}
-        style={{ color: C.ink }}
-      >
-        Sign out
-      </button>
     </div>
   );
 }
