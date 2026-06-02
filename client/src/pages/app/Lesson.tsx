@@ -273,7 +273,10 @@ export default function Lesson() {
       }
       if (!rm) {
         setShowConfetti(true);
-        playCompletionChime();
+        // The chime + full burst is reserved for milestones. Finishing the whole
+        // course (no next lesson) earns it; a routine lesson gets a quieter, soft
+        // burst and the toast, so the big moments stay distinct (Rubin).
+        if (!next) playCompletionChime();
         setTimeout(() => setShowConfetti(false), 3000);
       }
       toast.success("Lesson marked complete.", {
@@ -447,7 +450,7 @@ export default function Lesson() {
           style={{ borderTop: `1px solid ${C.hairline}` }}
         >
           <AnimatePresence>
-            {showConfetti && <ConfettiBurst />}
+            {showConfetti && <ConfettiBurst soft={!!next} />}
           </AnimatePresence>
           {/* Persistent live region so completion is announced reliably (the badge
               below mounts via AnimatePresence and would not announce on its own). */}
@@ -552,7 +555,7 @@ export default function Lesson() {
             className="hidden md:block mt-3 text-center"
             style={{ color: C.inkSoft, fontFamily: FONT_MONO, fontSize: 12 }}
           >
-            ← → or j/k to navigate
+            Use your arrow keys to move between lessons
           </p>
         )}
       </motion.article>

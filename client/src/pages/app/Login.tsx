@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,6 +18,38 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Seconds left on the resend cooldown. A magic link can lag or land in spam, so
+  // the confirmation must offer a resend instead of leaving the visitor stuck with
+  // no recourse (Outsider HIGH-4). The cooldown keeps an impatient click from
+  // tripping Supabase's own rate limit.
+  const [resendIn, setResendIn] = useState(0);
+  const confirmRef = useRef<HTMLDivElement>(null);
+
+  // Move focus to the confirmation when the form is swapped out, so keyboard and
+  // screen-reader users aren't stranded on a now-removed submit button (Executor H3).
+  useEffect(() => {
+    if (submitted) confirmRef.current?.focus();
+  }, [submitted]);
+
+  // Tick the resend cooldown down to zero.
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendIn]);
+
+  async function handleResend() {
+    if (submitting || resendIn > 0) return;
+    setError(null);
+    setSubmitting(true);
+    const res = await signInWithMagicLink(email);
+    setSubmitting(false);
+    if (res.ok) {
+      setResendIn(30);
+    } else {
+      setError(mapAuthError(res.error, res.status));
+    }
+  }
 
   function mapAuthError(msg?: string, status?: number): string {
     if (!msg) return "Couldn't send the link. Check your connection and try again.";
@@ -62,7 +94,7 @@ export default function Login() {
 
   return (
     <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
-      <a href="#login-form" className={SKIP_LINK}>Skip to content</a>
+      <a href="#login-content" className={SKIP_LINK}>Skip to content</a>
       <BrandNav
         right={
           <a
@@ -107,24 +139,52 @@ export default function Login() {
             Enter your email and we'll send a one-click sign-in link. No password to remember.
           </motion.p>
 
-          {/* Form / Success */}
+          {/* Form / Success. Skip-link target on the always-rendered wrapper so it
+              survives the form→confirmation swap (Executor MED-1). */}
           <motion.div
+            id="login-content"
+            tabIndex={-1}
             initial={rm ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: dur.base, delay: staggerDelay(2), ease: ease.ink }}
             className="mt-10"
           >
             {submitted ? (
-              <div
-                className={CONFIRM_PILL}
-                style={{ backgroundColor: C.surface, boxShadow: SHADOW_PILL, color: C.espresso }}
-                role="status"
-                aria-live="polite"
-              >
-                <Check className="w-4 h-4 shrink-0" style={{ color: C.forest }} aria-hidden="true" />
-                <span className="text-sm">
-                  Check your inbox for the magic link. Your lessons are waiting.
-                </span>
+              <div ref={confirmRef} tabIndex={-1} role="status" aria-live="polite">
+                <div
+                  className={CONFIRM_PILL}
+                  style={{ backgroundColor: C.surface, boxShadow: SHADOW_PILL, color: C.espresso }}
+                >
+                  <Check className="w-4 h-4 shrink-0" style={{ color: C.forest }} aria-hidden="true" />
+                  <span className="text-sm">
+                    Check your inbox for your sign-in link.
+                  </span>
+                </div>
+                {/* C1: the magic-link can lag a minute and often lands in spam.
+                    Saying so up front turns "it's not working" frustration into
+                    expected waiting (and removes the duplicate "lessons are
+                    waiting," which already lives in the footer below -- Rubin). */}
+                <p className="mt-4 text-sm" style={{ color: C.umber }}>
+                  It can take a minute to arrive. If you don't see it, check your spam folder.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={submitting || resendIn > 0}
+                  className={`mt-3 text-sm font-medium underline underline-offset-2 disabled:no-underline disabled:opacity-60 ${FOCUS_RING}`}
+                  style={{ color: C.umber }}
+                >
+                  {submitting
+                    ? "Sending…"
+                    : resendIn > 0
+                      ? `Resend in ${resendIn}s`
+                      : "Didn't get it? Resend the link"}
+                </button>
+                {error && (
+                  <p className="mt-3 text-sm" style={{ color: C.umber }} role="alert">
+                    {error}
+                  </p>
+                )}
               </div>
             ) : (
               <PillEmailForm
@@ -134,7 +194,7 @@ export default function Login() {
                 onSubmit={handleSubmit}
                 submitting={submitting}
                 error={error}
-                buttonLabel="Send magic link"
+                buttonLabel="Email me a sign-in link"
                 formLabel="Sign in by email"
               />
             )}

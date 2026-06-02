@@ -49,8 +49,13 @@ export function playCompletionChime() {
 // Full-screen confetti burst on completion. Particles fire outward with an
 // upward bias, then fall under "gravity" while spinning — a celebratory rain
 // rather than a small puff. aria-hidden + fixed overlay, pointer-events: none.
-export function ConfettiBurst() {
-  const COUNT = 90;
+//
+// `soft` halves the particle count for routine moments (a single lesson) so the
+// full burst stays reserved for real milestones — finishing a track, passing a
+// mastery check, earning a capstone (Rubin: don't spend the big reward on small
+// wins, or it stops meaning anything).
+export function ConfettiBurst({ soft = false }: { soft?: boolean }) {
+  const COUNT = soft ? 40 : 90;
   const colors = CONFETTI;
   const particles = Array.from({ length: COUNT }, (_, i) => {
     const angle = Math.random() * Math.PI * 2;

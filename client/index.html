@@ -7,16 +7,37 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Lumio | Go from AI-curious to AI-confident</title>
-    
+    <meta
+      name="description"
+      content="Daily lessons, a few minutes each, that teach knowledge workers to actually use AI at work. Learn for free, then earn a certificate a real person reviews." />
+    <link rel="canonical" href="https://lumio.app/" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Lumio" />
+    <meta property="og:url" content="https://lumio.app/" />
     <meta property="og:title" content="Lumio | Go from AI-curious to AI-confident" />
-    <meta property="og:description" content="Five-minute daily lessons that teach knowledge workers to actually use AI at work." />
-    
+    <meta property="og:description" content="Daily lessons, a few minutes each, that teach knowledge workers to actually use AI at work." />
+
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
+    <!-- summary (not summary_large_image): with no branded image asset yet, the
+         large-image card renders a blank panel. Plain summary degrades cleanly. -->
+    <meta property="twitter:card" content="summary" />
     <meta property="twitter:title" content="Lumio | Go from AI-curious to AI-confident" />
-    <meta property="twitter:description" content="Five-minute daily lessons that teach knowledge workers to actually use AI at work." />
+    <meta property="twitter:description" content="Daily lessons, a few minutes each, that teach knowledge workers to actually use AI at work." />
+
+    <!-- Organization structured data so search engines and link scrapers can
+         attribute the brand consistently. Credential-level JSON-LD is injected
+         per certificate on the Verify page (Expansionist H2). -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Lumio",
+        "url": "https://lumio.app/",
+        "description": "Daily lessons, a few minutes each, that teach knowledge workers to actually use AI at work."
+      }
+    </script>
 
     <!-- Google Fonts: Fraunces (serif, variable weights, italics) and DM Sans (sans-serif) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

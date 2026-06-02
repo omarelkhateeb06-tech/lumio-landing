@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "wouter";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -60,7 +60,8 @@ function untilLabel(iso: string | null | undefined): string {
   if (!iso) return "later";
   const ms = new Date(iso).getTime() - Date.now();
   if (ms <= 0) return "now";
-  const mins = Math.round(ms / 60000);
+  // Never round down to "0 minutes" for a sub-minute wait.
+  const mins = Math.max(1, Math.round(ms / 60000));
   if (mins < 60) return `in about ${mins} minute${mins === 1 ? "" : "s"}`;
   const hours = Math.round(mins / 60);
   return `in about ${hours} hour${hours === 1 ? "" : "s"}`;
@@ -174,6 +175,8 @@ function FillBlankQuestion({
           const m = seg.match(/^\{\{(\w+)\}\}$/);
           if (m) {
             const blankId = m[1];
+            // Number the blank for the label rather than exposing the raw id.
+            const blankNum = segments.slice(0, i).filter((s) => /^\{\{\w+\}\}$/.test(s)).length + 1;
             const filled = !!value?.[blankId]?.trim();
             // Once locked, the whole question is graded as a unit, so every
             // blank takes the question-level correct/incorrect color.
@@ -182,7 +185,7 @@ function FillBlankQuestion({
               <input
                 key={i}
                 type="text"
-                aria-label={`Blank ${blankId}`}
+                aria-label={`Blank ${blankNum}`}
                 value={value?.[blankId] ?? ""}
                 disabled={locked}
                 onChange={(e) => onChange(blankId, e.target.value)}
@@ -221,10 +224,10 @@ function FeedbackPanel({ feedback }: { feedback: AnswerFeedback }) {
           className="text-[11px] uppercase tracking-[0.18em] mb-2"
           style={{ color: correct ? C.forest : C.error, fontFamily: FONT_MONO }}
         >
-          {correct ? "Correct" : "Not quite"}
+          {correct ? "Got it" : "Almost"}
         </div>
         <p className="text-sm leading-relaxed" style={{ color: C.espresso }}>
-          {feedback.explanation ?? (correct ? "That is the one." : "Have another look at the lesson.")}
+          {feedback.explanation ?? (correct ? "That is the one." : "The lesson covers this one. No rush, have another look.")}
         </p>
       </div>
     </div>
@@ -249,11 +252,26 @@ export default function MasteryCheck() {
   const [step, setStep] = useState(0);
   const [responses, setResponses] = useState<CheckResponses>({});
   const [feedback, setFeedback] = useState<Record<string, AnswerFeedback>>({});
-  const [gradingAnswer, setGradingAnswer] = useState(false);
+  // The id of the question currently being graded (null when idle). Keyed by id,
+  // not a global boolean, so an in-flight grade never dims or locks a sibling
+  // question the learner navigated to while the network call was still open.
+  const [gradingId, setGradingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  // True while this component is mounted. Async handlers (grade, submit) can
+  // resolve after the learner has navigated away; guarding setState on this ref
+  // avoids React's "update on an unmounted component" warning and stray writes
+  // into a dead tree (Executor H1).
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => {
+      aliveRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -292,17 +310,42 @@ export default function MasteryCheck() {
   // final score is computed independently in submit_mastery_check.
   async function gradeCurrent() {
     if (!current) return;
-    const response = responses[current.id];
+    // One grade at a time. Without this guard a double-click (or Enter held)
+    // fires two overlapping requests against the same question (Contrarian #3).
+    if (gradingId !== null) return;
+    // Capture the question being graded so the result is always written back to
+    // the right id even if the learner navigates away mid-grade.
+    const q = current;
+    const response = responses[q.id];
     if (response === undefined) return;
-    setGradingAnswer(true);
+    setGradingId(q.id);
     setError(null);
-    const fb = await checkMasteryAnswer(current.id, response);
-    setGradingAnswer(false);
-    if (!fb) {
-      setError("Could not check that answer. Please try again.");
-      return;
+    // Hold the timeout id so we can clear it the moment the grade resolves,
+    // instead of leaving a 15s timer running (and rejecting into nothing) after
+    // every successful check (Executor H1).
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      // Race the grade against a timeout so a hung request can never freeze the
+      // whole stepper (nav stays disabled while gradingId is set). On timeout we
+      // reject into the catch below, which clears gradingId in finally.
+      const fb = await Promise.race([
+        checkMasteryAnswer(q.id, response),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new Error("grade-timeout")), 15000);
+        }),
+      ]);
+      if (!aliveRef.current) return;
+      if (!fb) {
+        setError("Could not check that answer. Please try again.");
+        return;
+      }
+      setFeedback((prev) => ({ ...prev, [q.id]: fb }));
+    } catch {
+      if (aliveRef.current) setError("Could not check that answer. Please try again.");
+    } finally {
+      if (timer) clearTimeout(timer);
+      if (aliveRef.current) setGradingId(null);
     }
-    setFeedback((prev) => ({ ...prev, [current.id]: fb }));
   }
 
   async function handleSubmit() {
@@ -310,6 +353,7 @@ export default function MasteryCheck() {
     setSubmitting(true);
     setError(null);
     const res = await submitMasteryCheck(payload.check.id, responses);
+    if (!aliveRef.current) return;
     setSubmitting(false);
     if (!res.ok) {
       setError(res.error);
@@ -320,7 +364,9 @@ export default function MasteryCheck() {
     if (res.result.passed && !rm) {
       setShowConfetti(true);
       playCompletionChime();
-      setTimeout(() => setShowConfetti(false), 3000);
+      setTimeout(() => {
+        if (aliveRef.current) setShowConfetti(false);
+      }, 3000);
     }
   }
 
@@ -330,6 +376,9 @@ export default function MasteryCheck() {
     setStep(0);
     setResult(null);
     setError(null);
+    // Clear any leftover in-flight grading id so the fresh attempt never starts
+    // with navigation frozen by a stale isGrading (Executor MED).
+    setGradingId(null);
     setPhase("running");
   }
 
@@ -354,7 +403,7 @@ export default function MasteryCheck() {
             className="font-serif text-3xl"
             style={{ color: C.umber, fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT) }}
           >
-            Check not found.
+            We couldn't find that check.
           </p>
           <a href="/app" className={`inline-block mt-6 text-sm underline ${FOCUS_RING}`} style={{ color: C.orangeInk }}>
             ← Back to dashboard
@@ -380,7 +429,7 @@ export default function MasteryCheck() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: dur.base, ease: ease.ink }}
         >
-          <MonoLabel>{passed ? "Passed" : "Not yet"}</MonoLabel>
+          <MonoLabel>{passed ? "Nicely done" : "Keep going"}</MonoLabel>
           <h1
             className="font-serif"
             style={{
@@ -391,14 +440,25 @@ export default function MasteryCheck() {
               fontVariationSettings: displayFV(120, DISPLAY_WEIGHT_SOFT),
             }}
           >
-            {passed ? "You aced it." : "Almost there."}
+            {passed ? "You knew this." : "Almost there."}
           </h1>
           <p className="mt-5 text-lg leading-relaxed" style={{ color: C.umber }}>
-            You answered {result.correct} of {result.total} correctly ({scorePct}%).
             {passed
-              ? " That clears the bar."
-              : ` You need ${thresholdPct}% to pass. Review the lessons and try again.`}
+              ? "On to the next one."
+              : "Have a look at the lessons and try again whenever you like."}
           </p>
+          <p className="mt-3 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+            {result.correct} of {result.total} correct · {scorePct}%
+          </p>
+          {/* On a miss, lead with reassurance, not the bar they fell short of: the
+              threshold framed as a gotcha reads like a grade report to an anxious
+              learner (Outsider MED). The lessons are the path forward, not a
+              punishment. */}
+          {!passed && (
+            <p className="mt-2 text-xs" style={{ color: C.umber }}>
+              You needed {thresholdPct}% to skip these. No problem, the lessons walk you right through it.
+            </p>
+          )}
 
           {passed && (
             <div className="mt-8 grid gap-3">
@@ -418,7 +478,7 @@ export default function MasteryCheck() {
                   className="flex items-center justify-between px-5 py-4 rounded-2xl"
                   style={{ backgroundColor: C.surface, border: `1px solid ${C.hairline}` }}
                 >
-                  <span className="text-base" style={{ color: C.ink }}>Lessons cleared</span>
+                  <span className="text-base" style={{ color: C.ink }}>Lessons you can skip now</span>
                   <span className="font-medium" style={{ color: C.forest, fontFamily: FONT_MONO }}>
                     {result.lessons_cleared}
                   </span>
@@ -459,7 +519,7 @@ export default function MasteryCheck() {
             )}
             {!passed && result.locked && (
               <span className="text-sm" style={{ color: C.umber }}>
-                You can retake this {untilLabel(result.locked_until)}.
+                You can try this again {untilLabel(result.locked_until)}.
               </span>
             )}
           </div>
@@ -477,7 +537,7 @@ export default function MasteryCheck() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: dur.base, ease: ease.ink }}
         >
-          <MonoLabel>Mastery check · {check.scope}</MonoLabel>
+          <MonoLabel>Quick check</MonoLabel>
           <h1
             className="font-serif"
             style={{
@@ -507,6 +567,13 @@ export default function MasteryCheck() {
             </div>
           )}
 
+          {!locked && !status.already_passed && (
+            <p className="mt-6 text-base leading-relaxed" style={{ color: C.umber, maxWidth: 480 }}>
+              This is optional. If you don't pass, nothing you've completed is lost. You can simply
+              learn the lessons, or try again whenever you like.
+            </p>
+          )}
+
           <ul className="mt-8 space-y-2.5 text-base" style={{ color: C.ink }}>
             <li className="flex items-center gap-3">
               <span style={{ color: C.orangeInk, fontFamily: FONT_MONO }}>{total}</span>
@@ -514,20 +581,14 @@ export default function MasteryCheck() {
             </li>
             <li className="flex items-center gap-3">
               <span style={{ color: C.orangeInk, fontFamily: FONT_MONO }}>{thresholdPct}%</span>
-              to pass
+              to skip these lessons
             </li>
-            {status.attempts > 0 && (
-              <li className="flex items-center gap-3">
-                <span style={{ color: C.umber, fontFamily: FONT_MONO }}>{status.attempts}</span>
-                previous attempt{status.attempts === 1 ? "" : "s"}
-              </li>
-            )}
           </ul>
 
           <div className="mt-10">
             {locked ? (
               <p className="text-base" style={{ color: C.umber }}>
-                This check is cooling down. You can take it {untilLabel(status.locked_until)}.
+                Take a breather. You can try this again {untilLabel(status.locked_until)}.
               </p>
             ) : (
               <button
@@ -536,7 +597,7 @@ export default function MasteryCheck() {
                 className={`${PILL} ${FOCUS_RING} cursor-pointer disabled:opacity-50`}
                 style={{ backgroundColor: C.ink, color: C.paper }}
               >
-                Begin check →
+                Try the questions →
               </button>
             )}
           </div>
@@ -549,6 +610,13 @@ export default function MasteryCheck() {
   const isLast = step === total - 1;
   const currentFeedback = current ? feedback[current.id] : undefined;
   const isGraded = !!currentFeedback;
+  // A grade is in flight (any question). We use it to freeze navigation so a
+  // learner cannot jump to a sibling question while a network grade is open.
+  const isGrading = gradingId !== null;
+  // The current question is the one being graded right now.
+  const currentIsGrading = !!current && gradingId === current.id;
+  // First question still missing an answer, for the last-step safety hint.
+  const firstUnansweredStep = questions.findIndex((q) => !answered(q));
   return (
     <Frame>
       {/* Progress */}
@@ -589,7 +657,7 @@ export default function MasteryCheck() {
               question={current}
               value={responses[current.id] as string | undefined}
               onChange={(optionId) => setResponse(current.id, optionId)}
-              locked={isGraded}
+              locked={isGraded || currentIsGrading}
               feedback={currentFeedback}
             />
           )}
@@ -601,7 +669,7 @@ export default function MasteryCheck() {
                 const prev = (responses[current.id] as Record<string, string> | undefined) ?? {};
                 setResponse(current.id, { ...prev, [blankId]: text });
               }}
-              locked={isGraded}
+              locked={isGraded || currentIsGrading}
               feedback={currentFeedback}
             />
           )}
@@ -615,11 +683,27 @@ export default function MasteryCheck() {
         </p>
       )}
 
+      {/* If the learner is on the last question but somehow left an earlier one
+          blank, tell them exactly which and offer a jump, so the submit button
+          is never disabled with no visible reason. */}
+      {isLast && !allAnswered && firstUnansweredStep >= 0 && (
+        <p className="mt-6 text-sm" style={{ color: C.umber }}>
+          A question still needs an answer.{" "}
+          <button
+            onClick={() => setStep(firstUnansweredStep)}
+            className={`font-medium underline underline-offset-2 ${FOCUS_RING} cursor-pointer`}
+            style={{ color: C.orangeInk }}
+          >
+            Go to question {firstUnansweredStep + 1} →
+          </button>
+        </p>
+      )}
+
       {/* Nav */}
       <div className="mt-12 pt-8 flex items-center justify-between gap-4" style={{ borderTop: `1px solid ${C.hairline}` }}>
         <button
           onClick={() => setStep((s) => Math.max(0, s - 1))}
-          disabled={step === 0}
+          disabled={step === 0 || isGrading}
           className={`text-sm font-medium ${FOCUS_RING} disabled:opacity-0`}
           style={{ color: C.umber }}
         >
@@ -629,26 +713,27 @@ export default function MasteryCheck() {
         {!isGraded ? (
           <motion.button
             onClick={gradeCurrent}
-            disabled={!answered(current) || gradingAnswer}
+            disabled={!answered(current) || isGrading}
             whileTap={rm ? undefined : { scale: 0.97 }}
             className={`${PILL} ${FOCUS_RING} cursor-pointer disabled:opacity-50`}
             style={{ backgroundColor: C.ink, color: C.paper }}
           >
-            {gradingAnswer ? "Checking…" : "Submit answer"}
+            {currentIsGrading ? "Checking…" : "Check my answer"}
           </motion.button>
         ) : isLast ? (
           <motion.button
             onClick={handleSubmit}
-            disabled={!allAnswered || submitting}
+            disabled={!allAnswered || submitting || isGrading}
             whileTap={rm ? undefined : { scale: 0.97 }}
             className={`${PILL} ${FOCUS_RING} cursor-pointer disabled:opacity-50`}
             style={{ backgroundColor: C.ink, color: C.paper }}
           >
-            {submitting ? "Grading…" : "See results"}
+            {submitting ? "Adding up your score…" : "See how it went"}
           </motion.button>
         ) : (
           <motion.button
             onClick={() => setStep((s) => Math.min(total - 1, s + 1))}
+            disabled={isGrading}
             whileTap={rm ? undefined : { scale: 0.97 }}
             className={`${PILL} ${FOCUS_RING} cursor-pointer disabled:opacity-50`}
             style={{ backgroundColor: C.ink, color: C.paper }}

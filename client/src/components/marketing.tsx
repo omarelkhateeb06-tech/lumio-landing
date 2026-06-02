@@ -138,6 +138,8 @@ export function PillEmailForm({
           onChange={(e) => onEmailChange(e.target.value)}
           placeholder="you@example.com"
           aria-label="Email address"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error && id ? `${id}-error` : undefined}
           disabled={submitting}
           className="flex-1 min-w-0 bg-transparent px-5 py-3 text-base focus:outline-none disabled:opacity-50"
           style={{ color: C.ink }}
@@ -152,7 +154,7 @@ export function PillEmailForm({
         </button>
       </form>
       {error && (
-        <p className="text-xs mt-2 text-center" style={{ color: C.error }} role="alert">
+        <p id={id ? `${id}-error` : undefined} className="text-xs mt-2 text-center" style={{ color: C.error }} role="alert">
           {error}
         </p>
       )}

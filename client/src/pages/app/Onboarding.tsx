@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
@@ -70,7 +70,8 @@ const STEPS: Step[] = [
       { value: "legal", label: "Legal", sub: "Law, compliance, or contracts" },
       { value: "education", label: "Education", sub: "Teaching, training, or academia" },
       { value: "finance", label: "Finance", sub: "Accounting, banking, or analysis" },
-      { value: "operations", label: "Operations", sub: "Process, logistics, or admin" },
+      { value: "hr", label: "HR", sub: "People, recruiting, or HR ops" },
+      { value: "customer-service", label: "Customer service", sub: "Support, success, or service" },
     ],
   },
   {
@@ -120,16 +121,60 @@ function SingleChoice({
   value: string | undefined;
   onSelect: (v: string) => void;
 }) {
+  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  // ARIA radiogroup keyboard contract: arrows move selection (and focus) and the
+  // group is a single tab stop (roving tabindex). The selected option is the tab
+  // stop; with nothing selected yet, the first option is.
+  const selectedIndex = step.choices.findIndex((c) => c.value === value);
+
+  function move(from: number, dir: 1 | -1) {
+    const n = step.choices.length;
+    const next = (from + dir + n) % n;
+    onSelect(step.choices[next].value);
+    btnRefs.current[next]?.focus();
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    switch (e.key) {
+      case "ArrowDown":
+      case "ArrowRight":
+        e.preventDefault();
+        move(index, 1);
+        break;
+      case "ArrowUp":
+      case "ArrowLeft":
+        e.preventDefault();
+        move(index, -1);
+        break;
+      case "Home":
+        e.preventDefault();
+        onSelect(step.choices[0].value);
+        btnRefs.current[0]?.focus();
+        break;
+      case "End": {
+        e.preventDefault();
+        const last = step.choices.length - 1;
+        onSelect(step.choices[last].value);
+        btnRefs.current[last]?.focus();
+        break;
+      }
+    }
+  }
+
   return (
     <div role="radiogroup" aria-label={step.question} className="grid gap-3">
-      {step.choices.map((c) => {
+      {step.choices.map((c, i) => {
         const selected = value === c.value;
+        const isTabStop = selectedIndex === -1 ? i === 0 : selected;
         return (
           <button
             key={c.value}
+            ref={(el) => { btnRefs.current[i] = el; }}
             type="button"
             role="radio"
             aria-checked={selected}
+            tabIndex={isTabStop ? 0 : -1}
+            onKeyDown={(e) => onKeyDown(e, i)}
             onClick={() => onSelect(c.value)}
             className={`text-left rounded-2xl px-5 py-4 cursor-pointer transition-colors ${FOCUS_RING}`}
             style={{
@@ -261,7 +306,15 @@ export default function Onboarding() {
   }
 
   if (checking) {
-    return <div style={{ backgroundColor: C.paper, minHeight: "100vh" }} />;
+    // A blank screen tells a screen reader nothing; announce the wait so the
+    // page isn't silent until content appears (Executor).
+    return (
+      <div style={{ backgroundColor: C.paper, minHeight: "100vh" }}>
+        <p className="sr-only" role="status" aria-live="polite">
+          Loading your account.
+        </p>
+      </div>
+    );
   }
 
   return (

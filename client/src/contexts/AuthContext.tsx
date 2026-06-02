@@ -10,7 +10,7 @@ type AuthContextValue = {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signInWithMagicLink: (email: string) => Promise<{ ok: boolean; error?: string; status?: number }>;
+  signInWithMagicLink: (email: string, redirectPath?: string) => Promise<{ ok: boolean; error?: string; status?: number }>;
   signOut: () => Promise<void>;
 };
 
@@ -45,12 +45,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   async function signInWithMagicLink(
-    email: string
+    email: string,
+    redirectPath?: string
   ): Promise<{ ok: boolean; error?: string; status?: number }> {
+    // Only honor internal, same-origin paths so a cert-intent signup lands on
+    // that cert after auth (Executor M1) without becoming an open-redirect vector.
+    const safePath = redirectPath && redirectPath.startsWith("/") && !redirectPath.startsWith("//")
+      ? redirectPath
+      : "/app";
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: window.location.origin + "/app",
+        emailRedirectTo: window.location.origin + safePath,
       },
     });
     if (error) return { ok: false, error: error.message, status: error.status };

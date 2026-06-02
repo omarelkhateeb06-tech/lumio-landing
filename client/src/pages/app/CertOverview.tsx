@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
@@ -12,9 +12,10 @@ import {
   deriveCertStatus,
   CERT_STATUS_LABEL,
   dollars,
-  businessDaysSince,
+  certProgressPct,
+  reviewStatusMessage,
   CAPSTONE_RUBRIC,
-  REVIEW_OVERDUE_AFTER_BUSINESS_DAYS,
+  DEFAULT_MIN_WORDS,
   REVIEW_WINDOW_COPY,
   formatCertDate,
 } from "@/lib/certs";
@@ -87,6 +88,17 @@ export default function CertOverview() {
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
 
+  // Guards setState after an await once the component has unmounted. The async
+  // load effects use their own per-run `cancelled` flag; this covers the
+  // click-driven startEarning path, which has no such flag (Executor MED).
+  const aliveRef = useRef(true);
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => {
+      aliveRef.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -149,7 +161,7 @@ export default function CertOverview() {
   const total = lessons.length;
   const completedCount = lessons.filter((l) => l.completed).length;
   const allComplete = total > 0 && completedCount === total;
-  const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+  const pct = certProgressPct(completedCount, total);
   const nextLesson = lessons.find((l) => !l.completed) ?? null;
   const status = deriveCertStatus(userCert, submission, completedCount);
 
@@ -157,14 +169,19 @@ export default function CertOverview() {
     if (!cert) return;
     setEnrolling(true);
     const res = await enrollInCert(cert.id);
+    if (!aliveRef.current) return;
     setEnrolling(false);
     if (!res.ok) {
       toast.error("Could not start the certificate. Please try again.");
       return;
     }
     const target = nextLesson ?? lessons[0];
-    if (target) navigate(`/lesson/${target.slug}`);
-    else setUserCert(await getUserCert(cert.id));
+    if (target) {
+      navigate(`/lesson/${target.slug}`);
+    } else {
+      const uc = await getUserCert(cert.id);
+      if (aliveRef.current) setUserCert(uc);
+    }
   }
 
   // Stripe Payment Links mark paid_at out of band (an admin sets it), so a
@@ -292,21 +309,23 @@ export default function CertOverview() {
               in exactly one place (the status-aware ActionPanel) at a time. */}
           {status !== "submitted" && status !== "needs-revision" && status !== "certified" && (
             <>
-              {/* Dream outcome before the number (Hormozi H2 + Contrarian HIGH):
-                  at the buy moment the cert sells standing, not relief. "Not behind"
-                  keeps the buyer in a deficit identity right where money and public
-                  reputation are on the line, so we lead with what they can do, not
-                  what they were afraid of. Not a fabricated claim. */}
+              {/* The buyer is already on the cert page, so the vivid cold-traffic
+                  scene lives on the landing and isn't repeated here verbatim (Rubin
+                  HIGH-2). Here, the quieter present-tense statement of what they walk
+                  away with. The "real person reviews" promise is made once, lower
+                  down, so it isn't restated here too (Rubin HIGH). */}
               <p className="mt-6 text-base leading-relaxed" style={{ color: C.espresso, maxWidth: 560 }}>
-                Proof you can put in front of your manager that you ship real work with AI, not just talk
-                about it. A real person reviews one real task from your job, not a machine grading a quiz.
+                This is the part you point to: a finished, reviewed piece of real work from your job, and
+                a link you can send your manager or bring to your next review.
               </p>
-              {/* Reframe the honesty, don't bury it (Contrarian MED): accreditation
-                  is the wrong axis for "can you use AI." Turn the admission into the
-                  differentiator instead of a pre-price apology. Still no fabrication. */}
+              {/* State what it is plainly, on its own merit, rather than arguing
+                  against college degrees, which only plants the doubt it tries to
+                  dispel in an anxious buyer (Naval MED-3, Outsider HIGH). The "real
+                  person reviews it" promise is deliberately NOT repeated here -- it
+                  is made once, loudly, in the guarantee box below, so the buy surface
+                  doesn't say it five times (Naval HIGH-1, Rubin HIGH). */}
               <p className="mt-3 text-sm leading-relaxed" style={{ color: C.umber, maxWidth: 520 }}>
-                Not a college credential, and better for this. Accredited courses test what you memorized.
-                Here, a real person confirms you did real work from your actual job.
+                It's concrete: a real task from your actual job, done with AI.
               </p>
               <div className="mt-5 flex items-baseline gap-2">
                 <span className="text-2xl font-medium" style={{ color: C.espresso, fontFamily: FONT_MONO }}>
@@ -316,15 +335,39 @@ export default function CertOverview() {
                   one time
                 </span>
               </div>
-              {/* Anchor the price (Hormozi H1): a number alone has nothing to weigh
-                  against. The honest, durable contrast is structural, not a brand or
-                  a figure we would have to keep accurate: subscription forever versus
-                  pay once. The "real person" promise is made once below, in the
-                  guarantee, so it isn't restated five ways here (Rubin HIGH). */}
-              <p className="mt-2 text-sm leading-relaxed" style={{ color: C.inkSoft, maxWidth: 520 }}>
-                A subscription learning site charges you every year, whether you use it or not. The lessons
-                here are free. You pay once, when you're ready, and only if you want the certificate.
+              {/* Honest, founder-authorized urgency (Hormozi H3): every cert is
+                  seeded at $49 and rises to $99 after the first 50 certifications.
+                  This is real scarcity tied to a real pricing plan, not an invented
+                  countdown. */}
+              <p className="mt-2 text-sm font-medium leading-relaxed" style={{ color: C.orangeInk, maxWidth: 520 }}>
+                Founding price. It goes to $99 after the first 50 certifications.
               </p>
+              {/* Anchor the price against something the buyer already prices in
+                  their head (Hormozi H2): an hour with a career coach runs well past
+                  this, and here the lessons are free and you pay once. The "real
+                  person" promise is made once below, in the guarantee, so it isn't
+                  restated five ways here (Rubin HIGH). */}
+              <p className="mt-2 text-sm leading-relaxed" style={{ color: C.inkSoft, maxWidth: 520 }}>
+                That's less than one hour with a career coach. The lessons here are free, and you pay once,
+                when you're ready, and only if you want the certificate. No subscription.
+              </p>
+              {/* C3: concentrate the offer at the buy point. The skill outcomes
+                  have their own section below; this is the lighter "what the one
+                  payment actually buys you" stack, so a hesitating buyer sees the
+                  whole thing they're getting in one glance next to the number. */}
+              <ul className="mt-4 space-y-1.5" style={{ maxWidth: 520 }}>
+                {[
+                  "Every lesson in this track, free to learn",
+                  "One real project from your actual job",
+                  "A certificate with a link anyone can open and check",
+                  "Pay once, no subscription",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: C.espresso }}>
+                    <span aria-hidden="true" style={{ color: C.forest, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    <span style={{ lineHeight: 1.5 }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
               {/* Risk reversal, given real visual weight (Hormozi): a named,
                   bordered guarantee reads as a promise, not fine print. */}
               <div
@@ -334,18 +377,28 @@ export default function CertOverview() {
                 <p className="text-sm font-medium" style={{ color: C.espresso }}>
                   Our guarantee
                 </p>
+                {/* Bound the promise: good-faith revision help, plus a real,
+                    founder-authorized money-back backstop. The refund is bounded to
+                    "after your first revision" so it stays a finite contract, not an
+                    unlimited re-review loop (Hormozi H1; Contrarian MED-2). */}
                 <p className="mt-2 text-sm leading-relaxed" style={{ color: C.umber }}>
-                  If your project isn't approved the first time, we tell you exactly what to fix and review it
-                  again, free. Keep going and we'll keep reviewing. You keep your money and you keep working
-                  toward the certificate.
+                  If your project isn't approved the first time, we tell you exactly what to fix and
+                  review your revision again, free. And if it still isn't approved after that first
+                  revision, we'll refund you. No questions.
                 </p>
               </div>
-              {/* One honest, gentle reason to not put it off, without restating the
-                  "reviewed by a real person" promise yet again (Rubin HIGH). The
-                  review window copy is single-sourced. */}
-              <p className="mt-3 text-sm leading-relaxed" style={{ color: C.inkSoft, maxWidth: 520 }}>
-                You'll hear back {REVIEW_WINDOW_COPY}. The earlier you submit, the sooner that is.
-              </p>
+              {/* Speed to result, honestly anchored (Hormozi HIGH-2): give the buyer
+                  a sense of how far away the certificate is, using the real lesson
+                  count rather than an invented "two weeks", then tie the final step
+                  to the single-sourced review window so it can't drift into an
+                  overpromise. */}
+              {total > 0 && (
+                <p className="mt-3 text-sm leading-relaxed" style={{ color: C.inkSoft, maxWidth: 520 }}>
+                  It's {total} short {total === 1 ? "lesson" : "lessons"}, a few minutes a day, then one
+                  real project. Submit it and you'll hear back {REVIEW_WINDOW_COPY}. The sooner you
+                  submit, the sooner it's yours.
+                </p>
+              )}
             </>
           )}
         </motion.div>
@@ -369,24 +422,42 @@ export default function CertOverview() {
         />
 
         {/* ── What you'll learn ───────────────────────────────────────────── */}
-        {cert.outcomes.length > 0 && (
-          <Section title="What you'll walk away with" rm={rm} delay={0.2}>
-            <p className="text-sm mb-4" style={{ color: C.umber }}>
-              By the time you submit your final project, you'll be able to:
+        {/* Always render the value-stack section. If a track has no outcomes listed
+            yet, show one honest generic line rather than silently dropping the
+            entire "here's what you get" block (Hormozi L6). */}
+        <Section title="What you'll walk away with" rm={rm} delay={0.2}>
+          {cert.outcomes.length > 0 ? (
+            <>
+              <p className="text-sm mb-4" style={{ color: C.umber }}>
+                By the time you submit your final project, you'll be able to:
+              </p>
+              <ul className="space-y-3">
+                {cert.outcomes.map((o, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm" style={{ color: C.espresso }}>
+                    <span aria-hidden="true" style={{ color: C.forest, flexShrink: 0, marginTop: 1 }}>✓</span>
+                    <span style={{ lineHeight: 1.55 }}>{o}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="text-sm" style={{ color: C.espresso, lineHeight: 1.55 }}>
+              You'll finish with one real, reviewed piece of AI work from your own job, and something real to show for it.
             </p>
-            <ul className="space-y-3">
-              {cert.outcomes.map((o, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm" style={{ color: C.espresso }}>
-                  <span aria-hidden="true" style={{ color: C.forest, flexShrink: 0, marginTop: 1 }}>✓</span>
-                  <span style={{ lineHeight: 1.55 }}>{o}</span>
-                </li>
-              ))}
-            </ul>
-          </Section>
-        )}
+          )}
+        </Section>
 
         {/* ── Lessons included ────────────────────────────────────────────── */}
         <Section title="Lessons included" rm={rm} delay={0.28}>
+          {/* Reconcile the free habit with the paid finish line: a learner who has
+              been doing daily lessons should see those count here, so the free
+              lessons read as the on-ramp they're sold as, not a separate set
+              starting from zero (First-Principles HIGH-2). */}
+          {completedCount > 0 && (
+            <p className="text-sm mb-4" style={{ color: C.forest }}>
+              You've already finished {completedCount} of these {total}. Your daily lessons count here.
+            </p>
+          )}
           <div
             className="rounded-2xl overflow-hidden"
             style={{ border: `1px solid ${C.hairline}`, backgroundColor: C.paperHi }}
@@ -451,11 +522,14 @@ export default function CertOverview() {
             <p className="text-sm leading-relaxed" style={{ color: C.espresso }}>
               {cert.capstone_spec.description}
             </p>
-            {cert.capstone_spec.min_words != null && (
-              <p className="mt-3 text-xs" style={{ color: C.inkSoft }}>
-                Aim for about {cert.capstone_spec.min_words} words, a few short paragraphs. This is not an essay test.
-              </p>
-            )}
+            {/* State the real word floor before paying, using the same default the
+                submit page enforces, so a buyer is never surprised by a 200-word
+                gate the overview didn't mention (Contrarian MED-3). "At least", not
+                "about", so the wording matches the actual minimum (Naval/Outsider). */}
+            <p className="mt-3 text-xs" style={{ color: C.inkSoft }}>
+              Plan for at least {cert.capstone_spec.min_words ?? DEFAULT_MIN_WORDS} words, a few short
+              paragraphs. This is not an essay test, just enough to show what you did.
+            </p>
             {/* What passing looks like, stated plainly before you pay (Hormozi:
                 a visible bar turns "will I pass?" dread into a checklist). Shared
                 CAPSTONE_RUBRIC so the bar shown here matches the submit page. */}
@@ -607,7 +681,10 @@ function ActionPanel({
           className={`inline-block ${PILL} ${FOCUS_RING}`}
           style={{ backgroundColor: C.orange, color: C.ink, opacity: enrolling ? 0.6 : 1 }}
         >
-          {enrolling ? "Starting…" : "Start earning →"}
+          {/* "Start earning" implies the lessons cost something. They don't, and the
+              free-to-learn truth is the friction-killer for an anxious buyer who
+              landed straight on a price (Hormozi LOW-7, Outsider HIGH-2). */}
+          {enrolling ? "Starting…" : "Start learning, free →"}
         </button>
       )}
 
@@ -662,7 +739,7 @@ function ActionPanel({
       {status === "in-progress" && allComplete && !checkoutPending && (
         <div>
           <p className="text-sm mb-4" style={{ color: C.espresso }}>
-            You finished every lesson. One step left: a real person reviews your final project, then the certificate is yours.
+            You finished every lesson. One step left: submit your final project for review, then the certificate is yours.
           </p>
           {cert.stripe_payment_link ? (
             /* Lead the click with the outcome, not the cost (Hormozi H4). The price
@@ -678,7 +755,7 @@ function ActionPanel({
                 Get my certificate →
               </a>
               <span className="text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
-                {dollars(cert.price_cents)} one time, no subscription
+                {dollars(cert.price_cents)} one time
               </span>
             </div>
           ) : (
@@ -686,14 +763,17 @@ function ActionPanel({
               Checkout is not available yet. Check back soon.
             </p>
           )}
-          {/* Cross-device payers and anyone past the local checkout window land
-              here with only a pay button. A real person confirms payment by hand,
-              so reassure plainly about a double charge first (Outsider HIGH), then
-              set the honest expectation on timing. */}
+          {/* This block renders to anyone who finished the lessons but has not
+              started checkout (checkoutPending is false), so it must NOT assert
+              payment as a fact -- doing so told non-payers their payment was
+              "received," which is false and reads as chargeback bait (Contrarian
+              H1 regression). Keep it conditional: address only the learner who
+              actually paid in a past session, and never claim receipt. */}
           {cert.stripe_payment_link && (
             <p className="mt-4 text-sm" style={{ color: C.umber }}>
-              Already paid? You won't be charged again. We confirm payments by hand, so it can take up to
-              a day to show here. Refresh this page, and reach us if it has been longer.
+              Already paid in a past session? We confirm each payment by hand, so it can take up to a day
+              to show here, and you won't be charged twice. Refresh this page, and reach us if it has been
+              longer.
             </p>
           )}
         </div>
@@ -723,11 +803,7 @@ function ActionPanel({
               Without this branch an approved learner sees "under review" until that
               stamp lands (Executor MED). Speak to the real, good news instead. */}
           <p className="text-sm" style={{ color: C.espresso }}>
-            {submission.status === "approved"
-              ? "Your final project was approved. Your certificate is being finalized and will appear here shortly."
-              : businessDaysSince(submission.submitted_at) >= REVIEW_OVERDUE_AFTER_BUSINESS_DAYS
-                ? "Your final project is still with our reviewer. Thanks for your patience, we have not forgotten it. If you would like an update, just reach out."
-                : `Your final project is under review. A real person reviews every project, ${REVIEW_WINDOW_COPY}.`}
+            {reviewStatusMessage(submission.status, submission.submitted_at, "overview")}
           </p>
           {submission.submitted_at && (
             <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
@@ -788,20 +864,59 @@ function ActionPanel({
 
 function CertifiedPanel({ cert, userCert }: { cert: Cert; userCert: UserCert }) {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
+  // The canonical link a holder shows a manager to verify — kept clean, no
+  // tracking params, so it reads as the credential itself (display + copy below).
   const verifyUrl = `${origin}/verify/${userCert.verify_token}`;
+  // The broadcast-share variant. A stranger reaching the Verify page from a feed
+  // post or forwarded message is an inbound source worth attributing, so the win
+  // moment doesn't leak its origin (Expansionist HIGH). Mirrors the ?ref=share&cert=
+  // convention used by Verify.tsx's ShareCredentialButton.
+  const shareUrl = `${verifyUrl}?ref=share&cert=${encodeURIComponent(cert.slug)}`;
 
   // A feed share posts the public Verify page where a network actually sees it.
   // We deliberately use share-offsite (which works today) instead of LinkedIn's
   // add-to-profile flow, which silently fails without a real organizationId.
-  const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`;
+  const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
 
   // Pre-written, on-brand post so sharing is one tap, not a blank box. The win is
   // the emotional peak ("I'm not behind anymore") — make it effortless to voice.
-  const sharePost = `I just earned my ${cert.name} from Lumio. Proof I can actually use AI at work, reviewed by a real person. Verify it here: ${verifyUrl}`;
+  // H1: scope the claim to what was actually verified -- one real task, reviewed
+  // by a person -- rather than the broad "proof I can use AI at work," which
+  // overclaims what one certificate attests and reads as less credible.
+  const sharePost = `I just earned my ${cert.name} from Lumio. I did one real task from my job with AI and a real person reviewed it. Verify it here: ${shareUrl}`;
 
   // One-tap share to X, the highest-velocity channel, reusing the same on-brand
   // copy. Pure intent URL, zero infra (Expansionist).
   const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(sharePost)}`;
+
+  // The highest-trust word-of-mouth moment for an anxious-at-work buyer is right
+  // after they earn it: a 1:1 nudge to a named coworker, not just a broadcast
+  // post (Expansionist MED-3). A mailto needs zero infra, and ?ref=invite flows
+  // straight through the existing signupSource attribution.
+  const inviteSubject = "This helped me with AI at work";
+  const inviteBody = `I just earned my ${cert.name} from Lumio. The lessons are free and you only pay if you want the certificate. Start here: ${origin}/?ref=invite`;
+  const inviteHref = `mailto:?subject=${encodeURIComponent(inviteSubject)}&body=${encodeURIComponent(inviteBody)}`;
+
+  // On phones (where this win is most often seen), the OS share sheet beats
+  // picking a single network: one tap reaches whatever the learner actually uses.
+  // Render it only when the API exists so desktop isn't shown a dead button
+  // (Expansionist H3). navigator.share must be called from a user gesture, which
+  // the button click satisfies.
+  const [canNativeShare, setCanNativeShare] = useState(false);
+  useEffect(() => {
+    setCanNativeShare(
+      typeof navigator !== "undefined" && typeof navigator.share === "function",
+    );
+  }, []);
+
+  function shareNative() {
+    if (typeof navigator === "undefined" || typeof navigator.share !== "function") return;
+    navigator
+      .share({ title: `${cert.name} from Lumio`, text: sharePost, url: shareUrl })
+      .catch(() => {
+        // User dismissed the sheet or the platform rejected it; nothing to do.
+      });
+  }
 
   function copyVerify() {
     navigator.clipboard.writeText(verifyUrl).then(
@@ -826,6 +941,16 @@ function CertifiedPanel({ cert, userCert }: { cert: Cert; userCert: UserCert }) 
         </span>
       </div>
       <div className="flex items-center gap-3 flex-wrap">
+        {canNativeShare && (
+          <button
+            type="button"
+            onClick={shareNative}
+            className={`inline-block ${PILL} ${FOCUS_RING}`}
+            style={{ backgroundColor: C.orange, color: C.ink }}
+          >
+            Share →
+          </button>
+        )}
         <a
           href={linkedInShareUrl}
           target="_blank"
@@ -870,14 +995,24 @@ function CertifiedPanel({ cert, userCert }: { cert: Cert; userCert: UserCert }) 
       {/* Capture intent at the peak (Expansionist). Frame the next cert as range,
           not catch-up: the buyer just resolved "I'm not behind," so a second cert
           can't sell that same relief again. It sells reach across their work
-          (Contrarian #2). Zero-infra nudge to the hub. */}
-      <a
-        href="/app"
-        className={`inline-block mt-5 text-sm font-medium ${FOCUS_RING}`}
-        style={{ color: C.orangeInk }}
-      >
-        Prove it in another part of your work →
-      </a>
+          (Contrarian #2). "Earn one" rather than "prove it" again, which reads as
+          one more test to pass right after they just passed (Outsider LOW). */}
+      <div className="mt-5 flex flex-col items-start gap-3">
+        <a
+          href="/app"
+          className={`inline-block text-sm font-medium ${FOCUS_RING}`}
+          style={{ color: C.orangeInk }}
+        >
+          Earn one for another part of your work →
+        </a>
+        <a
+          href={inviteHref}
+          className={`inline-block text-sm font-medium ${FOCUS_RING}`}
+          style={{ color: C.umber }}
+        >
+          Tell a coworker who'd want this →
+        </a>
+      </div>
     </div>
   );
 }

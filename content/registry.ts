@@ -49,6 +49,8 @@ export const TAGS: TagDef[] = [
   { slug: "education", kind: "industry", label: "Education" },
   { slug: "finance", kind: "industry", label: "Finance" },
   { slug: "operations", kind: "industry", label: "Operations" },
+  { slug: "hr", kind: "industry", label: "HR" },
+  { slug: "customer-service", kind: "industry", label: "Customer service" },
 
   // ── use_case (job-to-be-done) ───────────────────────────────────────────────
   { slug: "email", kind: "use_case", label: "Email" },

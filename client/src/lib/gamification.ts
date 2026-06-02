@@ -226,8 +226,11 @@ export async function checkMasteryAnswer(
   return { correct: !!d.correct, explanation: d.explanation ?? null };
 }
 
-// Fire-and-forget: stamp today's activity so the streak advances. Safe to call
-// on dashboard load and on lesson open; idempotent per calendar day server-side.
+// Fire-and-forget: stamp today's activity. This advances the streak columns,
+// which exist solely to feed the `streak_days` badge criterion — we deliberately
+// do NOT surface a day-streak anywhere in the UI (a visible streak is a fear
+// mechanic; the badge is a quiet, optional reward). Safe to call on dashboard
+// load and lesson open; idempotent per calendar day server-side.
 export async function recordActivity(): Promise<void> {
   await supabase.rpc("record_activity");
 }

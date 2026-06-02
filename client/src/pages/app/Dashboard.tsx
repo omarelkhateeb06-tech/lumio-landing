@@ -24,7 +24,7 @@ import {
   levelCheckFor,
 } from "@/lib/gamification";
 import type { UserStats, BadgeDefinition, MasteryCheckSummary } from "@/lib/gamification";
-import { fetchDashboardCerts, CERT_STATUS_LABEL, dollars, isLessonsDoneUnpaid } from "@/lib/certs";
+import { fetchDashboardCerts, CERT_STATUS_LABEL, dollars, isLessonsDoneUnpaid, certProgressPct, LESSON_TIME_COPY } from "@/lib/certs";
 import type { CertDashboardCard } from "@/lib/certs";
 import { CERT_STATUS_TONE } from "@/lib/certStatusUi";
 import { C, FOCUS_RING, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT_SOFT, PILL } from "@/lib/theme";
@@ -704,7 +704,21 @@ function IndustryDeepDives({
 // First-login welcome card
 // ─────────────────────────────────────────────────────────────────────────────
 
-function WelcomeCard({ total, rm, onDismiss }: { total: number; rm: boolean; onDismiss: () => void }) {
+function WelcomeCard({
+  total,
+  rm,
+  onDismiss,
+  firstLessonSlug,
+}: {
+  total: number;
+  rm: boolean;
+  onDismiss: () => void;
+  // The first path lesson for this brand-new learner. When present, the welcome
+  // CTA walks them straight into it instead of just dismissing and leaving them
+  // to find the card below, so the very first action is "begin," not "close"
+  // (Outsider MED-6).
+  firstLessonSlug?: string | null;
+}) {
   return (
     <motion.div
       initial={rm ? false : { opacity: 0, y: 12 }}
@@ -715,17 +729,28 @@ function WelcomeCard({ total, rm, onDismiss }: { total: number; rm: boolean; onD
       style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
     >
       <ul className="space-y-2 text-sm" style={{ color: C.espresso, lineHeight: 1.6 }}>
-        <li>{total} short lessons. Five minutes each, in plain language.</li>
+        <li>{total} short lessons, {LESSON_TIME_COPY}, in plain language.</li>
         <li>Work through them at your own pace. No deadlines, no pressure.</li>
         <li>Mark each one complete to track your progress across every module.</li>
       </ul>
-      <button
-        onClick={onDismiss}
-        className={`mt-5 text-sm font-medium cursor-pointer ${FOCUS_RING}`}
-        style={{ color: C.orangeInk }}
-      >
-        Got it →
-      </button>
+      {firstLessonSlug ? (
+        <a
+          href={`/lesson/${firstLessonSlug}`}
+          onClick={onDismiss}
+          className={`inline-block mt-5 text-sm font-medium ${FOCUS_RING}`}
+          style={{ color: C.orangeInk }}
+        >
+          Start your first lesson →
+        </a>
+      ) : (
+        <button
+          onClick={onDismiss}
+          className={`mt-5 text-sm font-medium cursor-pointer ${FOCUS_RING}`}
+          style={{ color: C.orangeInk }}
+        >
+          Got it →
+        </button>
+      )}
     </motion.div>
   );
 }
@@ -754,6 +779,13 @@ function StatsRow({ stats, rm }: { stats: UserStats; rm: boolean }) {
         </span>
         <span className="text-sm" style={{ color: C.umber }}>points</span>
       </div>
+      {/* Say what the number is for. An unexplained score reads as manipulation to
+          the skeptical adult this product is for. Points come from several places
+          (lessons, checks, showing up), so we name them honestly as a running tally
+          of work done rather than asserting a per-lesson formula (Naval M5). */}
+      <span className="text-sm" style={{ color: C.inkSoft }}>
+        for the work you've put in
+      </span>
     </motion.div>
   );
 }
@@ -897,13 +929,14 @@ function CertWidget({
         Certificates
       </h2>
       <p className="mb-6 text-sm leading-relaxed" style={{ color: C.umber, maxWidth: 560 }}>
-        Each certificate ends with one real task from your own work. You finish it, and it becomes
-        proof you can show.
+        Each certificate ends with one real task from your own work, reviewed by a real person. Finish it
+        and you've got a link anyone can open and check, one to bring to your next review or add to your
+        portfolio, real work that shows you can run with AI.
       </p>
       <div className="grid sm:grid-cols-2 gap-4">
         {certs.map((card) => {
           const { cert, total, completedCount, status } = card;
-          const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+          const pct = certProgressPct(completedCount, total);
           // A learner who finished every lesson but has not paid is in "in-progress"
           // with a 100% bar. The plain "In progress" pill makes a done card look
           // stalled and hides that money is the only thing left. Surface a distinct
@@ -989,6 +1022,21 @@ function CertWidget({
                   {cta.label}
                 </a>
               )}
+              {/* The emotional peak ("I'm not behind anymore") is the moment to make
+                  sharing effortless, so an earned credential gets a one-click route
+                  straight to its public page from the dashboard, not just from the
+                  cert overview (Expansionist M2). */}
+              {status === "certified" && card.userCert?.verify_token && (
+                <a
+                  href={`/verify/${card.userCert.verify_token}?ref=share&cert=${encodeURIComponent(card.cert.slug)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-block mt-3 text-sm font-medium self-start ${FOCUS_RING}`}
+                  style={{ color: C.umber }}
+                >
+                  Share it →
+                </a>
+              )}
             </div>
           );
         })}
@@ -1026,8 +1074,8 @@ function CertifyCallout({ ready, rm }: { ready: CertDashboardCard | undefined; r
           and the review window live on the overview, so they aren't restated here
           (Rubin HIGH: the same promise on two screens dilutes it). */}
       <p className="mt-2 text-sm leading-relaxed" style={{ color: C.umber, maxWidth: 560 }}>
-        All that's left is the proof: a real person reviews your final project, then you earn the
-        certificate. This is the part you can show your manager.
+        All that's left is to show what you did: a real person reviews one real work task, then you earn the
+        certificate. This is the part you can point to at work.
       </p>
       <div className="mt-4 flex flex-col items-start gap-1.5">
         <a
@@ -1069,8 +1117,9 @@ export default function Dashboard() {
   useEffect(() => {
     let cancelled = false;
     // Fire-and-forget: stamp today's activity (feeds badge/activity logic
-    // server-side). We no longer surface a day-streak in the UI.
-    recordActivity();
+    // server-side). We no longer surface a day-streak in the UI. Swallow failures
+    // so a flaky network never raises an unhandled rejection (Executor LOW).
+    recordActivity().catch(() => {});
     (async () => {
       // A rejected fetch here used to leave setLoading(false) unreached, hanging
       // the learner on the skeleton forever. try/finally guarantees we always
@@ -1165,7 +1214,7 @@ export default function Dashboard() {
       : curriculum.lessons;
   const nextLesson: CurriculumLesson | null =
     orderedLessons.find((l) => !effectiveCompleted.has(l.id)) ?? null;
-  const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+  const pct = certProgressPct(completedCount, total);
 
   // Hero progress anchor: the certificate the learner is actively working
   // toward, closest to completion. The top bar tracks this achievable unit
@@ -1210,7 +1259,7 @@ export default function Dashboard() {
   const spineIsTarget = !activeCert && !!spineCert;
   const anchorTotal = spineCert ? spineCert.total : total;
   const anchorDone = spineCert ? spineCert.completedCount : completedCount;
-  const anchorPct = anchorTotal > 0 ? Math.round((anchorDone / anchorTotal) * 100) : 0;
+  const anchorPct = certProgressPct(anchorDone, anchorTotal);
 
   // "Today's lesson" must advance the exact cert the hero bar is tracking, or
   // the headline target and the primary button point at different lessons and a
@@ -1330,6 +1379,7 @@ export default function Dashboard() {
             <WelcomeCard
               total={total}
               rm={rm}
+              firstLessonSlug={todayLesson?.slug}
               onDismiss={() => {
                 localStorage.setItem("lumio_welcomed", "1");
                 setShowWelcome(false);

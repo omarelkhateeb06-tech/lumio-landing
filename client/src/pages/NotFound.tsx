@@ -1,49 +1,79 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, Home } from "lucide-react";
-import { useLocation } from "wouter";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  C,
+  FOCUS_RING,
+  FONT_MONO,
+  SKIP_LINK,
+  displayFV,
+  DISPLAY_WEIGHT_SOFT,
+  PILL,
+} from "@/lib/theme";
+import { dur, ease } from "@/lib/motion";
+import { BrandNav } from "@/components/marketing";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 404 — the catch-all route. Kept in the same paper/serif voice as the rest of
+// the app so a mistyped URL never drops the learner onto an off-brand surface.
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function NotFound() {
-  const [, setLocation] = useLocation();
+  const rm = useReducedMotion() ?? false;
 
-  const handleGoHome = () => {
-    setLocation("/");
-  };
+  const navRight = (
+    <a
+      href="/"
+      className={`text-[13px] font-medium ${FOCUS_RING}`}
+      style={{ color: C.umber, fontFamily: FONT_MONO }}
+    >
+      lumio.app
+    </a>
+  );
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-      <Card className="w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-        <CardContent className="pt-8 pb-8 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse" />
-              <AlertCircle className="relative h-16 w-16 text-red-500" />
-            </div>
+    <div style={{ backgroundColor: C.paper, minHeight: "100dvh", color: C.ink }}>
+      <a href="#main-content" className={SKIP_LINK}>Skip to content</a>
+      <BrandNav maxWidth={720} right={navRight} />
+
+      <div
+        id="main-content"
+        className="max-w-[720px] mx-auto px-6 pt-40 pb-20 md:pt-48 md:pb-28 text-center"
+      >
+        <motion.div
+          initial={rm ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: dur.base, ease: ease.ink }}
+        >
+          <div
+            className="text-[12px] uppercase tracking-[0.24em] mb-6"
+            style={{ color: C.umber, fontFamily: FONT_MONO }}
+          >
+            Error 404
           </div>
-
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">404</h1>
-
-          <h2 className="text-xl font-semibold text-slate-700 mb-4">
-            Page Not Found
-          </h2>
-
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            Sorry, the page you are looking for doesn't exist.
-            <br />
-            It may have been moved or deleted.
+          <h1
+            className="font-serif"
+            style={{
+              color: C.espresso,
+              fontSize: "clamp(32px, 5vw, 52px)",
+              lineHeight: 1.05,
+              letterSpacing: "-0.025em",
+              fontVariationSettings: displayFV(120, DISPLAY_WEIGHT_SOFT),
+            }}
+          >
+            This page wandered off.
+          </h1>
+          <p className="mt-5 text-lg leading-relaxed" style={{ color: C.umber }}>
+            The page you're looking for doesn't exist, or it may have moved.
+            Let's get you back on track.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button
-              onClick={handleGoHome}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              <Home className="w-4 h-4 mr-2" />
-              Go Home
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          <a
+            href="/"
+            className={`inline-block mt-8 ${PILL} ${FOCUS_RING}`}
+            style={{ backgroundColor: C.orange, color: C.ink }}
+          >
+            Back to Lumio →
+          </a>
+        </motion.div>
+      </div>
     </div>
   );
 }

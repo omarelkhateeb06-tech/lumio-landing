@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
@@ -8,10 +8,11 @@ import {
   getUserCert,
   getCapstoneSubmission,
   submitCapstone,
-  businessDaysSince,
   formatCertDate,
+  isOpenForRevision,
+  reviewStatusMessage,
   CAPSTONE_RUBRIC,
-  REVIEW_OVERDUE_AFTER_BUSINESS_DAYS,
+  DEFAULT_MIN_WORDS,
   REVIEW_WINDOW_COPY,
   SUBMISSION_STATUS_LABEL,
 } from "@/lib/certs";
@@ -57,13 +58,14 @@ export default function CertSubmit() {
   // Form fields
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [promptResult, setPromptResult] = useState("");
   const [aiTools, setAiTools] = useState("");
   const [improvements, setImprovements] = useState("");
   const [attestation, setAttestation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const minWords = cert?.capstone_spec.min_words ?? 200;
+  const minWords = cert?.capstone_spec.min_words ?? DEFAULT_MIN_WORDS;
   const descWords = wordCount(description);
 
   useEffect(() => {
@@ -117,7 +119,17 @@ export default function CertSubmit() {
     async function onVisible() {
       if (document.visibilityState !== "visible") return;
       const sub = await getCapstoneSubmission(uc.id);
-      if (!cancelled) setExisting(sub);
+      if (cancelled) return;
+      setExisting(sub);
+      // The just-submitted success screen is gated on `submitted`, which would
+      // otherwise outrank a fresh refetch: a reviewer sending the project back
+      // (or approving it) while this tab sat in the background would strand the
+      // learner on "received / under review" forever. Drop `submitted` whenever
+      // the latest row is no longer a plain pending submission, so the accurate
+      // form (revision) or locked panel (approved) takes over (Executor H2/H3).
+      if (sub && sub.status !== "submitted" && sub.status !== "under_review") {
+        setSubmitted(false);
+      }
     }
     document.addEventListener("visibilitychange", onVisible);
     return () => {
@@ -126,11 +138,16 @@ export default function CertSubmit() {
     };
   }, [userCert]);
 
-  // A prior submission that is not open for revision blocks resubmission.
+  // A prior submission that is not open for revision blocks resubmission. Shares
+  // the one isOpenForRevision rule with deriveCertStatus (First Principles MED-1).
   const locked = useMemo(
-    () => existing != null && existing.status !== "needs_revision" && existing.status !== "rejected",
+    () => existing != null && !isOpenForRevision(existing.status),
     [existing],
   );
+
+  // The success screen must never outrank a submission the reviewer has since
+  // reopened for revision (Executor H2): only show it for a still-pending row.
+  const showSuccess = submitted && (!existing || !isOpenForRevision(existing.status));
 
   const canSubmit =
     title.trim().length > 0 &&
@@ -147,19 +164,30 @@ export default function CertSubmit() {
   if (aiTools.trim().length === 0) missing.push("name the AI tool you used");
   if (!attestation) missing.push("confirm you did this task yourself");
 
+  // Synchronous double-submit guard. setSubmitting(true) only disables the button
+  // on the next render, so a fast double-click or double-Enter can fire
+  // handleSubmit twice before the disabled state lands, inserting two attempt rows
+  // for one project. A ref flips synchronously, inside the same tick, closing that
+  // window (Executor M1).
+  const submitGuard = useRef(false);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!userCert || !canSubmit) return;
+    if (submitGuard.current) return;
+    submitGuard.current = true;
     setSubmitting(true);
     const content: CapstoneSubmissionContent = {
       title: title.trim(),
       description: description.trim(),
+      prompt_and_result: promptResult.trim(),
       ai_tools: aiTools.trim(),
       improvements: improvements.trim(),
       attestation: true,
     };
     const res = await submitCapstone(userCert.id, content);
     setSubmitting(false);
+    submitGuard.current = false;
     if (!res.ok) {
       toast.error("Could not submit your final project. Please try again.");
       return;
@@ -242,7 +270,7 @@ export default function CertSubmit() {
         </motion.h1>
 
         {/* Success state */}
-        {submitted ? (
+        {showSuccess ? (
           <motion.div
             initial={rm ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -258,7 +286,7 @@ export default function CertSubmit() {
               Submission received
             </h2>
             <p className="mt-3 text-sm" style={{ color: C.umber }}>
-              Your submission is under review. A real person reviews every project, {REVIEW_WINDOW_COPY}.
+              Your submission is under review. You'll hear back, {REVIEW_WINDOW_COPY}.
             </p>
             <a
               href={`/app/cert/${cert.slug}`}
@@ -267,6 +295,35 @@ export default function CertSubmit() {
             >
               Back to certificate
             </a>
+            {/* Capture momentum at the win (Hormozi MED4): the learner just
+                finished a track, so point at the next one while they feel capable,
+                framed as range across their work, not catch-up. */}
+            <p className="mt-5 text-sm" style={{ color: C.umber }}>
+              While you wait, you can{" "}
+              <a
+                href="/app"
+                className={`font-medium underline underline-offset-2 ${FOCUS_RING}`}
+                style={{ color: C.orangeInk }}
+              >
+                start a certificate in another part of your work
+              </a>
+              .
+            </p>
+            {/* G1: the win is the most natural moment to bring a coworker in --
+                no fabricated "refer and earn," just a one-tap email they can send
+                to someone at their job who's in the same boat. */}
+            <p className="mt-3 text-sm" style={{ color: C.umber }}>
+              <a
+                href={`mailto:?subject=${encodeURIComponent("Thought of you")}&body=${encodeURIComponent(
+                  `I just submitted my project for a Lumio certificate (${cert.name}). It's free to start if you want to try it: ${typeof window !== "undefined" ? window.location.origin : "https://lumio.app"}/?ref=share&cert=${cert.slug}`,
+                )}`}
+                className={`font-medium underline underline-offset-2 ${FOCUS_RING}`}
+                style={{ color: C.orangeInk }}
+              >
+                Tell a coworker who's in the same boat
+              </a>
+              .
+            </p>
           </motion.div>
         ) : locked && existing ? (
           /* Already submitted — show status, no resubmission */
@@ -289,11 +346,7 @@ export default function CertSubmit() {
               {SUBMISSION_STATUS_LABEL[existing.status] ?? existing.status}
             </span>
             <p className="mt-4 text-sm" style={{ color: C.espresso }}>
-              {existing.status === "approved"
-                ? "Your project was approved. Your certificate is being finalized and will appear on your certificate page shortly."
-                : businessDaysSince(existing.submitted_at) >= REVIEW_OVERDUE_AFTER_BUSINESS_DAYS
-                  ? "You've already submitted your final project. It's still with our reviewer. Thanks for your patience, we have not forgotten it. Reach out any time for an update."
-                  : `You've already submitted your final project for this certificate. Once it's approved, the certificate is yours, ${REVIEW_WINDOW_COPY}.`}
+              {reviewStatusMessage(existing.status, existing.submitted_at, "submit")}
             </p>
             {existing.submitted_at && (
               <p className="mt-2 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
@@ -326,8 +379,13 @@ export default function CertSubmit() {
               style={{ backgroundColor: C.orangeWash, border: `1px solid ${C.orangeWashBorder}` }}
             >
               <span aria-hidden="true" style={{ color: C.forest, fontSize: 14, flexShrink: 0, marginTop: 1 }}>✓</span>
+              {/* The anxious buyer's fear at this exact screen is "what if I get it
+                  wrong and lose my money?" Name the safety net up front: a
+                  needs-revision is not a fail, and resubmitting costs nothing
+                  more (Outsider MED-5). Bounded wording, no "until it's right." */}
               <p className="text-sm" style={{ color: C.espresso, lineHeight: 1.5 }}>
-                A real person reads every submission. You'll hear back, {REVIEW_WINDOW_COPY}.
+                A real person reads every submission. You'll hear back, {REVIEW_WINDOW_COPY}. If it needs
+                another pass, we'll tell you exactly what to change and you can resubmit at no extra cost.
               </p>
             </div>
 
@@ -364,8 +422,11 @@ export default function CertSubmit() {
               label="Project description"
               htmlFor="description"
               hint={
+                /* T2: a hard "X of 200 minimum" reads like a test the anxious
+                   buyer can fail. Frame it as a gentle target, and once they're
+                   there, say so plainly rather than keep counting at them. */
                 <span style={{ color: descWords >= minWords ? C.forest : C.inkSoft }}>
-                  {descWords} of about {minWords} words
+                  {descWords >= minWords ? "Looks like enough detail" : `${descWords} words so far. A few short paragraphs (${minWords}+) is plenty.`}
                 </span>
               }
             >
@@ -379,6 +440,30 @@ export default function CertSubmit() {
                 placeholder="Just tell us what you did, what you asked the AI, and what came back. Write like you'd tell a coworker."
               />
             </Field>
+
+            {/* The rubric asks the reviewer to look for the actual prompt and
+                result; give the learner a place to paste it so the submission
+                carries that artifact instead of only a paraphrase. Optional, so it
+                never becomes a needs-revision trap (First Principles H2, Contrarian H2). */}
+            <Field label="Paste the prompt you used and what the AI gave back" htmlFor="promptResult">
+              <textarea
+                id="promptResult"
+                value={promptResult}
+                onChange={(e) => setPromptResult(e.target.value)}
+                rows={6}
+                className={`w-full px-4 py-3 rounded-xl text-sm ${FOCUS_RING}`}
+                style={{ backgroundColor: C.surface, border: `1px solid ${C.hairline}`, color: C.ink, resize: "vertical" }}
+                placeholder="Optional, but it's the best proof you did the work: the words you typed, and the answer that came back."
+              />
+            </Field>
+
+            {/* T2: this audience works with real company data. Tell them plainly
+                they don't have to share anything sensitive -- a reviewer needs to
+                see the shape of the work, not your employer's private details. */}
+            <p className="text-xs leading-relaxed" style={{ color: C.inkSoft, marginTop: -8 }}>
+              No need to share anything confidential. Feel free to swap names, numbers, or client details
+              for stand-ins. We only need to see how you worked.
+            </p>
 
             <Field label="Which AI did you use?" htmlFor="aiTools">
               <input
@@ -412,7 +497,7 @@ export default function CertSubmit() {
                 className="mt-0.5"
                 style={{ accentColor: C.orange, width: 16, height: 16, flexShrink: 0 }}
               />
-              <span>I did this task myself. Using AI to do it is fine, that is the point.</span>
+              <span>I did this real task myself, using AI.</span>
             </label>
 
             {!submitting && missing.length > 0 && (

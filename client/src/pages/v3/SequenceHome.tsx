@@ -15,7 +15,7 @@
  * - Honest pre-launch framing: free while new, no fabricated subscriber count
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useInView,
@@ -27,21 +27,77 @@ import { ease, dur, stagger, splitWords } from "@/lib/motion";
 import { captureEmail, runPromptRunner, type PromptRunnerResponse } from "@/lib/supabase";
 import { C, SHADOW_PILL, FOCUS_RING, FOCUS_RING_DARK, FOCUS_WITHIN_DARK, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT, DISPLAY_WEIGHT_SOFT, CONFIRM_PILL } from "@/lib/theme";
 import { BrandNav, PillEmailForm } from "@/components/marketing";
+import { useAuth } from "@/contexts/AuthContext";
+import { getCertBySlug, listPublishedCerts, lowestCertPriceCents, dollars, LESSON_1_DELIVERY_COPY, LESSON_TIME_RANGE, type PublishedCert } from "@/lib/certs";
 
 const SIGNUP_URL = "/signup";
 
+// Carry referral attribution from a shared certificate link (/?ref=verify&cert=slug)
+// into the waitlist source, so we can see which earned credentials actually drive
+// signups instead of losing that signal at the email box (Expansionist M2).
+function signupSource(base: string): string {
+  if (typeof window === "undefined") return base;
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get("ref");
+  const cert = params.get("cert");
+  if (!ref) return base;
+  return cert ? `${base}__${ref}_${cert}` : `${base}__${ref}`;
+}
+
+// Same referral attribution, carried onto the /signup links so a visitor who
+// skips the email box and creates an account directly still keeps the signal
+// of which shared certificate brought them in (Expansionist M2).
+function signupHref(): string {
+  if (typeof window === "undefined") return SIGNUP_URL;
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get("ref");
+  if (!ref) return SIGNUP_URL;
+  const cert = params.get("cert");
+  const q = new URLSearchParams();
+  q.set("ref", ref);
+  if (cert) q.set("cert", cert);
+  return `${SIGNUP_URL}?${q.toString()}`;
+}
+
+// A 1:1 referral vector for the peak-intent moment right after someone signs up
+// (Expansionist M3). Carries ?ref=invite so the inbound is acknowledged and
+// attributed by the same plumbing as the track pills and share links.
+function inviteMailto(): string {
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://lumio.app";
+  const link = `${origin}/?ref=invite`;
+  const body = `I've been doing this short daily AI lesson and thought you'd want it too. The first one is free: ${link}`;
+  return `mailto:?subject=${encodeURIComponent("Thought you'd want this")}&body=${encodeURIComponent(body)}`;
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
-// Subscribe action for the brand nav (right side).
+// Subscribe action for the brand nav (right side). A returning learner who is
+// already signed in should be invited back into the app, not pushed to sign up
+// again (which dead-ends at a magic-link they don't need). Reads existing auth
+// state, no new infra (Expansionist MED-1).
 // ──────────────────────────────────────────────────────────────────────────────
-const SubscribeAction = (
-  <a
-    href={SIGNUP_URL}
-    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium tracking-tight transition-opacity hover:opacity-80 ${FOCUS_RING}`}
-    style={{ backgroundColor: C.ink, color: C.paper }}
-  >
-    Start free <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
-  </a>
-);
+function SubscribeAction() {
+  const { user } = useAuth();
+  if (user) {
+    return (
+      <a
+        href="/app"
+        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium tracking-tight transition-opacity hover:opacity-80 ${FOCUS_RING}`}
+        style={{ backgroundColor: C.ink, color: C.paper }}
+      >
+        Continue learning <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+      </a>
+    );
+  }
+  return (
+    <a
+      href={SIGNUP_URL}
+      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium tracking-tight transition-opacity hover:opacity-80 ${FOCUS_RING}`}
+      style={{ backgroundColor: C.ink, color: C.paper }}
+    >
+      Start free <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+    </a>
+  );
+}
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Hero: Atelier-style centered + variable-axis settle once on load
@@ -51,50 +107,93 @@ function CenteredHero() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [refCertName, setRefCertName] = useState<string | null>(null);
+  const [refMode, setRefMode] = useState<"credential" | "track" | "invite" | null>(null);
   const rm = useReducedMotion() ?? false;
+
+  // Personalize the hero for every warm inbound, not just credential links
+  // (Expansionist M1):
+  //  - verify/share → "you just saw a real {cert} certificate"
+  //  - track        → a coworker/pill sent them to a specific track
+  //  - invite       → a coworker invited them (no cert needed)
+  // For verify/share/track we look up the cert name to name it; invite stands alone.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref === "invite") {
+      setRefMode("invite");
+      return;
+    }
+    const isCredential = ref === "verify" || ref === "share";
+    if (!isCredential && ref !== "track") return;
+    setRefMode(isCredential ? "credential" : "track");
+    const slug = params.get("cert");
+    if (!slug) return;
+    let cancelled = false;
+    getCertBySlug(slug)
+      .then((c) => {
+        if (!cancelled && c) setRefCertName(c.name);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!email.includes("@")) return setError("That doesn't look like an email.");
     setSubmitting(true);
-    const res = await captureEmail(email, "v3_sequence_hero");
+    const res = await captureEmail(email, signupSource("v3_sequence_hero"));
     setSubmitting(false);
     if (res.ok) setSubmitted(true);
     else setError("Couldn't send the link. Check your connection and try again.");
   }
 
-  const text = `Thirty days from now, AI is just how you work.`;
-  const italicFrom = text.indexOf("just how you work");
-  const italicTo = italicFrom + "just how you work".length;
+  // H4: "AI is just how you work" overclaims a finished state to a reader who is
+  // anxious they're behind -- it can read as "everyone but you already does this."
+  // "starts to feel like" promises the same destination as a direction they're
+  // moving toward, which is both truer and less intimidating.
+  const text = `A few weeks of this, and AI starts to feel like how you work.`;
+  const italicFrom = text.indexOf("how you work");
+  const italicTo = italicFrom + "how you work".length;
   const words = splitWords(text);
   let cursor = 0;
 
   return (
     <section className="pt-32 md:pt-40 pb-12 md:pb-16">
       <div className="max-w-[960px] mx-auto px-6 md:px-12 text-center">
-        {/* Hormozi: value stack explicit and above the fold */}
-        <motion.div
-          initial={rm ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: dur.fast, delay: 0.0, ease: ease.ink }}
-          className="inline-flex items-center gap-3 mb-8 px-4 py-2 rounded-full"
-          style={{
-            color: C.umber,
-            fontFamily: FONT_MONO,
-            fontSize: 12,
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            border: `1px solid ${C.hairline}`,
-            backgroundColor: "rgba(255,255,255,0.5)",
-          }}
-        >
-          <span>30 Lessons</span>
-          <span style={{ opacity: 0.35 }}>·</span>
-          <span>5 Min Each</span>
-          <span style={{ opacity: 0.35 }}>·</span>
-          <span>Ships Daily</span>
-        </motion.div>
+        {(refMode === "invite" || ((refMode === "credential" || refMode === "track") && refCertName)) && (
+          <motion.p
+            initial={rm ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: dur.fast, ease: ease.ink }}
+            className="mb-6 mx-auto max-w-[560px] text-base"
+            style={{ color: C.espresso }}
+          >
+            {refMode === "credential" && refCertName && (
+              <>
+                You just saw a real, person-reviewed{" "}
+                <span style={{ color: C.orangeInk, fontWeight: 500 }}>{refCertName}</span>{" "}
+                certificate. Here is the daily habit behind it.
+              </>
+            )}
+            {refMode === "track" && refCertName && (
+              <>
+                The{" "}
+                <span style={{ color: C.orangeInk, fontWeight: 500 }}>{refCertName}</span>{" "}
+                track starts with the same daily habit. Here is how it works.
+              </>
+            )}
+            {refMode === "invite" && (
+              <>A coworker thought you'd want this. Here is the daily habit they're talking about.</>
+            )}
+          </motion.p>
+        )}
+        {/* Eyebrow spec pill removed: the SpecStrip directly below the hero
+            already carries the same three facts (format / time / cadence) with
+            more dignity, so repeating them 60px apart was noise (Rubin M4). */}
         <h1
           className="font-serif"
           aria-label={text}
@@ -149,9 +248,8 @@ function CenteredHero() {
           className="mt-8 mx-auto max-w-[560px]"
           style={{ color: C.umber, fontSize: 18, lineHeight: 1.55 }}
         >
-          Stop feeling behind on AI. One 5-minute lesson lands in your inbox every
-          workday, in plain English, and you use it that same afternoon. Starts from
-          the very basics. No experience needed.
+          One short lesson every workday, free to learn. When you're ready, you do one real
+          task from your job and earn a certificate, one payment, no subscription.
         </motion.p>
 
         <motion.div
@@ -168,13 +266,19 @@ function CenteredHero() {
               >
                 <Check className="w-4 h-4 shrink-0" style={{ color: C.forest }} aria-hidden="true" />
                 <span className="text-sm">
-                  You're in. Lesson 1 lands the next workday.
+                  You're in. Lesson 1 arrives {LESSON_1_DELIVERY_COPY}.
                 </span>
               </div>
               <p className="mt-5 text-sm" style={{ color: C.umber }}>
                 Want to start right now?{" "}
-                <a href="/signup" className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
+                <a href={signupHref()} className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
                   Create your account →
+                </a>
+              </p>
+              <p className="mt-2 text-sm" style={{ color: C.umber }}>
+                Know someone who feels behind on AI?{" "}
+                <a href={inviteMailto()} className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
+                  Send them the first lesson →
                 </a>
               </p>
             </div>
@@ -203,8 +307,8 @@ function CenteredHero() {
                 Free · No card · Your email stays private · One-click unsubscribe
               </p>
               <p className="text-center mt-3 text-xs" style={{ color: C.umber }}>
-                Lesson 1 starts the next workday, or{" "}
-                <a href="/signup" className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
+                Lesson 1 starts {LESSON_1_DELIVERY_COPY}, or{" "}
+                <a href={signupHref()} className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
                   create an account to start instantly →
                 </a>
               </p>
@@ -231,8 +335,8 @@ function SpecStrip() {
       <h2 id="program-details-heading" className="sr-only">Program details</h2>
       <dl className="max-w-[1100px] mx-auto px-6 md:px-10 py-6 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">
         {[
-          { label: "Format", value: "30 daily lessons" },
-          { label: "Time", value: "5 minutes each" },
+          { label: "Format", value: "30-day core path" },
+          { label: "Time", value: LESSON_TIME_RANGE },
           { label: "Delivery", value: "Straight to your inbox" },
           { label: "Pace", value: "One per workday", accent: true },
         ].map((spec) => (
@@ -270,8 +374,8 @@ type RunnerState =
 
 const EXAMPLES = [
   "Write me a quarterly review email.",
-  "Summarize this meeting transcript.",
-  "Help me with my onboarding deck.",
+  "Summarize a long article.",
+  "Help me plan a team offsite.",
 ];
 
 function DarkPromptRunner() {
@@ -301,15 +405,15 @@ function DarkPromptRunner() {
           style={{ color: muted, fontFamily: FONT_MONO }}
         >
           <span style={{ color: C.orange }} aria-hidden="true">●</span>
-          <span>Try it live</span>
+          <span>Try it yourself, free</span>
           <span style={{ color: subdued }} aria-hidden="true">·</span>
-          <span>Real AI, not a mockup</span>
+          <span>A taste of what you'll learn</span>
         </div>
         {/* Persistent section heading — single visible <h2> so the page has a
             clean H1→H2 outline for screen-reader heading navigation. */}
         <h2
           id="demo-heading"
-          className="font-serif mb-10"
+          className="font-serif mb-4"
           style={{
             fontSize: "clamp(36px, 5vw, 56px)",
             lineHeight: 1.02,
@@ -319,8 +423,19 @@ function DarkPromptRunner() {
             textWrap: "balance" as const,
           }}
         >
-          See what Lumio actually does.
+          See the kind of thing you'll learn.
         </h2>
+        {/* Tell a first-timer what the box does before they type. "Make it better"
+            alone left an outsider asking "better at what?" (Outsider H3). Framed as
+            a teaching demo, not a guarantee the paid product must clear (Naval H2,
+            Contrarian M1): the lessons teach the skill, this just shows the idea. */}
+        {/* S3: dropped "one idea from a lesson, not the whole thing." The hedge
+            talked the demo down before the visitor had tried it. Let the result
+            make its own case; keep only the privacy reassurance. */}
+        <p className="mb-10 text-base" style={{ color: muted, maxWidth: 520 }}>
+          Type anything you'd ask AI below. We'll show you how a small change sharpens what you
+          get back, and exactly what we changed. Nothing is saved.
+        </p>
         <AnimatePresence mode="wait">
           {state.kind === "idle" && (
             <motion.form
@@ -340,7 +455,7 @@ function DarkPromptRunner() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type anything you'd ask AI. Or tap an example below."
-                  aria-label="Enter a prompt to improve"
+                  aria-label="Type something you'd ask AI"
                   rows={3}
                   maxLength={600}
                   className="placeholder-on-dark w-full bg-transparent text-lg md:text-2xl resize-none focus:outline-none"
@@ -351,12 +466,21 @@ function DarkPromptRunner() {
                   }}
                 />
               </div>
+              {/* Privacy note: lead with the reassurance, not the warning. An
+                  anxious newcomer reads "don't paste anything confidential" as a
+                  threat; opening with "nothing is saved" turns the same fact into
+                  safety, then the caution lands gently (Outsider HIGH-2, Contrarian
+                  H2). */}
+              <p className="text-[12px]" style={{ color: subdued }}>
+                Nothing you type is saved. We only use it to show you the rewrite, so there's no need to
+                paste anything confidential.
+              </p>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div
                   className="flex flex-wrap items-center gap-2 text-[12px]"
                   style={{ color: muted, fontFamily: FONT_MONO }}
                   role="group"
-                  aria-label="Example prompts to try"
+                  aria-label="Examples to try"
                 >
                   <span aria-hidden="true">Try:</span>
                   {EXAMPLES.map((e) => (
@@ -364,7 +488,7 @@ function DarkPromptRunner() {
                       key={e}
                       type="button"
                       onClick={() => setInput(e)}
-                      aria-label={`Use example prompt: ${e}`}
+                      aria-label={`Use this example: ${e}`}
                       className={`px-2 py-1 border hover:bg-white/[0.04] transition-colors ${FOCUS_RING_DARK}`}
                       style={{ borderColor: C.hairlineOnDark, color: strong }}
                     >
@@ -378,7 +502,7 @@ function DarkPromptRunner() {
                   className={`inline-flex items-center gap-2 px-6 py-3 text-sm font-medium tracking-tight transition-opacity disabled:opacity-50 disabled:cursor-not-allowed ${FOCUS_RING_DARK}`}
                   style={{ backgroundColor: C.orange, color: C.ink }}
                 >
-                  Improve my prompt <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  Sharpen it <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
             </motion.form>
@@ -387,7 +511,7 @@ function DarkPromptRunner() {
             <motion.div key="loading" initial={rm ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-4 py-20" role="status" aria-live="polite">
               <Loader2 className="w-5 h-5 animate-spin" style={{ color: C.orange }} aria-hidden="true" />
               <span style={{ color: muted, fontFamily: FONT_MONO, fontSize: 14 }}>
-                Lumio is reading your prompt…
+                Lumio is reading what you typed…
               </span>
             </motion.div>
           )}
@@ -410,15 +534,22 @@ function DarkPromptRunner() {
             >
               <div className="lg:col-span-5">
                 <div className="text-[12px] uppercase tracking-[0.22em] font-medium mb-3" style={{ color: muted, fontFamily: FONT_MONO }}>
-                  Your prompt
+                  What you typed
                 </div>
-                <p className="whitespace-pre-line" style={{ color: muted, fontFamily: FONT_MONO, fontSize: 14, lineHeight: 1.6, textDecoration: "line-through", textDecorationColor: C.orangeStrike }}>
+                {/* No strikethrough on the visitor's own words. Crossing out what they
+                    wrote tells an anxious buyer the machine beat them; the teaching
+                    point lands better when their version is simply the starting
+                    point, not a mistake (Naval H1 / First-Principles M5). */}
+                <p className="whitespace-pre-line" style={{ color: muted, fontFamily: FONT_MONO, fontSize: 14, lineHeight: 1.6 }}>
                   {state.original}
+                </p>
+                <p className="mt-4 text-xs italic" style={{ color: strong }}>
+                  Yours is fine. Here's a small change that helps.
                 </p>
               </div>
               <div className="lg:col-span-7">
                 <div className="text-[12px] uppercase tracking-[0.22em] font-medium mb-3 flex items-center gap-2" style={{ color: C.orange, fontFamily: FONT_MONO }}>
-                  <Sparkles className="w-3 h-3" aria-hidden="true" /> Lumio rewrite
+                  <Sparkles className="w-3 h-3" aria-hidden="true" /> One small tweak to try
                 </div>
                 <p className="whitespace-pre-line mb-6" style={{ color: C.paper, fontFamily: FONT_MONO, fontSize: 14, lineHeight: 1.6 }}>
                   {state.data.improved_prompt}
@@ -427,8 +558,8 @@ function DarkPromptRunner() {
                   {state.data.why_better}
                 </p>
                 <div className="mt-8 flex items-center gap-4">
-                  <a href={SIGNUP_URL} className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium ${FOCUS_RING_DARK}`} style={{ backgroundColor: C.orange, color: C.ink }}>
-                    Get all 30 lessons free <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  <a href={signupHref()} className={`inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium ${FOCUS_RING_DARK}`} style={{ backgroundColor: C.orange, color: C.ink }}>
+                    Start free, earn a certificate that shows it <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </a>
                   <button onClick={reset} className={`text-sm ${FOCUS_RING_DARK}`} style={{ color: strong }}>Try another →</button>
                 </div>
@@ -510,18 +641,8 @@ function Curriculum() {
         >
           Six modules. Thirty lessons. <em className="font-normal" style={{ color: C.orange }}>One per workday.</em>
         </h2>
-        <p className="text-center text-sm italic mb-4" style={{ color: C.umber }}>
-          Each lesson builds on the last. By Lesson 30 you're not learning AI anymore. You're just using it.
-        </p>
-        <p
-          className="text-center text-[11px] uppercase mb-16"
-          style={{ color: C.umber, fontFamily: FONT_MONO, letterSpacing: "0.12em" }}
-        >
-          <span style={{ color: C.forest }}>Beginner</span> <span style={{ opacity: 0.6 }}>BEG</span>
-          <span aria-hidden="true" className="mx-2" style={{ opacity: 0.4 }}>·</span>
-          <span style={{ color: C.orangeInk }}>Growing</span> <span style={{ opacity: 0.6 }}>INT</span>
-          <span aria-hidden="true" className="mx-2" style={{ opacity: 0.4 }}>·</span>
-          <span style={{ color: C.espresso }}>Confident</span> <span style={{ opacity: 0.6 }}>ADV</span>
+        <p className="text-center text-sm italic mb-16" style={{ color: C.umber }}>
+          Each lesson builds on the last, so day 30 feels earned, not rushed.
         </p>
         <div className="space-y-12">
           {CURRICULUM.map((mod, modIdx) => (
@@ -561,7 +682,7 @@ function Curriculum() {
                         {les.n}
                       </span>
                       <span
-                        className="col-span-7 md:col-span-8 font-serif leading-snug"
+                        className="col-span-9 font-serif leading-snug"
                         style={{
                           color: isFirst ? C.orangeInk : C.ink,
                           fontSize: 18,
@@ -578,21 +699,10 @@ function Curriculum() {
                         )}
                       </span>
                       <span
-                        className="col-span-2 md:col-span-2 text-right tabular-nums"
+                        className="col-span-2 text-right tabular-nums"
                         style={{ color: C.umber, fontFamily: FONT_MONO, fontSize: 12 }}
                       >
                         {les.min} min
-                      </span>
-                      <span
-                        className="col-span-2 md:col-span-1 text-right"
-                        style={{
-                          color: les.level === "BEG" ? C.forest : les.level === "INT" ? C.orangeInk : C.espresso,
-                          fontFamily: FONT_MONO,
-                          fontSize: 12,
-                          letterSpacing: "0.1em",
-                        }}
-                      >
-                        {les.level}
                       </span>
                     </li>
                   );
@@ -600,6 +710,182 @@ function Curriculum() {
               </ul>
             </motion.div>
           ))}
+        </div>
+        <p className="text-center text-sm mx-auto max-w-[560px] mt-16" style={{ color: C.umber, lineHeight: 1.6 }}>
+          These thirty are the starting path. Once you're in, your field opens up to a deeper
+          library of lessons built for your line of work.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Certificates — the bridge from the free daily habit to the paid, provable
+// outcome. A cold visitor must learn the real product exists: you can earn a
+// certificate, backed by one real work task a real person reviews.
+// ──────────────────────────────────────────────────────────────────────────────
+const CERT_STEPS = [
+  {
+    n: "01",
+    title: "Learn it, free",
+    body: "Work through the daily lessons in your field, a few minutes a day. No card, no pressure.",
+  },
+  {
+    n: "02",
+    title: "Do one real task",
+    body: "Each certificate ends with a final project: one real task from your actual work. You do it, you submit it.",
+  },
+  {
+    n: "03",
+    title: "A real person checks it",
+    body: "A real person reviews your work, not an algorithm. We are checking that you did the work, not that it is flawless.",
+  },
+  {
+    n: "04",
+    title: "Show what you did",
+    body: "You get a certificate with a link anyone can open to see it was issued by Lumio. Put it on LinkedIn, send it to your manager.",
+  },
+];
+
+function Certificates() {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const rm = useReducedMotion() ?? false;
+  const [tracks, setTracks] = useState<PublishedCert[]>([]);
+
+  // Show the real, published tracks so a cold visitor can see their own line of
+  // work is covered and click straight to it (Expansionist MED-2). Public columns
+  // only; if the call fails we simply hide the list rather than block the page.
+  useEffect(() => {
+    let cancelled = false;
+    listPublishedCerts()
+      .then((rows) => {
+        if (!cancelled) setTracks(rows);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Dedupe by display name so multi-tier tracks (a base cert and its variants
+  // share a name) don't render as two identical pills (Executor MED-1).
+  const uniqueTracks = tracks.filter(
+    (t, i) => tracks.findIndex((o) => o.name === t.name) === i,
+  );
+  const floorCents = lowestCertPriceCents(tracks);
+
+  return (
+    <section ref={ref} id="certificates" className="py-24 md:py-32" style={{ borderTop: `1px solid ${C.hairline}` }}>
+      <div className="max-w-[1100px] mx-auto px-6 md:px-10">
+        <div
+          className="text-[12px] uppercase tracking-[0.22em] font-medium mb-6 text-center"
+          style={{ color: C.umber, fontFamily: FONT_MONO }}
+        >
+          When you're ready
+        </div>
+        <h2
+          className="font-serif text-center mb-4"
+          style={{
+            color: C.espresso,
+            fontSize: "clamp(32px, 4.5vw, 56px)",
+            lineHeight: 1.0,
+            letterSpacing: "-0.025em",
+            fontVariationSettings: displayFV(144, DISPLAY_WEIGHT_SOFT),
+            textWrap: "balance" as const,
+          }}
+        >
+          Earn a certificate that <em className="font-normal" style={{ color: C.orange }}>shows</em> it.
+        </h2>
+        {/* Pull the dream outcome forward to where cold traffic decides, instead of
+            leaving it behind the auth wall on the cert page (Hormozi HIGH-1). */}
+        <p className="text-center text-lg mx-auto max-w-[560px] mb-4" style={{ color: C.espresso, lineHeight: 1.55 }}>
+          The next time AI comes up at work, you're not the one hoping nobody asks. You have real,
+          reviewed work to point to.
+        </p>
+        {/* Set the mental model straight: the certificate is gated on its own short
+            lesson set, not the full 30-day path (First-Principles H1). */}
+        <p className="text-center text-base mx-auto max-w-[560px] mb-4" style={{ color: C.umber, lineHeight: 1.55 }}>
+          Each track is built for one line of work, with its own short set of lessons. Pick yours,
+          then do one real task from your actual job.
+        </p>
+        {floorCents != null && (
+          <p className="text-center text-sm mx-auto max-w-[560px] mb-3" style={{ color: C.umber }}>
+            Founding price: tracks start at {dollars(floorCents)}, and rise to $99 after the first 50
+            certifications. You pay once when you're ready, never a subscription, and the daily lessons
+            stay free.
+          </p>
+        )}
+        {/* Surface the risk reversal at the moment of hesitation, not only behind
+            signup on the cert page (Hormozi HIGH-2, Outsider #3). */}
+        <p className="text-center text-sm mx-auto max-w-[560px] mb-10" style={{ color: C.umber }}>
+          If your project isn't approved the first time, we tell you exactly what to fix and review
+          your revision again, free. And if it still isn't approved after that first revision, we'll
+          refund you. No questions.
+        </p>
+
+        {/* Link each track to signup (not the auth-gated /app/cert route), so a
+            logged-out visitor lands somewhere they can act, carrying cert-level
+            attribution (Executor/Expansionist/Contrarian R1). */}
+        {uniqueTracks.length > 0 && (
+          <ul className="flex flex-wrap justify-center gap-2.5 mb-16" aria-label="Certificate tracks">
+            {uniqueTracks.map((t) => (
+              <li key={t.slug}>
+                {/* C2: show each track's real price on the pill. A visitor
+                    scanning for their field also sees the number before they
+                    click, so the price never arrives as a surprise behind signup. */}
+                <a
+                  href={`/signup?ref=track&cert=${t.slug}`}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm transition-opacity hover:opacity-80 ${FOCUS_RING}`}
+                  style={{ border: `1px solid ${C.hairline}`, color: C.espresso }}
+                >
+                  {t.name}
+                  <span style={{ color: C.umber, fontFamily: FONT_MONO, fontSize: 12 }}>
+                    {dollars(t.price_cents)}
+                  </span>
+                  <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+          {CERT_STEPS.map((step, i) => (
+            <motion.li
+              key={step.n}
+              initial={rm ? false : { opacity: 0, y: 16 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: dur.base, delay: i * stagger.base, ease: ease.glass }}
+            >
+              <div
+                className="tabular-nums mb-3"
+                style={{ color: C.orangeInk, fontFamily: FONT_MONO, fontSize: 13, letterSpacing: "0.1em" }}
+              >
+                {step.n}
+              </div>
+              <h3
+                className="font-serif mb-2"
+                style={{ color: C.espresso, fontSize: 21, fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT) }}
+              >
+                {step.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: C.umber }}>
+                {step.body}
+              </p>
+            </motion.li>
+          ))}
+        </ol>
+
+        <div className="mt-16 text-center">
+          <a
+            href={signupHref()}
+            className={`inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-medium tracking-tight transition-opacity hover:opacity-90 ${FOCUS_RING}`}
+            style={{ backgroundColor: C.ink, color: C.paper }}
+          >
+            Start free, then earn a certificate <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </section>
@@ -620,7 +906,7 @@ function FinalCTA() {
     setError(null);
     if (!email.includes("@")) return setError("That doesn't look like an email.");
     setSubmitting(true);
-    const res = await captureEmail(email, "v3_sequence_cta");
+    const res = await captureEmail(email, signupSource("v3_sequence_cta"));
     setSubmitting(false);
     if (res.ok) setSubmitted(true);
     else setError("Couldn't send the link. Check your connection and try again.");
@@ -659,17 +945,10 @@ function FinalCTA() {
             textWrap: "balance" as const,
           }}
         >
-          Five minutes a day.{" "}
-          <em className="font-normal" style={{ color: C.orange }}>Six Mondays from now,</em>{" "}
-          you're the one people ask.
+          A few minutes a day.{" "}
+          <em className="font-normal" style={{ color: C.orange }}>That's</em>{" "}
+          the whole thing.
         </h2>
-
-        <p
-          className="text-center text-[12px] uppercase tracking-[0.16em] mb-8"
-          style={{ color: C.umber, fontFamily: FONT_MONO }}
-        >
-          30 lessons · one per workday · 5 minutes each · the exact prompts, ready to copy · yours free
-        </p>
 
         {/* Hormozi: second email capture — person who scrolled all 30 lessons needs a form, not a link */}
         <div className="max-w-[540px] mx-auto">
@@ -680,18 +959,25 @@ function FinalCTA() {
                 style={{ backgroundColor: C.surface, boxShadow: SHADOW_PILL, color: C.espresso }}
               >
                 <Check className="w-4 h-4 shrink-0" style={{ color: C.forest }} aria-hidden="true" />
-                <span className="text-sm">You're in. Lesson 1 lands the next workday.</span>
+                <span className="text-sm">You're in. Lesson 1 arrives {LESSON_1_DELIVERY_COPY}.</span>
               </div>
               <p className="mt-5 text-sm" style={{ color: C.umber }}>
                 Want to start right now?{" "}
-                <a href="/signup" className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
+                <a href={signupHref()} className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
                   Create your account →
+                </a>
+              </p>
+              <p className="mt-2 text-sm" style={{ color: C.umber }}>
+                Know someone who feels behind on AI?{" "}
+                <a href={inviteMailto()} className={`font-medium underline underline-offset-2 ${FOCUS_RING}`} style={{ color: C.espresso }}>
+                  Send them the first lesson →
                 </a>
               </p>
             </div>
           ) : (
             <>
               <PillEmailForm
+                id="cta-form"
                 email={email}
                 onEmailChange={setEmail}
                 onSubmit={handleSubmit}
@@ -700,8 +986,10 @@ function FinalCTA() {
                 buttonLabel="Send me Lesson 1"
                 formLabel="Get the first lesson by email"
               />
+              {/* Re-plant the outcome for the warmest lead on the page without
+                  repeating the free/pay-later promise verbatim (Hormozi M5 vs Rubin). */}
               <p className="mt-4 text-xs italic" style={{ color: C.umber }}>
-                Free while it's new. I'd rather have your feedback than your money right now.
+                No card needed to start. Keep going and you can earn a certificate that shows what you can do.
               </p>
             </>
           )}
@@ -724,18 +1012,19 @@ export default function SequenceHome() {
           100% { font-variation-settings: "opsz" 144, "wght" 420, "SOFT" 30; letter-spacing: -0.028em; }
         }
       `}</style>
-      <BrandNav maxWidth={1100} right={SubscribeAction} />
+      <BrandNav maxWidth={1100} right={<SubscribeAction />} />
       <main id="main-content">
         <CenteredHero />
         <SpecStrip />
         <DarkPromptRunner />
         <Curriculum />
+        <Certificates />
         <FinalCTA />
       </main>
       <footer className="py-10" style={{ borderTop: `1px solid ${C.hairline}` }}>
         <div className="max-w-[1100px] mx-auto px-6 md:px-10 flex flex-wrap items-baseline justify-between gap-3">
           <p className="text-sm italic" style={{ color: C.umber }}>
-            Lumio. One five-minute AI lesson, every workday.
+            Lumio. One short AI lesson, every workday.
           </p>
           <p className="text-xs" style={{ color: C.umber }}>© 2026</p>
         </div>

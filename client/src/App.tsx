@@ -7,13 +7,6 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { fetchOnboardingComplete } from "./lib/supabase";
-import Home from "./pages/Home";
-import DemoPicker from "./pages/v2/DemoPicker";
-import DispatchHome from "./pages/v2/DispatchHome";
-import AtelierHome from "./pages/v2/AtelierHome";
-import V3Picker from "./pages/v3/V3Picker";
-import DispatchV2 from "./pages/v3/DispatchV2";
-import AtelierV2 from "./pages/v3/AtelierV2";
 import SequenceHome from "./pages/v3/SequenceHome";
 import Signup from "./pages/app/Signup";
 import Login from "./pages/app/Login";
@@ -21,6 +14,7 @@ import Dashboard from "./pages/app/Dashboard";
 import Lesson from "./pages/app/Lesson";
 import MasteryCheck from "./pages/app/MasteryCheck";
 import Onboarding from "./pages/app/Onboarding";
+import Profile from "./pages/app/Profile";
 import CertOverview from "./pages/app/CertOverview";
 import CertSubmit from "./pages/app/CertSubmit";
 import Verify from "./pages/Verify";
@@ -60,9 +54,15 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetchOnboardingComplete().then((done) => {
-      if (!cancelled) setStatus(done ? "complete" : "incomplete");
-    });
+    fetchOnboardingComplete()
+      .then((done) => {
+        if (!cancelled) setStatus(done ? "complete" : "incomplete");
+      })
+      // A rejected lookup must not strand the user on the blank paper screen
+      // forever. Fail open to the onboarding flow rather than hanging (Executor M2).
+      .catch(() => {
+        if (!cancelled) setStatus("incomplete");
+      });
     return () => {
       cancelled = true;
     };
@@ -89,16 +89,16 @@ const gated = (Component: React.ComponentType) =>
 function Router() {
   return (
     <Switch>
-      {/* Landing + design variants */}
+      {/* Landing */}
       <Route path={"/"} component={SequenceHome} />
-      <Route path={"/v1"} component={Home} />
-      <Route path={"/v2"} component={DemoPicker} />
-      <Route path={"/v2/dispatch"} component={DispatchHome} />
-      <Route path={"/v2/atelier"} component={AtelierHome} />
-      <Route path={"/v3"} component={V3Picker} />
-      <Route path={"/v3/dispatch"} component={DispatchV2} />
-      <Route path={"/v3/atelier"} component={AtelierV2} />
-      <Route path={"/v3/sequence"} component={SequenceHome} />
+
+      {/* Retired demo/design-variant routes — redirect to the live landing so
+          no half-finished surface is reachable by a paying user. */}
+      <Route path={"/v1"}>{() => <Redirect to="/" />}</Route>
+      <Route path={"/v2"}>{() => <Redirect to="/" />}</Route>
+      <Route path={"/v2/:rest*"}>{() => <Redirect to="/" />}</Route>
+      <Route path={"/v3"}>{() => <Redirect to="/" />}</Route>
+      <Route path={"/v3/:rest*"}>{() => <Redirect to="/" />}</Route>
 
       {/* Auth */}
       <Route path={"/signup"} component={Signup} />
@@ -112,6 +112,9 @@ function Router() {
       {/* Protected app routes — gated behind onboarding completion */}
       <Route path={"/app"}>
         {() => <ProtectedRoute component={gated(Dashboard)} />}
+      </Route>
+      <Route path={"/app/profile"}>
+        {() => <ProtectedRoute component={gated(Profile)} />}
       </Route>
       <Route path={"/lesson/:slug"}>
         {() => <ProtectedRoute component={gated(Lesson)} />}
@@ -128,6 +131,9 @@ function Router() {
 
       {/* Public certificate verification — intentionally outside ProtectedRoute */}
       <Route path={"/verify/:token"} component={Verify} />
+      {/* A bare /verify (hand-typed or a truncated share link) has no token and
+          would otherwise hit the generic 404. Send it home instead (Executor H1). */}
+      <Route path={"/verify"}>{() => <Redirect to="/" />}</Route>
 
       {/* Fallbacks */}
       <Route path={"/404"} component={NotFound} />

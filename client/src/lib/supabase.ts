@@ -108,6 +108,9 @@ export interface CurriculumLesson {
   module_slug: string;
   module_title: string;
   module_order: number;
+  /** The lesson's industry tag slug (tags.kind = 'industry'), or null. Drives the
+   *  industry grouping of the Industry Deep Dives module on the dashboard. */
+  industry: string | null;
 }
 
 export interface CurriculumModule {
@@ -131,17 +134,27 @@ interface LessonJoinRow {
   estimated_minutes: number;
   order_index: number;
   module: { slug: string; title: string; order_index: number } | { slug: string; title: string; order_index: number }[] | null;
+  lesson_tags: { tags: { slug: string; kind: string } | { slug: string; kind: string }[] | null }[] | null;
 }
 
 function normalizeModule(m: LessonJoinRow["module"]) {
   return Array.isArray(m) ? m[0] : m;
 }
 
+/** Pull the first industry-kind tag slug off a joined lesson row, or null. */
+function industryFromTags(lessonTags: LessonJoinRow["lesson_tags"]): string | null {
+  for (const lt of lessonTags ?? []) {
+    const tag = Array.isArray(lt.tags) ? lt.tags[0] : lt.tags;
+    if (tag && tag.kind === "industry") return tag.slug;
+  }
+  return null;
+}
+
 export async function fetchCurriculum(): Promise<Curriculum> {
   const { data, error } = await supabase
     .from("lessons")
     .select(
-      "id, slug, title, hook, key_takeaway, level, estimated_minutes, order_index, module:modules!inner(slug, title, order_index)"
+      "id, slug, title, hook, key_takeaway, level, estimated_minutes, order_index, module:modules!inner(slug, title, order_index), lesson_tags(tags(slug, kind))"
     )
     .eq("status", "published");
 
@@ -163,6 +176,7 @@ export async function fetchCurriculum(): Promise<Curriculum> {
         module_slug: mod.slug,
         module_title: mod.title,
         module_order: mod.order_index,
+        industry: industryFromTags(row.lesson_tags),
       } satisfies CurriculumLesson;
     })
     .filter((l): l is CurriculumLesson => l !== null)
@@ -509,6 +523,58 @@ export async function generateUserPath(): Promise<{ ok: boolean; pathId?: string
   }
 
   return { ok: true, pathId: newPath.id };
+}
+
+// The current user's industry tag slug (profiles.industry), or null. Used by the
+// dashboard to surface the learner's own field first in the Industry Deep Dives
+// section. "general" is treated as no specific industry by the consuming UI.
+export async function fetchUserIndustry(): Promise<string | null> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase
+    .from("profiles")
+    .select("industry")
+    .eq("id", user.id)
+    .maybeSingle();
+  return (data as { industry: string | null } | null)?.industry ?? null;
+}
+
+// A small, read-only summary of the current user's profile for the profile page.
+export interface ProfileSummary {
+  industry: string | null;
+  job_role: string | null;
+  skill_level: SkillLevel | null;
+  goal: OnboardingGoal | null;
+  goal_other: string | null;
+}
+
+export async function fetchProfileSummary(): Promise<ProfileSummary | null> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase
+    .from("profiles")
+    .select("industry, job_role, skill_level, goal, goal_other")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (!data) return null;
+  const p = data as {
+    industry: string | null;
+    job_role: string | null;
+    skill_level: SkillLevel | null;
+    goal: OnboardingGoal | null;
+    goal_other: string | null;
+  };
+  return {
+    industry: p.industry,
+    job_role: p.job_role,
+    skill_level: p.skill_level,
+    goal: p.goal,
+    goal_other: p.goal_other,
+  };
 }
 
 // The current user's active path as an ordered list of lesson UUIDs. Empty when
