@@ -122,3 +122,4 @@ supabase/.temp/
 .playwright-mcp/
 graphify-out/
 .claude/settings.local.json
+.claude/settings.json
