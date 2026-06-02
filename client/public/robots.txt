@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /$
+Allow: /verify/
+Disallow: /app/
+Disallow: /onboarding
+Disallow: /login
+Disallow: /signup
+Disallow: /lesson/
+Disallow: /check/
+
+Sitemap: https://lumio.app/sitemap.xml
