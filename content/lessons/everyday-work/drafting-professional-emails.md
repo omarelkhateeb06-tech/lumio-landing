@@ -18,16 +18,6 @@ The catch is that the quality of what comes back depends entirely on what you pu
 
 There are four things worth handing the AI every time. First, the situation: who this is going to and what is actually happening. Second, the points to make: the two or three things that must land. Third, the tone: how you want to come across. Fourth, the constraints: length, format, anything to avoid. Once you brief all four, the draft that comes back is usually ninety percent of the way there.
 
-Here is what that looks like in practice. Say you manage an office and a vendor has invoiced you twice for the same delivery. You could stew over how to flag it without sounding accusatory, or you could write: "Draft an email to a vendor I have a good relationship with. They invoiced us twice for the September cleaning supplies order, invoice numbers 4471 and 4488, same items. I want them to void the duplicate and confirm. Tone: friendly and matter of fact, assume it was an honest mistake. Under 100 words." What comes back names the invoices, makes the ask cleanly, and keeps the relationship intact. You read it once and send.
-
-Take a second case. A paralegal needs to decline a request from a partner to take on extra document review because they are already buried, but saying no to a partner feels dangerous. The brief: "Write an email declining a partner's request to handle the Reyes document review. I am already at capacity on the Tanaka and Brooks matters with deadlines this week. I want to say no clearly but show I take their request seriously and offer an alternative. Tone: respectful, confident, not apologetic or groveling. Under 120 words." The draft acknowledges the request, states the conflict in terms of existing deadlines rather than personal preference, and suggests checking back next week. That framing protects you. It says no without sounding like you are dodging work.
-
-Tone is the lever most people forget to pull, and it changes everything. The exact same facts can be delivered as warm, firm, apologetic, or coolly professional, and the AI will follow your lead if you name it. A teacher emailing a parent about a missed assignment can ask for "supportive and non-judgmental, assume the parent wants to help." An HR manager confirming a policy change can ask for "neutral and clear, no warmth needed, just the facts." If you do not name a tone, the AI defaults to a generic middle that often reads as either stiff or weirdly chummy. Naming it costs you four words and saves you a rewrite.
-
-A few smaller moves sharpen the result further. Tell the AI to skip jargon and filler if you hate corporate-speak: "no buzzwords, no 'circle back,' plain language." Give it a length so it does not ramble: a chasing email should be three sentences, not three paragraphs. And if you have written similar emails before, paste one in and say "match this voice." The AI is good at mirroring a style once it has a sample.
-
-Now the part that matters most, and the part no prompt can do for you. Always read the draft before you send, and read it as the person receiving it. The AI does not know your history with this person. It does not know that this vendor already apologized last month, or that this colleague is going through something hard, or that one sentence in the draft will land wrong because of a conversation you had last week. You know all of that. So the workflow is not "AI writes my email." It is "AI drafts, I decide." You are still the author. The AI just gets you past the blank box and into editing, which is the easy part. When you hit send, that email is yours, with your name on it, and you are accountable for every word. Treat the draft as a strong first pass from a helpful assistant, never as a finished product you can fire off unread.
-
 ## multiple_choice
 
 ```json
@@ -58,15 +48,64 @@ Now the part that matters most, and the part no prompt can do for you. Always re
 
 ## reading
 
+Here is what that looks like in practice. Say you manage an office and a vendor has invoiced you twice for the same delivery. You could stew over how to flag it without sounding accusatory, or you could write: "Draft an email to a vendor I have a good relationship with. They invoiced us twice for the September cleaning supplies order, invoice numbers 4471 and 4488, same items. I want them to void the duplicate and confirm. Tone: friendly and matter of fact, assume it was an honest mistake. Under 100 words." What comes back names the invoices, makes the ask cleanly, and keeps the relationship intact. You read it once and send.
+
+Take a second case. A paralegal needs to decline a request from a partner to take on extra document review because they are already buried, but saying no to a partner feels dangerous. The brief: "Write an email declining a partner's request to handle the Reyes document review. I am already at capacity on the Tanaka and Brooks matters with deadlines this week. I want to say no clearly but show I take their request seriously and offer an alternative. Tone: respectful, confident, not apologetic or groveling. Under 120 words." The draft acknowledges the request, states the conflict in terms of existing deadlines rather than personal preference, and suggests checking back next week. That framing protects you. It says no without sounding like you are dodging work.
+
+## fill_blank
+
+```json
+{
+  "template": "In the paralegal example, the decline is framed around existing {{1}} on the Tanaka and Brooks matters rather than personal {{2}}, which is what makes the no land as professional.",
+  "blanks": [
+    { "id": "1", "accept": ["deadlines", "capacity", "workload", "commitments"], "ideal": "deadlines" },
+    { "id": "2", "accept": ["preference", "preferences", "choice", "feelings"], "ideal": "preference" }
+  ],
+  "explanation": "The draft states the conflict in terms of existing deadlines rather than personal preference, so it reads as a real scheduling constraint, not as dodging work."
+}
+```
+
+## reading
+
+Tone is the lever most people forget to pull, and it changes everything. The exact same facts can be delivered as warm, firm, apologetic, or coolly professional, and the AI will follow your lead if you name it. A teacher emailing a parent about a missed assignment can ask for "supportive and non-judgmental, assume the parent wants to help." An HR manager confirming a policy change can ask for "neutral and clear, no warmth needed, just the facts." If you do not name a tone, the AI defaults to a generic middle that often reads as either stiff or weirdly chummy. Naming it costs you four words and saves you a rewrite.
+
+A few smaller moves sharpen the result further. Tell the AI to skip jargon and filler if you hate corporate-speak: "no buzzwords, no 'circle back,' plain language." Give it a length so it does not ramble: a chasing email should be three sentences, not three paragraphs. And if you have written similar emails before, paste one in and say "match this voice." The AI is good at mirroring a style once it has a sample.
+
+Now the part that matters most, and the part no prompt can do for you. Always read the draft before you send, and read it as the person receiving it. The AI does not know your history with this person. It does not know that this vendor already apologized last month, or that this colleague is going through something hard, or that one sentence in the draft will land wrong because of a conversation you had last week. You know all of that. So the workflow is not "AI writes my email." It is "AI drafts, I decide." You are still the author. The AI just gets you past the blank box and into editing, which is the easy part. When you hit send, that email is yours, with your name on it, and you are accountable for every word. Treat the draft as a strong first pass from a helpful assistant, never as a finished product you can fire off unread.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, if you do not name a tone in your brief, what tends to happen?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The AI refuses to write the email until you supply one.",
+      "is_correct": false,
+      "explanation": "The AI does not refuse. It simply picks a default, which is the whole problem with leaving the tone unnamed."
+    },
+    {
+      "id": "b",
+      "label": "The AI defaults to a generic middle that often reads as either stiff or weirdly chummy.",
+      "is_correct": true,
+      "explanation": "Right. Naming the tone costs four words and steers the email, while leaving it out lands you in that stiff or chummy default."
+    },
+    {
+      "id": "c",
+      "label": "The AI automatically matches the tone of the last email you sent.",
+      "is_correct": false,
+      "explanation": "It only mirrors a style when you paste a sample and ask it to match that voice. Without a named tone or a sample, it falls back to a generic default."
+    }
+  ]
+}
+```
+
+## reading
+
 The most common mistake is treating the AI's first draft as finished. People brief it well, get back something that reads smoothly, and hit send without reading it as the recipient would. Then they find out the draft thanked a client for "your continued partnership" when this was a brand-new client, or it apologized profusely when the situation called for a firm correction, not an apology. A smooth draft is not a correct draft. The AI writes confident-sounding sentences about things it cannot possibly know: your history with this person, the politics in the room, the one detail that changes the whole message. Reading every draft before sending is not optional. It is the job.
 
 The second mistake is skipping the tone instruction and accepting whatever default comes out. Left to its own devices, the AI tends toward a chummy, over-friendly register, lots of exclamation points and "I'd love to" and "so excited." For a nurse emailing a doctor about a scheduling conflict, that tone is wrong and undermines you. Name the tone explicitly every time. "Professional and brief," "warm but firm," "neutral, just the facts." Four words steer the entire email.
-
-The third mistake is the opposite problem: over-briefing into a stiff, robotic result. Some people, worried about sounding unprofessional, ask for "highly formal corporate language" and end up with an email so starchy it reads like a legal notice. A frustrated colleague who gets a reply dripping with "per my previous correspondence" feels handled, not heard. Aim for how a thoughtful human actually writes. "Clear and human, no corporate jargon" almost always beats "formal."
-
-A fourth trap is pasting in confidential details without thinking. If you are drafting an email about a patient, a client matter, or an employee's performance, do not paste names, medical details, or sensitive specifics into a tool your workplace has not approved. Describe the situation in general terms ("an employee who missed three deadlines") and add the real names yourself in the final draft. Check your organization's policy on what can go into AI tools before you paste anything sensitive.
-
-The last mistake is asking the AI to handle something it should not. An email firing someone, denying a serious complaint, or delivering legally significant news is not a "draft it and tweak it" task. The stakes are too high and the wording carries real consequences. Use the AI for the everyday volume: the chasers, the scheduling notes, the polite declines, the status updates. For the genuinely sensitive sends, write them yourself or get a human to review, because those are the emails where a wrong word actually costs you.
 
 ## fill_blank
 
@@ -78,6 +117,42 @@ The last mistake is asking the AI to handle something it should not. An email fi
     { "id": "2", "accept": ["history", "relationship", "context", "past"], "ideal": "history" }
   ],
   "explanation": "A smooth draft is not a correct draft. The AI writes confident sentences about things it cannot know, so reading every draft as the recipient and catching anything that clashes with your real history is the step that keeps you the author."
+}
+```
+
+## reading
+
+The third mistake is the opposite problem: over-briefing into a stiff, robotic result. Some people, worried about sounding unprofessional, ask for "highly formal corporate language" and end up with an email so starchy it reads like a legal notice. A frustrated colleague who gets a reply dripping with "per my previous correspondence" feels handled, not heard. Aim for how a thoughtful human actually writes. "Clear and human, no corporate jargon" almost always beats "formal."
+
+A fourth trap is pasting in confidential details without thinking. If you are drafting an email about a patient, a client matter, or an employee's performance, do not paste names, medical details, or sensitive specifics into a tool your workplace has not approved. Describe the situation in general terms ("an employee who missed three deadlines") and add the real names yourself in the final draft. Check your organization's policy on what can go into AI tools before you paste anything sensitive.
+
+The last mistake is asking the AI to handle something it should not. An email firing someone, denying a serious complaint, or delivering legally significant news is not a "draft it and tweak it" task. The stakes are too high and the wording carries real consequences. Use the AI for the everyday volume: the chasers, the scheduling notes, the polite declines, the status updates. For the genuinely sensitive sends, write them yourself or get a human to review, because those are the emails where a wrong word actually costs you.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Based on this segment, how should you handle confidential details like patient or employee names when drafting with an unapproved AI tool?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Paste everything in so the AI has full context, then delete the sensitive parts afterward.",
+      "is_correct": false,
+      "explanation": "Once you paste sensitive details into an unapproved tool, deleting them later does not undo the exposure. The point is not to paste them in the first place."
+    },
+    {
+      "id": "b",
+      "label": "Describe the situation in general terms and add the real names or specifics yourself in the final draft.",
+      "is_correct": true,
+      "explanation": "Right. General terms like 'an employee who missed three deadlines' keep the brief useful while you add the sensitive specifics yourself, and you check your organization's policy first."
+    },
+    {
+      "id": "c",
+      "label": "Avoid drafting any email with AI if it touches a person, no matter how general.",
+      "is_correct": false,
+      "explanation": "You can still draft these emails. The segment says to describe the situation generally and add real names yourself, not to avoid the tool entirely."
+    }
+  ]
 }
 ```
 

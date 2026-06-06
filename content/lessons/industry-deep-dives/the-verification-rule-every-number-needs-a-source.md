@@ -16,18 +16,6 @@ Here is something that should worry you a little, in a useful way. An AI model d
 
 Picture Dana, an FP&A analyst building the quarterly board deck on a Sunday night. She is tired, the meeting is at eight, and she asks the AI to "summarize the revenue trend and give me the year-over-year growth figure." It hands her "revenue grew 18.4 percent year over year, driven by strong enterprise expansion." That sentence is perfect. It is specific, it sounds like her business, and it slots cleanly into slide four. The only problem is that the model invented 18.4 percent. The real figure, sitting in her actual export, is 11 percent. Nobody at the table will know the difference until a board member who runs the numbers asks a follow-up question Dana cannot answer, and suddenly the whole deck feels untrustworthy.
 
-This is the core idea of the lesson, and it is worth saying plainly. Every number an AI gives you is a claim, not a fact. A claim is something you check. A fact is something you have already checked. The verification rule is simply this: no figure leaves your hands until you have traced it back to a real source, the actual statement, the actual ledger, the actual filing, the actual export. The number the AI asserted is a hypothesis. The number in your source document is the truth. You report the second one.
-
-It helps to understand exactly how the failure happens, because it is not random. AI fabricates in three predictable ways, and once you can name them, you can catch them. The first is the hallucinated figure: a revenue number, a cash balance, a headcount cost that the model simply made up because you asked and it wanted to answer. The second is the invented benchmark: "a healthy current ratio for your industry is 1.8," stated as if it came from a study, when it came from nowhere in particular. The third is the quiet arithmetic error: you paste real numbers and ask the model to compute, and it transposes a digit, misapplies a formula, or sums a column wrong. That third one is the sneakiest, because the inputs were real, so the output feels real too.
-
-Now, none of this means AI is useless with numbers. That would be the wrong lesson, and it would cost you a genuinely powerful tool. AI is excellent at the work around the numbers. It can explain why two figures might differ. It can draft the narrative that surrounds a table you already built. It can restructure data you pasted, walk you through a calculation method so you can apply it yourself, or help you write the commentary for a variance you have already verified. The line is clean once you see it. AI is wonderful at describing numbers and dangerous at being the place numbers come from.
-
-So draw that line hard in your own workflow. Numbers that originate in a real source, your accounting system, a bank feed, an audited statement, a filing, are trustworthy, and AI can help you talk about them all day. Numbers the model produces from memory or estimation are drafts to verify, never values to report. And when you paste your own data and ask the AI to compute something, you still check the math by hand, because the model can transpose a digit as easily as it can write a clean sentence. The figure is yours to stand behind, which means it is yours to confirm.
-
-Think about Marcus, a controller closing the month. He asks the AI to help reconcile an account and it tells him "the difference of 4,200 is explained by the timing of the vendor accrual." That might be true. It might also be a complete fabrication that happens to sound plausible. The disciplined move is the same every time: he opens the actual accrual entry, looks at the actual dollar amount, and confirms it himself. If it matches, great, the AI saved him time framing the explanation. If it does not, he just caught a number that would otherwise have gone into the close with a confident story attached to it.
-
-The habit you are building is a reflex, and reflexes are simple by design. Every time a number appears in something AI wrote for you, a quiet alarm goes off, and you ask one question: where did this come from. If you can point to the source document, the number stays. If you cannot, the number is a draft, and a draft does not go into a board deck, a filing, a covenant calculation, or a client email. That single question, asked every time, is what separates the finance professionals who use AI safely from the ones who get burned by it.
-
 ## multiple_choice
 
 ```json
@@ -64,17 +52,9 @@ The habit you are building is a reflex, and reflexes are simple by design. Every
 
 ## reading
 
-The verification rule sounds obvious on a calm afternoon. It breaks down in the exact moments it matters most, so it helps to know where it usually goes wrong.
+This is the core idea of the lesson, and it is worth saying plainly. Every number an AI gives you is a claim, not a fact. A claim is something you check. A fact is something you have already checked. The verification rule is simply this: no figure leaves your hands until you have traced it back to a real source, the actual statement, the actual ledger, the actual filing, the actual export. The number the AI asserted is a hypothesis. The number in your source document is the truth. You report the second one.
 
-The first failure is the deadline override. When the meeting is in twenty minutes and the AI hands you a clean, specific number, the temptation to just use it is enormous. The figure looks right, it fits the slide, and checking it feels like a luxury you cannot afford. This is precisely when an unverified number slips through, because pressure is the enemy of the cite-and-check habit. The fix is to make verification non-negotiable rather than optional, the same way you would never skip tying out a control just because you were busy.
-
-The second failure is trusting the math because the inputs were real. A bookkeeper named Priya pastes her actual receivables aging into the AI and asks it to total the over-90-day bucket. The inputs came from her real system, so when the model returns a sum, it feels sourced. It is not. The model could have added a column wrong or dropped a row. Real inputs do not make the output verified. You still re-add the bucket yourself, because the arithmetic is a separate claim from the data.
-
-The third failure is the invented benchmark dressed up as authority. The AI tells you "a current ratio above 2.0 is considered healthy for your sector" and it sounds researched, so you repeat it to a client as if it were established fact. The model did not consult a study. If a benchmark matters to a decision, it needs a real source you can name, not a confident sentence from a tool that cannot cite where the number came from.
-
-The fourth failure is the silent edit. You give the AI your real figures and ask it to write the narrative, and it quietly adds a number you never provided, a percentage, a total, a comparison, woven so smoothly into the prose that you read right past it. The defense is to instruct the model never to introduce figures you did not supply, and then to scan its output specifically for any number you do not recognize.
-
-The thread running through all four is the same. The danger is never that AI is obviously wrong. It is that AI is plausibly, confidently, specifically wrong, in your own language, at the worst possible moment. Verification is the one habit that holds up under all of it.
+It helps to understand exactly how the failure happens, because it is not random. AI fabricates in three predictable ways, and once you can name them, you can catch them. The first is the hallucinated figure: a revenue number, a cash balance, a headcount cost that the model simply made up because you asked and it wanted to answer. The second is the invented benchmark: "a healthy current ratio for your industry is 1.8," stated as if it came from a study, when it came from nowhere in particular. The third is the quiet arithmetic error: you paste real numbers and ask the model to compute, and it transposes a digit, misapplies a formula, or sums a column wrong. That third one is the sneakiest, because the inputs were real, so the output feels real too.
 
 ## fill_blank
 
@@ -86,6 +66,134 @@ The thread running through all four is the same. The danger is never that AI is 
     {"id":"2","accept":["fact","truth","value of record","source of truth"],"ideal":"fact"}
   ],
   "explanation": "The heart of the verification rule is the distinction between a claim and a fact. A figure the AI generates is a claim you must trace to a primary source. Only after you confirm it against the actual ledger, statement, or export does it become a fact you can stand behind."
+}
+```
+
+## reading
+
+Now, none of this means AI is useless with numbers. That would be the wrong lesson, and it would cost you a genuinely powerful tool. AI is excellent at the work around the numbers. It can explain why two figures might differ. It can draft the narrative that surrounds a table you already built. It can restructure data you pasted, walk you through a calculation method so you can apply it yourself, or help you write the commentary for a variance you have already verified. The line is clean once you see it. AI is wonderful at describing numbers and dangerous at being the place numbers come from.
+
+So draw that line hard in your own workflow. Numbers that originate in a real source, your accounting system, a bank feed, an audited statement, a filing, are trustworthy, and AI can help you talk about them all day. Numbers the model produces from memory or estimation are drafts to verify, never values to report. And when you paste your own data and ask the AI to compute something, you still check the math by hand, because the model can transpose a digit as easily as it can write a clean sentence. The figure is yours to stand behind, which means it is yours to confirm.
+
+Think about Marcus, a controller closing the month. He asks the AI to help reconcile an account and it tells him "the difference of 4,200 is explained by the timing of the vendor accrual." That might be true. It might also be a complete fabrication that happens to sound plausible. The disciplined move is the same every time: he opens the actual accrual entry, looks at the actual dollar amount, and confirms it himself. If it matches, great, the AI saved him time framing the explanation. If it does not, he just caught a number that would otherwise have gone into the close with a confident story attached to it.
+
+The habit you are building is a reflex, and reflexes are simple by design. Every time a number appears in something AI wrote for you, a quiet alarm goes off, and you ask one question: where did this come from. If you can point to the source document, the number stays. If you cannot, the number is a draft, and a draft does not go into a board deck, a filing, a covenant calculation, or a client email. That single question, asked every time, is what separates the finance professionals who use AI safely from the ones who get burned by it.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, what is the clean line that separates where AI is safe to use with numbers from where it is dangerous?",
+  "options": [
+    {
+      "id": "a",
+      "label": "AI is dangerous for any task involving numbers, so it should never touch financial work in any form.",
+      "is_correct": false,
+      "explanation": "The lesson explicitly warns against this conclusion. Treating AI as useless with numbers would cost you a genuinely powerful tool that is excellent at the work around the numbers."
+    },
+    {
+      "id": "b",
+      "label": "AI is trustworthy whenever it sounds confident, and the confidence of its tone tells you the number is sound.",
+      "is_correct": false,
+      "explanation": "Confidence is exactly what makes a fabricated figure dangerous. A calm, precise tone is not evidence the number was checked, so tone is never the dividing line."
+    },
+    {
+      "id": "c",
+      "label": "AI is wonderful at describing numbers and dangerous at being the place numbers come from, so it can talk about sourced figures but should never originate them.",
+      "is_correct": true,
+      "explanation": "Correct. The segment draws the line cleanly: numbers that originate in a real source are trustworthy and AI can help you discuss them, while numbers the model produces from memory or estimation are drafts to verify, never values to report."
+    },
+    {
+      "id": "d",
+      "label": "AI can be trusted to do arithmetic on data you paste, because real inputs guarantee a correct result.",
+      "is_correct": false,
+      "explanation": "The segment says the opposite: even when you paste your own data, you still check the math by hand, because the model can transpose a digit as easily as it can write a clean sentence."
+    }
+  ]
+}
+```
+
+## reading
+
+The verification rule sounds obvious on a calm afternoon. It breaks down in the exact moments it matters most, so it helps to know where it usually goes wrong.
+
+The first failure is the deadline override. When the meeting is in twenty minutes and the AI hands you a clean, specific number, the temptation to just use it is enormous. The figure looks right, it fits the slide, and checking it feels like a luxury you cannot afford. This is precisely when an unverified number slips through, because pressure is the enemy of the cite-and-check habit. The fix is to make verification non-negotiable rather than optional, the same way you would never skip tying out a control just because you were busy.
+
+The second failure is trusting the math because the inputs were real. A bookkeeper named Priya pastes her actual receivables aging into the AI and asks it to total the over-90-day bucket. The inputs came from her real system, so when the model returns a sum, it feels sourced. It is not. The model could have added a column wrong or dropped a row. Real inputs do not make the output verified. You still re-add the bucket yourself, because the arithmetic is a separate claim from the data.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does this segment call the deadline override the first place the verification rule breaks down?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because AI produces worse numbers when it senses a deadline is approaching.",
+      "is_correct": false,
+      "explanation": "The model has no awareness of your deadline and does not produce worse numbers under time pressure. The risk lives in the human decision to skip checking, not in the AI's behavior."
+    },
+    {
+      "id": "b",
+      "label": "Because under time pressure a clean, specific number is tempting to use as-is, and pressure is the enemy of the cite-and-check habit, so the fix is to make verification non-negotiable.",
+      "is_correct": true,
+      "explanation": "Correct. The segment explains that when the meeting is minutes away, an unverified number slips through precisely because checking feels like a luxury, which is why verification must be treated as non-negotiable rather than optional."
+    },
+    {
+      "id": "c",
+      "label": "Because deadlines mean the source documents are usually unavailable, so verification is impossible.",
+      "is_correct": false,
+      "explanation": "The segment does not claim sources become unavailable. The problem is the temptation to skip checking under pressure, not a genuine inability to access the source."
+    },
+    {
+      "id": "d",
+      "label": "Because rushing makes you ask the AI for fewer decimal places, which reduces accuracy.",
+      "is_correct": false,
+      "explanation": "Decimal places are not the issue here. The deadline override is about skipping verification entirely, not about how finely a figure is formatted."
+    }
+  ]
+}
+```
+
+## reading
+
+The third failure is the invented benchmark dressed up as authority. The AI tells you "a current ratio above 2.0 is considered healthy for your sector" and it sounds researched, so you repeat it to a client as if it were established fact. The model did not consult a study. If a benchmark matters to a decision, it needs a real source you can name, not a confident sentence from a tool that cannot cite where the number came from.
+
+The fourth failure is the silent edit. You give the AI your real figures and ask it to write the narrative, and it quietly adds a number you never provided, a percentage, a total, a comparison, woven so smoothly into the prose that you read right past it. The defense is to instruct the model never to introduce figures you did not supply, and then to scan its output specifically for any number you do not recognize.
+
+The thread running through all four is the same. The danger is never that AI is obviously wrong. It is that AI is plausibly, confidently, specifically wrong, in your own language, at the worst possible moment. Verification is the one habit that holds up under all of it.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The silent edit failure describes the AI quietly adding a number you never provided while writing your narrative. What is the defense this segment recommends?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Stop asking AI to write any narrative around your figures, since it cannot be trusted with prose.",
+      "is_correct": false,
+      "explanation": "The lesson values AI for drafting narrative around verified figures. The defense is not to abandon that help, it is to constrain and then scan the output."
+    },
+    {
+      "id": "b",
+      "label": "Trust the prose as long as it reads smoothly, because a fluent narrative signals the numbers are accurate.",
+      "is_correct": false,
+      "explanation": "Smooth prose is exactly how the silent edit hides. A number woven seamlessly into fluent text is easy to read past, so fluency is no guarantee of accuracy."
+    },
+    {
+      "id": "c",
+      "label": "Instruct the model never to introduce figures you did not supply, then scan its output specifically for any number you do not recognize.",
+      "is_correct": true,
+      "explanation": "Correct. The segment names exactly this two-part defense: constrain the model up front so it does not add figures, and then actively scan the output for any unfamiliar number that slipped in anyway."
+    },
+    {
+      "id": "d",
+      "label": "Run the narrative through a second AI to confirm the numbers, and accept them if both agree.",
+      "is_correct": false,
+      "explanation": "A second model can repeat or invent figures just as confidently. Agreement between AI runs is not verification, and it is not the defense this segment describes."
+    }
+  ]
 }
 ```
 

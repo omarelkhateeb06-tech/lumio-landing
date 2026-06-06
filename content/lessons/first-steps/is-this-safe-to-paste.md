@@ -18,6 +18,21 @@ Start with the honest truth about where your text goes. When you paste something
 
 So here is the test that does all the work. Before you hit enter, ask yourself: would I be comfortable posting this exact text on a public bulletin board in the office lobby, where any coworker, client, or stranger could read it? If yes, paste away. If something in you flinches, that flinch is the signal. You do not need to memorize privacy law. You need that one half-second pause.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the reading, when you paste text into a free, public AI tool, what is the safest assumption to make about where that text goes?",
+  "options": [
+    { "id": "a", "label": "It stays private between you and the AI, like a sealed envelope no one else opens", "is_correct": false, "explanation": "That is exactly the wrong mental picture. The reading says it is a postcard, not a sealed envelope, because the text may be stored or read by others." },
+    { "id": "b", "label": "It may be stored, used to help train future models, and seen by a human reviewer", "is_correct": true, "explanation": "Right. The reading says to assume all three by default, which is why the postcard picture fits: fine to send most things, but not your bank PIN." },
+    { "id": "c", "label": "It is deleted instantly the moment you close the chat window", "is_correct": false, "explanation": "Nothing in the reading suggests this. The honest truth is the opposite: assume it may be stored and reviewed, which is how many consumer tools work by default." }
+  ]
+}
+```
+
+## reading
+
 To make the flinch reliable, run a quick three-part check on the text in front of you.
 
 Could it identify a real person? Names, email addresses, phone numbers, home addresses, account numbers, dates of birth, medical details, or HR records. A patient's name next to their diagnosis is identifying. So is an employee's name next to a complaint about them.
@@ -27,6 +42,21 @@ Is it confidential or under an agreement? Unreleased financial figures, anything
 Would it cause harm if it leaked? Passwords, security details, private medical or legal records, an employee's salary, or anything embarrassing or damaging if read out of context.
 
 If all three are clearly "no," you are safe; paste the real material and get a great answer. If any one is "yes," do not just paste and hope. You have three good moves instead.
+
+## multiple_choice
+
+```json
+{
+  "stem": "You are about to paste a paragraph into a free, public AI tool to get help rewording it. Which of these, if left in the text, is the unsafe one that goes wrong?",
+  "options": [
+    { "id": "a", "label": "A patient's full name sitting right next to their diagnosis and medical record number", "is_correct": true, "explanation": "Right. A real person's name tied to a diagnosis and MRN is exactly the identifying, harmful-if-leaked material the bulletin-board test is built to catch. Strip it to a role before pasting." },
+    { "id": "b", "label": "A general description like 'an older adult being discharged after a heart failure flare-up'", "is_correct": false, "explanation": "This is the substance with no identifiers attached. It points to no specific person, so it is safe to paste and is exactly what you keep after stripping." },
+    { "id": "c", "label": "A request for 'clear home-care instructions at a sixth-grade reading level'", "is_correct": false, "explanation": "This is just an instruction about format and audience. It carries no names, numbers, or secrets, so there is nothing here that can go wrong." }
+  ]
+}
+```
+
+## reading
 
 Move one, and the one you will use most: strip and generalize. The AI almost never needs the identifying specifics to help you. Take a real example. A nurse wants help wording a discharge instruction. The note says "Maria Gonzalez, DOB 4/2/1958, MRN 88214, discharged after CHF exacerbation." She does not paste that. She pastes: "Patient is an older adult being discharged after a flare-up of heart failure. Help me write clear home-care instructions at a sixth-grade reading level." The AI writes an excellent set of instructions, and no patient identifier ever left the building. The real name added nothing useful anyway.
 
@@ -57,6 +87,21 @@ The most common mistake is treating the chat box like a private, secure document
 
 The second mistake is the opposite overcorrection, deciding AI is too risky and refusing to paste anything real at all. These people describe their task so vaguely that the answers are useless, then conclude AI does not work for their job. It works fine; they skipped the actual skill, which is generalizing. You strip the names and specifics and keep the substance. "Maria Gonzalez, MRN 88214, CHF" becomes "an older patient discharged after a heart failure flare-up," and the AI helps just as well. Avoidance is not safety; it is just throwing away the benefit out of fear.
 
+## fill_blank
+
+```json
+{
+  "template": "The most common mistake is treating the chat box like a private, secure document instead of a {{1}}. The opposite overcorrection is refusing to paste anything real at all, which throws away the benefit; the real skill you skipped is {{2}}.",
+  "blanks": [
+    { "id": 1, "accept": ["postcard", "a postcard"], "ideal": "postcard" },
+    { "id": 2, "accept": ["generalizing", "generalising", "stripping and generalizing", "stripping"], "ideal": "generalizing" }
+  ],
+  "explanation": "The reading names both mistakes: treating the box as a secure document instead of a postcard, and refusing to paste anything real instead of generalizing. The fix in both cases is to keep the substance and strip the identifiers."
+}
+```
+
+## reading
+
 The third mistake is half-redacting. People remove the obvious name at the top but leave a dozen other identifiers buried in the text: the account number in paragraph three, the home address in the signature, the rare diagnosis that points to one specific person, the deal size only one client could have. Redaction has to cover the whole document, not just the headline. Before you paste, reread the text hunting for every name, number, and detail that could point back to a real person or a real secret.
 
 A subtler misconception is assuming all AI tools have the same rules. They do not. A free personal account and a company-paid enterprise account can have completely different data agreements. People who learn "AI is safe at work" on the enterprise tool sometimes paste the same sensitive material into their personal phone app at home, where the protections do not exist. Match the material to the tool, and when in doubt about what your work tool is actually cleared to handle, ask IT rather than guessing.
@@ -67,11 +112,11 @@ The last mistake is thinking this requires legal expertise. It does not. You are
 
 ```json
 {
-  "stem": "You are about to paste a paragraph into a free, public AI tool to get help rewording it. Which of these, if left in the text, is the unsafe one that goes wrong?",
+  "stem": "The reading describes 'half-redacting.' What does that mistake actually look like?",
   "options": [
-    { "id": "a", "label": "A patient's full name sitting right next to their diagnosis and medical record number", "is_correct": true, "explanation": "Right. A real person's name tied to a diagnosis and MRN is exactly the identifying, harmful-if-leaked material the bulletin-board test is built to catch. Strip it to a role before pasting." },
-    { "id": "b", "label": "A general description like 'an older adult being discharged after a heart failure flare-up'", "is_correct": false, "explanation": "This is the substance with no identifiers attached. It points to no specific person, so it is safe to paste and is exactly what you keep after stripping." },
-    { "id": "c", "label": "A request for 'clear home-care instructions at a sixth-grade reading level'", "is_correct": false, "explanation": "This is just an instruction about format and audience. It carries no names, numbers, or secrets, so there is nothing here that can go wrong." }
+    { "id": "a", "label": "Removing the obvious name at the top but leaving buried identifiers like an account number, a home address, or a tell-tale deal size", "is_correct": true, "explanation": "Right. Half-redacting is catching the headline name but missing the dozen other details buried in the text. Redaction has to cover the whole document, not just the top." },
+    { "id": "b", "label": "Believing a free personal account and an enterprise account follow the exact same data rules", "is_correct": false, "explanation": "That is a different mistake in the reading, the assumption that all AI tools have the same rules. Half-redacting is specifically about missing buried identifiers in the text itself." },
+    { "id": "c", "label": "Thinking you need legal expertise before you can safely paste anything", "is_correct": false, "explanation": "That is the last mistake the reading names, not half-redacting. Half-redacting is about leaving identifiers buried in the document after removing the obvious name." }
   ]
 }
 ```

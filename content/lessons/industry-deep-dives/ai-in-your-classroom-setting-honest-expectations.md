@@ -16,15 +16,47 @@ The conversation about AI in schools usually skips the most useful step. We deba
 
 Setting honest expectations starts with one distinction that does almost all the work: AI is useful where it supports the thinking, and harmful where it replaces the thinking your assignment exists to build. The line is not the tool. It is the skill the task was designed to grow. Once you hold onto that, most hard cases sort themselves out. Let me show you what that looks like in three real classrooms.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, what single distinction does almost all the work when you set honest expectations about AI?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Whether the AI tool is a simple one or an advanced one.",
+      "is_correct": false,
+      "explanation": "The segment is explicit that the line is not the tool. The same tool can help or harm depending on the task, so the simple-versus-advanced framing misses the point entirely."
+    },
+    {
+      "id": "b",
+      "label": "Whether the student is honest enough to admit they used AI.",
+      "is_correct": false,
+      "explanation": "Honesty matters elsewhere in the lesson, but the core distinction here is about support versus replacement of thinking, not about whether a student confesses to using the tool."
+    },
+    {
+      "id": "c",
+      "label": "Whether AI supports the thinking or replaces the thinking the assignment exists to build.",
+      "is_correct": true,
+      "explanation": "Correct. The segment names this as the one distinction that does almost all the work: AI is useful where it supports the thinking and harmful where it replaces the skill the task was designed to grow."
+    },
+    {
+      "id": "d",
+      "label": "Whether the school has a written policy banning AI use.",
+      "is_correct": false,
+      "explanation": "A written ban is not the distinction the segment draws. The lesson treats silence and blanket bans alike as ways of dodging the real call about what skill each task builds."
+    }
+  ]
+}
+```
+
+## reading
+
 Take a 9th grade English essay assigned so students can practice building an argument. The whole point is the wrestling: picking a claim, finding evidence, deciding what order convinces a reader. If a student asks AI to brainstorm possible topics or to push back on a thesis that feels weak, that supports the thinking. The student still has to choose, defend, and write. But if the same student asks AI to generate a draft of the essay, the tool has done the exact skill the assignment was built to develop. The student gets a grade and learns nothing about argument. Same tool, opposite outcomes, and the difference is the skill, not the software.
 
 Now picture a middle school math class working through multi-step word problems. The task exists to build reasoning: translating a messy real-world situation into the right operations and deciding what to do in what order. A student who sets up the problem, decides that a sale price means subtracting before multiplying, solves it, and then uses AI to check whether the arithmetic is correct is using it like a calculator with manners. That supports the work. A student who pastes in the whole word problem and copies back the answer and the steps has skipped the reasoning the problem was written to teach. The arithmetic was never the point. The thinking was, and that is what got replaced.
 
 Finally, a research project where students compare three sources on a historical event and write their own analysis. Here the line falls in an interesting place. Using AI to summarize a dense source so the student can grasp it faster can be reasonable support, the way a good study guide is, because comprehension is a doorway, not the destination. But the assignment exists to build the student's ability to weigh sources against each other and form a judgment. The moment AI writes the analysis, comparing the sources and drawing the conclusion, it has done the actual work being assessed. Summarizing to understand is support. Analyzing to conclude is replacement. You, the teacher, are the only one who knows which side of that line each part of your assignment sits on.
-
-That last point matters, so let me be direct about it. You can and should use AI to help you draft this policy, and it genuinely speeds things up. Ask it to write a short, plain-language classroom AI policy for your grade level that separates allowed support from off-limits replacement, with concrete examples on each side. But the judgment about where the line actually falls is yours, because only you know what each assignment is teaching. A draft that bans AI everywhere or allows it everywhere has skipped the one decision you have to make yourself. The AI can format your thinking. It cannot do your thinking, which is exactly the lesson you are trying to teach your students.
-
-Two more things make a policy work in practice. First, write it in language a student and a parent can both understand, not policy jargon, and give examples, because "use AI responsibly" means nothing until it becomes "yes to this, no to that." Vague rules are unfair rules, because the confident students decode them generously and the anxious ones freeze. Second, model the honesty you are asking for. Tell students how you use AI in your own work and where you stop. Maybe you use it to brainstorm warm-up questions but write your own feedback on their writing, because the feedback is the part that has to come from you. When students see you drawing the same kind of line you are asking them to draw, the policy stops feeling like a trap and starts feeling like a shared standard. Expectations you name plainly, and visibly live yourself, are the ones students can actually follow.
 
 ## multiple_choice
 
@@ -62,11 +94,74 @@ Two more things make a policy work in practice. First, write it in language a st
 
 ## reading
 
+That last point matters, so let me be direct about it. You can and should use AI to help you draft this policy, and it genuinely speeds things up. Ask it to write a short, plain-language classroom AI policy for your grade level that separates allowed support from off-limits replacement, with concrete examples on each side. But the judgment about where the line actually falls is yours, because only you know what each assignment is teaching. A draft that bans AI everywhere or allows it everywhere has skipped the one decision you have to make yourself. The AI can format your thinking. It cannot do your thinking, which is exactly the lesson you are trying to teach your students.
+
+Two more things make a policy work in practice. First, write it in language a student and a parent can both understand, not policy jargon, and give examples, because "use AI responsibly" means nothing until it becomes "yes to this, no to that." Vague rules are unfair rules, because the confident students decode them generously and the anxious ones freeze. Second, model the honesty you are asking for. Tell students how you use AI in your own work and where you stop. Maybe you use it to brainstorm warm-up questions but write your own feedback on their writing, because the feedback is the part that has to come from you. When students see you drawing the same kind of line you are asking them to draw, the policy stops feeling like a trap and starts feeling like a shared standard. Expectations you name plainly, and visibly live yourself, are the ones students can actually follow.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Based on this segment, why should you draft your classroom AI policy yourself even though AI can speed up the writing?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the judgment about where the line falls is yours, since only you know what each assignment is teaching.",
+      "is_correct": true,
+      "explanation": "Correct. The segment says AI can format your thinking but cannot do your thinking. A draft that bans or allows AI everywhere has skipped the one decision only you can make, because only you know what each task is built to teach."
+    },
+    {
+      "id": "b",
+      "label": "Because AI tools are not allowed to be used by teachers when writing official documents.",
+      "is_correct": false,
+      "explanation": "The segment says the opposite: you can and should use AI to help draft the policy, and it genuinely speeds things up. The point is about keeping the judgment, not avoiding the tool."
+    },
+    {
+      "id": "c",
+      "label": "Because a policy written by AI will always contain factual errors about your school.",
+      "is_correct": false,
+      "explanation": "The concern is not factual errors. It is that an AI draft cannot supply the per-assignment judgment about what skill each task teaches, which is the decision only the teacher can make."
+    },
+    {
+      "id": "d",
+      "label": "Because students can tell when a policy was written by AI and will trust it less.",
+      "is_correct": false,
+      "explanation": "Detection by students is not the reason given here. The segment's point is that AI can format your thinking but cannot do it, so the line-drawing decision has to stay with you."
+    }
+  ]
+}
+```
+
+## reading
+
 The way teachers get this wrong is rarely careless. It usually comes from trying to be fair and ending up vague, or trying to be safe and ending up rigid. Watch for these four patterns, because each one looks responsible and quietly fails.
 
 The first is the "use AI responsibly" policy with no examples. It sounds balanced and trusting, but it hands students a rule they cannot actually apply. A 10th grader staring at a research paper at 10 p.m. does not know if summarizing a source counts as responsible. The phrase has no edges. In practice it means the bold students interpret it loosely, the anxious students interpret it strictly, and you have created the exact unfairness you were trying to avoid. A policy without concrete yes and no examples is not a policy. It is a vibe.
 
 The second is the blanket ban or the blanket allow, both of which skip your judgment. A total ban treats AI as uniformly corrupting and punishes legitimate support like checking grammar or getting unstuck on a topic. A total allow treats every assignment as if the skill it builds does not matter. Both are attractive because they are easy: no per-assignment thinking required. But the easiness is the tell. The whole job is deciding, assignment by assignment, what skill is being built and therefore what help is fair. A policy that removes that decision has removed the only part that needed a teacher.
+
+## fill_blank
+
+```json
+{
+  "template": "A 'use AI responsibly' policy with no examples fails because the phrase has no {{1}}, leaving bold students to interpret it loosely and anxious students to interpret it {{2}}.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["edges", "edge"],
+      "ideal": "edges"
+    },
+    {
+      "id": "2",
+      "accept": ["strictly", "strict", "tightly", "narrowly"],
+      "ideal": "strictly"
+    }
+  ],
+  "explanation": "The segment says the phrase 'use AI responsibly' has no edges, so the bold students interpret it loosely while the anxious ones interpret it strictly, which recreates the exact unfairness a teacher was trying to avoid."
+}
+```
+
+## reading
 
 The third pitfall is treating an AI-drafted policy as the authority. This is the one most tied to the broader theme of these lessons. When you ask AI to write your classroom policy, it will produce something confident and well-formatted, and it is tempting to adopt it as is because it sounds official. But the AI does not know that your 9th grade essay is about argument while your 11th grade essay is about close reading. It cannot set the line for your specific assignment, because it does not know what your assignment is for. The draft is a starting point you edit, not an answer you accept. The moment you let the polished output stand in for your own judgment, you have made the exact mistake you are warning students against: letting AI do the thinking that was supposed to be yours. AI output is a draft, never a verdict.
 

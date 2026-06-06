@@ -18,18 +18,6 @@ Start with the single most important fact, because everything else follows from 
 
 Here is the most famous version of what happens when people forget that. In a 2023 federal case in New York, two attorneys filed a brief that cited several court decisions to support their argument. The cases did not exist. An AI tool had fabricated them, complete with quotations and citations, and when one of the lawyers asked the tool whether the cases were real, it cheerfully confirmed that they were. They were not. The judge sanctioned the attorneys, ordered them to pay a fine, and required them to notify the real judges whose names had been falsely attached to the fake opinions. The lesson is blunt. A citation that looks perfect tells you nothing about whether it is real. Nothing AI produces is legal authority until you confirm it in an actual legal source like Westlaw, Lexis, or an official reporter.
 
-With that line drawn clearly, here is where AI genuinely earns its keep in a legal workflow.
-
-Consider a paralegal drafting routine correspondence. A status-update letter to a client, an engagement-letter first draft, a cover note for a document production. These are templated, low-stakes documents where most of the words are the same every time and only the details change. AI can produce a clean first version in seconds. The paralegal then edits for accuracy, tone, and the specifics of the matter, fills in the facts of the actual file, and a supervising attorney reviews anything that goes out the door. The blank page is gone, but a human still owns every word that leaves the office.
-
-Consider summarizing deposition notes. You have three hundred pages of transcript and you need the key admissions, the timeline, and the topics that came up. AI is genuinely strong at compressing and structuring text you give it. It can pull a rough summary and a topic list you can scan in minutes. You still read the passages that matter in the original transcript before you rely on them, because a summary can flatten a crucial qualifier, but the first pass saves real time.
-
-Consider explaining a clause to a client. A non-compete provision or an indemnification clause written in dense legal language can be reframed into plain English a client can actually follow. AI is good at that translation. The attorney confirms the explanation is correct for this contract and this jurisdiction before sending it, because the plain-language version is only as good as the human who checks it.
-
-And here is what stays firmly with a qualified human, no exceptions. Legal advice and judgment, meaning what a client should actually do, is a professional decision and never an AI output. Final accuracy and authority, meaning every fact, every quoted rule, and every citation, must be verified by a person against a primary source. Anything filed with a court or relied upon in a transaction carries responsibility and liability that never transfers to the tool. If it goes out the door, a licensed human owns it.
-
-The mindset that keeps you safe is simple. Treat AI as a fast, fluent junior assistant whose work you always check. It is wonderful for the first draft and the rough summary. It is never a stand-in for professional judgment, and it is never a substitute for verified legal sources. The fluency is exactly the trap. The more confident and polished an AI answer sounds, the more it tempts you to skip the verification step, and the verification step is the whole job.
-
 ## multiple_choice
 
 ```json
@@ -60,17 +48,82 @@ The mindset that keeps you safe is simple. Treat AI as a fast, fluent junior ass
 
 ## reading
 
+With that line drawn clearly, here is where AI genuinely earns its keep in a legal workflow.
+
+Consider a paralegal drafting routine correspondence. A status-update letter to a client, an engagement-letter first draft, a cover note for a document production. These are templated, low-stakes documents where most of the words are the same every time and only the details change. AI can produce a clean first version in seconds. The paralegal then edits for accuracy, tone, and the specifics of the matter, fills in the facts of the actual file, and a supervising attorney reviews anything that goes out the door. The blank page is gone, but a human still owns every word that leaves the office.
+
+Consider summarizing deposition notes. You have three hundred pages of transcript and you need the key admissions, the timeline, and the topics that came up. AI is genuinely strong at compressing and structuring text you give it. It can pull a rough summary and a topic list you can scan in minutes. You still read the passages that matter in the original transcript before you rely on them, because a summary can flatten a crucial qualifier, but the first pass saves real time.
+
+Consider explaining a clause to a client. A non-compete provision or an indemnification clause written in dense legal language can be reframed into plain English a client can actually follow. AI is good at that translation. The attorney confirms the explanation is correct for this contract and this jurisdiction before sending it, because the plain-language version is only as good as the human who checks it.
+
+## fill_blank
+
+```json
+{
+  "template": "AI is genuinely strong at {{1}} the text you already give it, like compressing a long deposition into a topic list, but it is never trusted to {{2}} legal authority such as the cases or citations behind an argument.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["summarizing", "summarize", "organizing", "organize", "compressing", "structuring", "drafting"],
+      "ideal": "summarizing"
+    },
+    {
+      "id": "2",
+      "accept": ["supply", "provide", "produce", "source", "invent", "generate"],
+      "ideal": "supply"
+    }
+  ],
+  "explanation": "The use cases share one pattern: AI works on material you hand it, like correspondence, transcripts, or a clause, and a human still owns the result. It is never asked to supply the legal authority itself, because that is where it fabricates."
+}
+```
+
+## reading
+
+And here is what stays firmly with a qualified human, no exceptions. Legal advice and judgment, meaning what a client should actually do, is a professional decision and never an AI output. Final accuracy and authority, meaning every fact, every quoted rule, and every citation, must be verified by a person against a primary source. Anything filed with a court or relied upon in a transaction carries responsibility and liability that never transfers to the tool. If it goes out the door, a licensed human owns it.
+
+The mindset that keeps you safe is simple. Treat AI as a fast, fluent junior assistant whose work you always check. It is wonderful for the first draft and the rough summary. It is never a stand-in for professional judgment, and it is never a substitute for verified legal sources. The fluency is exactly the trap. The more confident and polished an AI answer sounds, the more it tempts you to skip the verification step, and the verification step is the whole job.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Based on what stays with a qualified human, which task can never be handed off to an AI tool?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Producing a clean first draft of a routine status-update letter.",
+      "is_correct": false,
+      "explanation": "A first draft of routine correspondence is exactly the kind of low-stakes, templated work AI handles well, as long as a human edits and a supervising attorney reviews it."
+    },
+    {
+      "id": "b",
+      "label": "Deciding what a client should actually do and signing off on a filing.",
+      "is_correct": true,
+      "explanation": "Correct. Legal advice and judgment is a professional decision, and responsibility for anything filed or sent never transfers to the tool. A licensed human owns it."
+    },
+    {
+      "id": "c",
+      "label": "Compressing a long transcript into a rough summary you will check.",
+      "is_correct": false,
+      "explanation": "Summarizing text you provide is something AI is strong at. A human still reads the key passages in the original before relying on them, but the first pass is a fair use."
+    },
+    {
+      "id": "d",
+      "label": "Reframing a dense clause into plain English for a human to confirm.",
+      "is_correct": false,
+      "explanation": "Plain-language translation is a good use of AI, provided the attorney confirms the explanation is correct for the contract and jurisdiction before sending it."
+    }
+  ]
+}
+```
+
+## reading
+
 Knowing the rule is one thing. The mistakes that actually get legal workers in trouble come from forgetting it under deadline pressure, when an answer looks finished and the clock is running. Here are the ones that show up again and again, so you can spot them before they cost you.
 
 The first is filing AI-fabricated citations without checking them. This is not hypothetical. In the 2023 New York case, real attorneys filed real briefs built on cases that an AI simply made up, and they were sanctioned for it. Since then, judges across multiple jurisdictions have caught and penalized the same mistake, and some courts now require lawyers to certify whether AI was used in a filing. The failure is always the same shape. The citation looked perfect, so nobody pulled it up to confirm it existed.
 
 The second is pasting privileged or confidential client material into a public tool. When you drop a client's contract, settlement terms, medical records, or case strategy into a free consumer chatbot, that information may be stored, may be used to train the model, and is no longer under your control. That can breach client confidentiality and waive privilege, which is one of the most serious things a legal professional can do. Sensitive client material does not belong in a public tool, period. If your firm has an approved, contractually protected legal AI platform, use that and follow its rules instead.
-
-The third is treating a fluent AI answer as legal authority. The tool writes in a calm, confident, professional voice. It sounds like a senior associate. That tone has nothing to do with accuracy. AI will state a rule that was repealed years ago, or describe the law of the wrong state, with exactly the same confidence it uses when it is right. Fluency is not authority, and a polished paragraph is not a verified one.
-
-The fourth is asking the AI to verify its own work. When you ask a tool whether the cases it gave you are real, you are asking the same prediction engine that invented them to grade itself. It will often say yes. Self-confirmation proves nothing. The check has to come from outside the tool, from a real legal database or the primary source itself.
-
-The fifth ties them all together. Using AI output without a qualified human reviewing it. Even when every citation is real and no confidential data was exposed, a licensed professional still has to own the legal judgment, the accuracy, and anything that gets filed or sent. The responsibility never transfers to the software. If you remember one thing, remember that AI can speed up the work but it can never sign off on it.
 
 ## multiple_choice
 
@@ -95,6 +148,42 @@ The fifth ties them all together. Using AI output without a qualified human revi
       "label": "Using a firm-approved, contractually protected legal AI platform that follows the firm's confidentiality rules.",
       "is_correct": false,
       "explanation": "This is a reasonable option when the platform is approved and protected. The danger is the public tool, not careful use of an approved one."
+    }
+  ]
+}
+```
+
+## reading
+
+The third is treating a fluent AI answer as legal authority. The tool writes in a calm, confident, professional voice. It sounds like a senior associate. That tone has nothing to do with accuracy. AI will state a rule that was repealed years ago, or describe the law of the wrong state, with exactly the same confidence it uses when it is right. Fluency is not authority, and a polished paragraph is not a verified one.
+
+The fourth is asking the AI to verify its own work. When you ask a tool whether the cases it gave you are real, you are asking the same prediction engine that invented them to grade itself. It will often say yes. Self-confirmation proves nothing. The check has to come from outside the tool, from a real legal database or the primary source itself.
+
+The fifth ties them all together. Using AI output without a qualified human reviewing it. Even when every citation is real and no confidential data was exposed, a licensed professional still has to own the legal judgment, the accuracy, and anything that gets filed or sent. The responsibility never transfers to the software. If you remember one thing, remember that AI can speed up the work but it can never sign off on it.
+
+## multiple_choice
+
+```json
+{
+  "stem": "An AI tool gives a calm, confident answer citing a rule, and then confirms its own cases are real when asked. What do these two facts tell you about the answer's reliability?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The confident tone and the self-confirmation together make it safe to rely on.",
+      "is_correct": false,
+      "explanation": "Both signals are worthless as proof. The tool uses the same confident voice when it is wrong, and asking it to grade itself just re-runs the engine that may have invented the answer."
+    },
+    {
+      "id": "b",
+      "label": "They tell you almost nothing, because fluency is not authority and self-confirmation proves nothing.",
+      "is_correct": true,
+      "explanation": "Correct. A polished paragraph is not a verified one, and the same prediction engine confirming its own work cannot validate it. The check must come from outside the tool."
+    },
+    {
+      "id": "c",
+      "label": "The self-confirmation is enough on its own, so the tone does not matter.",
+      "is_correct": false,
+      "explanation": "Self-confirmation is exactly the trap. In the New York case the tool confidently confirmed cases it had fabricated. Verification has to come from a real legal database or primary source."
     }
   ]
 }

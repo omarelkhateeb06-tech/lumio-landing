@@ -18,24 +18,6 @@ Here is the core difference. Google is a librarian. When you type a question, Go
 
 ChatGPT is a writer, not a librarian. It does not look anything up. It was trained on a huge amount of text, and when you ask it something, it predicts the most plausible-sounding response one word at a time. There is no link to click, no source attached, and its training has a cutoff date, so it has no idea what happened this week. What it is genuinely good at is the kind of thinking a librarian cannot do for you: turning a messy idea into a clear paragraph, explaining a hard concept in plain words, or generating five different versions of something so you can choose.
 
-So here is the test. Before you type your question anywhere, ask yourself one thing: does this question have a single correct answer that already exists out in the world? If yes, go to Google. If the answer needs to be created, reasoned through, rewritten, or judged, go to ChatGPT. That is the whole 10-second test.
-
-Let me make this concrete with three real situations.
-
-Maria is an office manager. She needs to know whether the company can deduct a client lunch on this year's taxes. This has one correct answer that exists in tax rules, and getting it wrong has real consequences. This is a Google question. If she asks ChatGPT, it will give her a confident, polished answer that might be based on tax rules from three years ago, and she will have no way to tell. She should Google the current IRS guidance, or better, ask her accountant.
-
-David teaches eighth-grade science. He has to send a tricky email to a parent whose child is failing, and he is dreading writing it. There is no "correct" email sitting on a web page. This needs to be created with care and tone. This is a ChatGPT question. He can tell it the situation, the tone he wants (firm but warm), and the facts, and it will draft something he can edit in two minutes instead of agonizing for thirty.
-
-Priya is an HR manager comparing two health insurance plans for the company. This one needs both tools, and this is where most people miss out. She uses Google to pull the actual plan documents and current premium numbers from the insurers, because those are verifiable facts that must be exactly right. Then she pastes the real details into ChatGPT and asks it to build a side-by-side comparison table and explain the tradeoffs in plain language for her team. Google supplied the facts. ChatGPT did the thinking. Neither tool could have done both halves well.
-
-One more case shows the trap from the other direction. Sam runs a small bakery and wants to write a punchy Instagram caption for a new seasonal pastry. He starts Googling "best bakery captions" and scrolls through pages of recycled one-liners, none of which mention his pistachio croissant or his neighborhood. That is wasted effort, because there is no correct caption waiting on a web page. The moment he switches to ChatGPT, describes the pastry, and asks for five caption options in a warm, slightly playful voice, he gets tailored choices in seconds. The lesson cuts both ways: Google is useless for creation, and ChatGPT is unsafe for verifiable facts. Sam was reaching for the librarian when he needed the writer.
-
-That last pattern has a name: research synthesis. You use Google to find the primary sources, because a source you can verify is the whole point of facts. Then you use ChatGPT to help you understand, compare, and summarize what you found. This combination is the single most useful AI habit a knowledge worker can build, and almost nobody does it on purpose.
-
-One more thing to keep in your head. ChatGPT recently gained some ability to search the web inside certain modes, which blurs this line a little. That is helpful, but it does not change the mental model. When accuracy matters and you need to point to a source, you still want to see and verify that source yourself. The librarian-versus-writer distinction is still the safest way to think, because it keeps you in the habit of asking "can I verify this?" before you trust an answer with your name on it.
-
-The payoff is simple. Match the tool to the job and you stop getting confident-sounding wrong answers from the writer, and you stop getting fourteen generic listicles from the librarian when you actually needed something written for your exact situation.
-
 ## multiple_choice
 
 ```json
@@ -51,13 +33,15 @@ The payoff is simple. Match the tool to the job and you stop getting confident-s
 
 ## reading
 
-The most common mistake is asking ChatGPT for current facts. People type "what is the current interest rate?" or "what does my state's overtime law say?" and get a clean, confident answer. The danger is that the answer looks identical whether it is right or invented. ChatGPT has no live connection to the world and a training cutoff, so for anything recent or anything legal, it is often guessing in a very convincing voice. The fix: any time you catch yourself wanting a current number, a price, a date, or what an official rule actually says, route that to Google instead. If you must use ChatGPT, paste the real fact in yourself and let it only do the writing.
+So here is the test. Before you type your question anywhere, ask yourself one thing: does this question have a single correct answer that already exists out in the world? If yes, go to Google. If the answer needs to be created, reasoned through, rewritten, or judged, go to ChatGPT. That is the whole 10-second test.
 
-The opposite mistake is just as common: Googling things that need to be created. People search "how should I word a layoff announcement?" or "performance review template for a defensive employee" and scroll through fourteen listicles that are generic, padded with ads, and not about their actual situation. None of those pages knows your employee, your tone, or your facts. This is a creation task, and ChatGPT will produce something tailored in one pass. The fix: if you are searching for how to write, phrase, structure, or explain something specific to your situation, that is a ChatGPT job, not a Google job.
+Let me make this concrete with three real situations.
 
-A third trap is the all-or-nothing belief that you should pick one tool and stick with it for the whole task. Research is where this costs you the most. People either trust ChatGPT alone and end up with unverifiable claims, or they bury themselves in twenty Google tabs and never synthesize anything. The fix is to deliberately split the work: Google for the verifiable inputs, ChatGPT for the reasoning on top of them. Naming it out loud ("now I am gathering facts, now I am synthesizing") keeps you from collapsing the two steps.
+Maria is an office manager. She needs to know whether the company can deduct a client lunch on this year's taxes. This has one correct answer that exists in tax rules, and getting it wrong has real consequences. This is a Google question. If she asks ChatGPT, it will give her a confident, polished answer that might be based on tax rules from three years ago, and she will have no way to tell. She should Google the current IRS guidance, or better, ask her accountant.
 
-The last misconception is the most dangerous because it sounds responsible: "I will just double-check ChatGPT's facts with Google afterward." In practice almost nobody does, because a confident answer feels finished, and verifying is boring. Picture a recruiter who asks ChatGPT for the current H-1B filing fee, gets a tidy figure, and tells herself she will confirm it before the deadline. The number sits in her draft looking official, the deadline rush arrives, and the unchecked figure ships to a client. The better habit is to never ask ChatGPT for the fact in the first place. Get the fact from Google up front, then hand it to ChatGPT. You cannot forget to verify a fact you never asked the writer to invent.
+David teaches eighth-grade science. He has to send a tricky email to a parent whose child is failing, and he is dreading writing it. There is no "correct" email sitting on a web page. This needs to be created with care and tone. This is a ChatGPT question. He can tell it the situation, the tone he wants (firm but warm), and the facts, and it will draft something he can edit in two minutes instead of agonizing for thirty.
+
+Priya is an HR manager comparing two health insurance plans for the company. This one needs both tools, and this is where most people miss out. She uses Google to pull the actual plan documents and current premium numbers from the insurers, because those are verifiable facts that must be exactly right. Then she pastes the real details into ChatGPT and asks it to build a side-by-side comparison table and explain the tradeoffs in plain language for her team. Google supplied the facts. ChatGPT did the thinking. Neither tool could have done both halves well.
 
 ## fill_blank
 
@@ -69,6 +53,70 @@ The last misconception is the most dangerous because it sounds responsible: "I w
     { "id": "2", "accept": ["chatgpt", "chat gpt", "an ai chatbot", "ai"], "ideal": "ChatGPT" }
   ],
   "explanation": "The whole decision comes down to whether the answer already exists and must be verified (Google) or needs to be created and reasoned through (ChatGPT)."
+}
+```
+
+## reading
+
+One more case shows the trap from the other direction. Sam runs a small bakery and wants to write a punchy Instagram caption for a new seasonal pastry. He starts Googling "best bakery captions" and scrolls through pages of recycled one-liners, none of which mention his pistachio croissant or his neighborhood. That is wasted effort, because there is no correct caption waiting on a web page. The moment he switches to ChatGPT, describes the pastry, and asks for five caption options in a warm, slightly playful voice, he gets tailored choices in seconds. The lesson cuts both ways: Google is useless for creation, and ChatGPT is unsafe for verifiable facts. Sam was reaching for the librarian when he needed the writer.
+
+That last pattern has a name: research synthesis. You use Google to find the primary sources, because a source you can verify is the whole point of facts. Then you use ChatGPT to help you understand, compare, and summarize what you found. This combination is the single most useful AI habit a knowledge worker can build, and almost nobody does it on purpose.
+
+One more thing to keep in your head. ChatGPT recently gained some ability to search the web inside certain modes, which blurs this line a little. That is helpful, but it does not change the mental model. When accuracy matters and you need to point to a source, you still want to see and verify that source yourself. The librarian-versus-writer distinction is still the safest way to think, because it keeps you in the habit of asking "can I verify this?" before you trust an answer with your name on it.
+
+The payoff is simple. Match the tool to the job and you stop getting confident-sounding wrong answers from the writer, and you stop getting fourteen generic listicles from the librarian when you actually needed something written for your exact situation.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Sam Googled \"best bakery captions\" and got nowhere. According to this segment, why was that wasted effort?",
+  "options": [
+    { "id": "a", "label": "Because Google ranks bakery pages poorly compared to other businesses.", "is_correct": false, "explanation": "The problem was not ranking. The issue is that there is no correct caption sitting on a web page for Google to find." },
+    { "id": "b", "label": "Because he should have searched for captions about croissants specifically.", "is_correct": false, "explanation": "A narrower search would still return recycled one-liners. The point is that a caption for his pastry has to be created, not retrieved." },
+    { "id": "c", "label": "Because there is no correct caption waiting on a web page, so creation is a ChatGPT job, not a Google job.", "is_correct": true, "explanation": "Right. A caption tailored to his pistachio croissant must be created, which is what ChatGPT does well and what Google cannot do." },
+    { "id": "d", "label": "Because he needed to verify the caption against a source first.", "is_correct": false, "explanation": "Verification matters for facts, not for creative writing. This was a creation task, so there was nothing to verify." }
+  ]
+}
+```
+
+## reading
+
+The most common mistake is asking ChatGPT for current facts. People type "what is the current interest rate?" or "what does my state's overtime law say?" and get a clean, confident answer. The danger is that the answer looks identical whether it is right or invented. ChatGPT has no live connection to the world and a training cutoff, so for anything recent or anything legal, it is often guessing in a very convincing voice. The fix: any time you catch yourself wanting a current number, a price, a date, or what an official rule actually says, route that to Google instead. If you must use ChatGPT, paste the real fact in yourself and let it only do the writing.
+
+The opposite mistake is just as common: Googling things that need to be created. People search "how should I word a layoff announcement?" or "performance review template for a defensive employee" and scroll through fourteen listicles that are generic, padded with ads, and not about their actual situation. None of those pages knows your employee, your tone, or your facts. This is a creation task, and ChatGPT will produce something tailored in one pass. The fix: if you are searching for how to write, phrase, structure, or explain something specific to your situation, that is a ChatGPT job, not a Google job.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, why is the answer ChatGPT gives to \"what does my state's overtime law say?\" so risky?",
+  "options": [
+    { "id": "a", "label": "Because ChatGPT refuses to answer legal questions.", "is_correct": false, "explanation": "ChatGPT will usually answer. The risk is not refusal; it is that the answer can be wrong in a convincing way." },
+    { "id": "b", "label": "Because the answer looks identical whether it is right or invented, and ChatGPT has no live connection and a training cutoff.", "is_correct": true, "explanation": "Correct. A confident answer reads the same whether it is accurate or guessed, and ChatGPT cannot check current or legal facts, so route those to Google." },
+    { "id": "c", "label": "Because ChatGPT always adds too many sources you have to read.", "is_correct": false, "explanation": "The opposite is true: ChatGPT attaches no source to click, which is part of why current facts are risky to ask it for." },
+    { "id": "d", "label": "Because overtime law is the same in every state, so the question is pointless.", "is_correct": false, "explanation": "Overtime rules vary, which is exactly why you want a verifiable current source from Google rather than a guess." }
+  ]
+}
+```
+
+## reading
+
+A third trap is the all-or-nothing belief that you should pick one tool and stick with it for the whole task. Research is where this costs you the most. People either trust ChatGPT alone and end up with unverifiable claims, or they bury themselves in twenty Google tabs and never synthesize anything. The fix is to deliberately split the work: Google for the verifiable inputs, ChatGPT for the reasoning on top of them. Naming it out loud ("now I am gathering facts, now I am synthesizing") keeps you from collapsing the two steps.
+
+The last misconception is the most dangerous because it sounds responsible: "I will just double-check ChatGPT's facts with Google afterward." In practice almost nobody does, because a confident answer feels finished, and verifying is boring. Picture a recruiter who asks ChatGPT for the current H-1B filing fee, gets a tidy figure, and tells herself she will confirm it before the deadline. The number sits in her draft looking official, the deadline rush arrives, and the unchecked figure ships to a client. The better habit is to never ask ChatGPT for the fact in the first place. Get the fact from Google up front, then hand it to ChatGPT. You cannot forget to verify a fact you never asked the writer to invent.
+
+## multiple_choice
+
+```json
+{
+  "stem": "This segment calls \"I will just double-check ChatGPT's facts with Google afterward\" the most dangerous misconception. What does it suggest you do instead?",
+  "options": [
+    { "id": "a", "label": "Double-check the facts twice to be safe.", "is_correct": false, "explanation": "Checking twice still relies on a verify-later step that the segment says almost nobody actually does." },
+    { "id": "b", "label": "Trust the confident answer, since a finished-looking answer is usually correct.", "is_correct": false, "explanation": "The segment warns that a confident answer only feels finished, which is exactly why people skip verifying it." },
+    { "id": "c", "label": "Stick with one tool for the whole task to keep things simple.", "is_correct": false, "explanation": "That is the all-or-nothing trap from earlier. The fix here is about where the fact comes from, not about using a single tool." },
+    { "id": "d", "label": "Never ask ChatGPT for the fact at all: get it from Google up front, then hand it to ChatGPT.", "is_correct": true, "explanation": "Right. You cannot forget to verify a fact you never asked the writer to invent, so source it from Google first." }
+  ]
 }
 ```
 

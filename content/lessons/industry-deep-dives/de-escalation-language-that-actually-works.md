@@ -16,9 +16,69 @@ De-escalation feels like a personality trait, something some agents just have an
 
 Start with the trigger phrases, because cutting them does half the work. "Calm down" tells someone their feelings are the problem. "As I already said" tells them they are too slow to keep up. "That is our policy" tells them you have stopped thinking about their situation. "There is nothing I can do" tells them you have given up. Every one of these is technically true in some moment and almost never helps. The skill is having something better ready, so you do not reach for the dismissive phrase out of habit when the pressure is on.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the lesson, how many core de-escalation language moves are there, and what role do trigger phrases play?",
+  "options": [
+    {
+      "id": "a",
+      "label": "There is one master move, sounding sympathetic, and trigger phrases are harmless as long as you say them gently.",
+      "is_correct": false,
+      "explanation": "The lesson names four distinct moves, not one. And trigger phrases like 'calm down' are not harmless; they almost never help no matter how gently delivered."
+    },
+    {
+      "id": "b",
+      "label": "There are four moves, and trigger phrases are fine to use because they are technically true.",
+      "is_correct": false,
+      "explanation": "There are indeed four moves, but the point about trigger phrases is the opposite: even though each is technically true in some moment, it almost never helps, so the skill is having something better ready."
+    },
+    {
+      "id": "c",
+      "label": "There are four moves, acknowledge the emotion, avoid trigger phrases, take ownership, and offer a path with a choice, and cutting trigger phrases does about half the work.",
+      "is_correct": true,
+      "explanation": "Correct. The four moves are acknowledge first, avoid the predictably escalating phrases, take ownership, and give back control with a choice, and the lesson says cutting the trigger phrases does half the work."
+    }
+  ]
+}
+```
+
+## reading
+
 Here is the work in concrete terms. Imagine a customer whose package was marked delivered but never arrived, and your blunt instinct is: "There is nothing I can do, that is our policy, you will have to file a claim with the carrier." Run that through AI with a clear instruction: "Rewrite this reply to a frustrated customer using de-escalation principles. Acknowledge their frustration first, drop any dismissive phrasing, take ownership of helping, and offer a clear next step with a choice. Keep it honest and do not promise anything we cannot deliver." What comes back sounds more like: "I am sorry, that is genuinely frustrating, you paid for something and it is not in your hands. Let me get this sorted with you. I can open a carrier investigation right now, or if you would rather not wait on that, I can reship today and chase the original separately. Which would you prefer?" Same facts, same policy limits, completely different temperature. Nothing was promised that cannot be done. The feeling got named, ownership got taken, and the customer got a choice.
 
 A second example. A subscriber is furious that they were charged after they thought they had canceled, and your draft is: "Our records show the cancellation went through after the billing date, so the charge is valid." That is accurate and it will escalate. The de-escalation version keeps every fact and changes the framing: "I can see why this feels wrong, you went in to cancel and still got charged, that is a bad surprise. Looking at the timing, the cancellation landed just after the billing ran, so the system charged for the cycle that had already started. I would rather not leave you paying for a service you are done with, so I can refund this charge as a one-time exception, or credit it toward something useful to you. Tell me which is better." You did not hide the timeline. You acknowledged the feeling, owned the outcome, and offered a real choice.
+
+## multiple_choice
+
+```json
+{
+  "stem": "In both worked examples (the missing package and the post-cancellation charge), what stays the same between the blunt draft and the de-escalation rewrite?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The facts and the policy limits stay the same; only the framing changes, with the feeling named, ownership taken, and a real choice offered.",
+      "is_correct": true,
+      "explanation": "Correct. Both rewrites keep every fact and the same policy limits, promise nothing extra, and simply change the temperature by acknowledging the feeling, taking ownership, and offering a choice."
+    },
+    {
+      "id": "b",
+      "label": "The rewrite wins by promising the customer something extra the blunt version withheld.",
+      "is_correct": false,
+      "explanation": "The lesson is explicit that nothing was promised that cannot be done. The rewrite offers a choice among honest options, not a new promise the blunt version was hiding."
+    },
+    {
+      "id": "c",
+      "label": "The rewrite drops the inconvenient facts, like the cancellation timing, to avoid upsetting the customer.",
+      "is_correct": false,
+      "explanation": "The opposite is true: 'You did not hide the timeline.' The de-escalation version keeps every fact and only changes how it is framed."
+    }
+  ]
+}
+```
+
+## reading
 
 Notice what AI is doing in both cases. It is not finding magic words. It is reliably applying the four moves to your own raw reply, faster and more consistently than you can under pressure, and that repetition is how you learn the pattern. Seeing your blunt instinct transformed a few dozen times teaches your ear what dismissive sounds like and what warm sounds like, so eventually you produce the better version yourself without a tool.
 
@@ -59,6 +119,42 @@ Two cautions hold this together. First, de-escalation language has to stay genui
 The mistakes here are subtle because the language can look perfect and still fail. The first one is treating AI-crafted phrases as scripts to recite. You get a beautifully de-escalating reply, you memorize it, and you deliver it word for word to the next angry customer regardless of what they actually said. People feel that. A line that does not fit their specific problem reads as a canned response, and a canned response to real anger is its own insult. The customer who said "I have called three times about this exact thing" does not want a smooth template that ignores the three calls. The fix is to use the AI rewrite to learn the moves, then produce your own version that fits the person in front of you. The phrasing has to be yours and it has to be true to their situation, or the warmth is fake and they know it.
 
 The second mistake is treating AI as the authority on what to say in a live, heated exchange. It is tempting, when a chat is going sideways in real time, to paste the customer's last message into a tool and let it tell you how to respond. The problem is that the model cannot hear the customer's tone, cannot see that they have actually started to soften, cannot tell that this particular person wants to be heard more than they want a refund. You can. The model is excellent before the conversation, building the skill and rehearsing the hard scenarios, and it is fine after, reviewing a draft for dismissive phrasing. In the live moment, your read of the human is the thing that decides which move to make, and outsourcing that to a tool that is blind to the room makes you worse, not better. Prepare with AI, then trust your own judgment when it counts.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why is treating AI as the authority on what to say during a live, heated exchange a mistake?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because AI tools are always too slow to respond before the customer hangs up.",
+      "is_correct": false,
+      "explanation": "Speed is not the reason the lesson gives. The problem is what the model cannot perceive in the live moment, not how fast it types."
+    },
+    {
+      "id": "b",
+      "label": "Because reciting AI replies in the moment violates your employer's privacy policy in every case.",
+      "is_correct": false,
+      "explanation": "Privacy is a separate, real concern addressed elsewhere, but it is not the reason live authority fails. The issue here is the model's blindness to the actual conversation."
+    },
+    {
+      "id": "c",
+      "label": "AI is best used before and after the conversation; recite it live and you reach for a dismissive phrase from habit.",
+      "is_correct": false,
+      "explanation": "AI is indeed best before and after, but the lesson does not say leaning on it live makes you reach for dismissive habits. It says the model is blind to the room, so it cannot pick the right move."
+    },
+    {
+      "id": "d",
+      "label": "The model cannot hear tone, see the person softening, or tell what they want underneath, so your real-time read, not the blind tool, must decide the move.",
+      "is_correct": true,
+      "explanation": "Correct. In the live moment the model is blind to the room: it cannot hear tone or notice softening. Your read of the human decides which move to make, and outsourcing that makes you worse, not better."
+    }
+  ]
+}
+```
+
+## reading
 
 The third mistake is a privacy one, and it is easy to make when you are stressed and just want help fast. Do not paste a customer's identifying details or the full conversation thread into a public AI tool. The angry message often contains a name, an order number, an email address, an account ID, sometimes a phone number or partial card details. A public tool is not a safe place for that, and your employer almost certainly has rules against it. When you want AI to help you de-escalate, strip the specifics first. Describe the situation in general terms: "a customer charged after a late cancellation," not the actual record. You lose nothing for learning the language, and you protect the person whose trust you are trying to win back. The whole point of de-escalation is respect, and leaking their data is the opposite of that.
 

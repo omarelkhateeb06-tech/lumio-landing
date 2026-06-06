@@ -16,18 +16,6 @@ The hardest replies in customer service are the ones to people who are genuinely
 
 Here is the thing to be honest about: the value is not that AI feels empathy. It does not feel anything. The value is that it can phrase acknowledgment and a path forward in calm, warm language faster than you can when you are stressed and rushed. You bring the facts and the resolution. The model helps you say it well. That distinction matters, because it tells you what to expect and what to never outsource. The empathy in the final reply is real because you made it real for this specific person. The AI just got you to clear, human language fast.
 
-Let me make this concrete with scenarios you have probably lived.
-
-First, the late and damaged order. A customer ordered something for a specific occasion, it arrived almost two weeks late, and when it finally showed up the box was crushed and the item inside was broken. They are angry, and they have a right to be. You can refund and reship today. A weak reply opens with "We apologize for any inconvenience," which reads like a form letter and makes things worse. A strong prompt looks like this: "A customer's order arrived about two weeks late and damaged. We can issue a full refund and reship today at no cost. Draft a warm, genuinely apologetic reply that acknowledges their frustration first, takes responsibility without excuses, then clearly lays out the refund and reshipment. Keep it concise and human, not corporate." What comes back leads with acknowledgment, owns the failure, and states the fix in plain words. You then add the customer's name and the order specifics from your system.
-
-Second, the double charge. A subscriber notices they were billed twice this month for the same plan, and now they are worried money is gone and nobody is watching their account. This is a trust problem as much as a money problem. You confirm the duplicate charge and you can reverse it. The prompt: "A customer was accidentally charged twice for their monthly subscription. I have confirmed the duplicate and can reverse it within three to five business days. Draft a calm, reassuring reply that takes the worry seriously, confirms the error is real and on us, and explains exactly when the refund lands. No jargon." The draft reassures without minimizing, which is what a worried customer needs. You verify the refund timing against your actual process before it goes out.
-
-Third, the broken promise. A customer was told they would get a callback to sort out a problem, and the callback never came. Now they are back, more frustrated than before, because the issue is still unsolved and they feel ignored. This one is delicate, because the company already let them down once. A good prompt names that: "A customer was promised a callback that never happened, and their original issue is still open. Draft a sincere reply that acknowledges we dropped the ball on the callback, apologizes specifically for that, and commits to a clear next step with a real timeframe. Warm and direct, no excuses about being busy." The draft owns the miss instead of glossing over it. You fill in the real next step you can actually deliver, because a second broken promise is unforgivable.
-
-Notice the pattern across all three. You describe the situation in general terms, you state the actual resolution you can offer, and you ask for a specific tone and structure: acknowledge first, take responsibility, then lay out the fix. That order matters for upset people. Lead with the fix and you sound like you are dodging the feeling. Lead with the feeling and forget the fix and you sound hollow. The AI handles the shape. You handle the substance, the real name, the real policy, the real timeframe.
-
-The draft gets you to calm, clear, human language fast, which is precisely what is hardest to produce when your heart rate is up and the queue is full. That speed is the whole point. It lets you respond from a steady place instead of a defensive one. And it protects the customer relationship at the exact moment it is most fragile, because the reply that goes out when someone is angry is the one they remember and the one they screenshot. A steady, warm, specific answer in that moment is often what turns a furious customer back into a loyal one, and starting from a solid draft makes that answer far easier to write well every single time.
-
 ## multiple_choice
 
 ```json
@@ -64,9 +52,129 @@ The draft gets you to calm, clear, human language fast, which is precisely what 
 
 ## reading
 
+Let me make this concrete with scenarios you have probably lived.
+
+First, the late and damaged order. A customer ordered something for a specific occasion, it arrived almost two weeks late, and when it finally showed up the box was crushed and the item inside was broken. They are angry, and they have a right to be. You can refund and reship today. A weak reply opens with "We apologize for any inconvenience," which reads like a form letter and makes things worse. A strong prompt looks like this: "A customer's order arrived about two weeks late and damaged. We can issue a full refund and reship today at no cost. Draft a warm, genuinely apologetic reply that acknowledges their frustration first, takes responsibility without excuses, then clearly lays out the refund and reshipment. Keep it concise and human, not corporate." What comes back leads with acknowledgment, owns the failure, and states the fix in plain words. You then add the customer's name and the order specifics from your system.
+
+Second, the double charge. A subscriber notices they were billed twice this month for the same plan, and now they are worried money is gone and nobody is watching their account. This is a trust problem as much as a money problem. You confirm the duplicate charge and you can reverse it. The prompt: "A customer was accidentally charged twice for their monthly subscription. I have confirmed the duplicate and can reverse it within three to five business days. Draft a calm, reassuring reply that takes the worry seriously, confirms the error is real and on us, and explains exactly when the refund lands. No jargon." The draft reassures without minimizing, which is what a worried customer needs. You verify the refund timing against your actual process before it goes out.
+
+## multiple_choice
+
+```json
+{
+  "stem": "In the double-charge scenario, what does a strong prompt deliberately ask the draft to do?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Take the worry seriously, confirm the error is real and on us, and explain exactly when the refund lands, with no jargon.",
+      "is_correct": true,
+      "explanation": "Correct. A double charge is a trust problem as much as a money problem, so the prompt asks for reassurance that names the worry, owns the error, and states clear timing in plain language."
+    },
+    {
+      "id": "b",
+      "label": "Downplay the charge as a minor glitch so the customer does not overreact while the refund processes.",
+      "is_correct": false,
+      "explanation": "Minimizing is exactly what a worried customer does not need. The draft reassures without minimizing, taking the worry seriously instead of brushing it off."
+    },
+    {
+      "id": "c",
+      "label": "Open with the company's billing policy in full so the customer understands the system that caused it.",
+      "is_correct": false,
+      "explanation": "Leading with policy and jargon reads as dodging the feeling. The prompt explicitly asks for no jargon and for the error to be confirmed as real and on us."
+    },
+    {
+      "id": "d",
+      "label": "Ask the customer to forward their bank statement before any refund can be promised.",
+      "is_correct": false,
+      "explanation": "In this scenario you have already confirmed the duplicate and can reverse it. The reply confirms the fix and the timing rather than putting the work back on the customer."
+    }
+  ]
+}
+```
+
+## reading
+
+Third, the broken promise. A customer was told they would get a callback to sort out a problem, and the callback never came. Now they are back, more frustrated than before, because the issue is still unsolved and they feel ignored. This one is delicate, because the company already let them down once. A good prompt names that: "A customer was promised a callback that never happened, and their original issue is still open. Draft a sincere reply that acknowledges we dropped the ball on the callback, apologizes specifically for that, and commits to a clear next step with a real timeframe. Warm and direct, no excuses about being busy." The draft owns the miss instead of glossing over it. You fill in the real next step you can actually deliver, because a second broken promise is unforgivable.
+
+Notice the pattern across all three. You describe the situation in general terms, you state the actual resolution you can offer, and you ask for a specific tone and structure: acknowledge first, take responsibility, then lay out the fix. That order matters for upset people. Lead with the fix and you sound like you are dodging the feeling. Lead with the feeling and forget the fix and you sound hollow. The AI handles the shape. You handle the substance, the real name, the real policy, the real timeframe.
+
+The draft gets you to calm, clear, human language fast, which is precisely what is hardest to produce when your heart rate is up and the queue is full. That speed is the whole point. It lets you respond from a steady place instead of a defensive one. And it protects the customer relationship at the exact moment it is most fragile, because the reply that goes out when someone is angry is the one they remember and the one they screenshot. A steady, warm, specific answer in that moment is often what turns a furious customer back into a loyal one, and starting from a solid draft makes that answer far easier to write well every single time.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to the pattern across all three scenarios, what is the right order for a reply to an upset customer?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Lay out the fix first, then mention the feeling only if there is room left at the end.",
+      "is_correct": false,
+      "explanation": "Leading with the fix makes you sound like you are dodging the feeling. The pattern puts acknowledgment first, before the remedy."
+    },
+    {
+      "id": "b",
+      "label": "Acknowledge first, take responsibility, then lay out the fix.",
+      "is_correct": true,
+      "explanation": "Correct. That order matters for upset people: acknowledge the feeling, own the failure, then state the concrete remedy. The AI handles the shape and you handle the substance."
+    },
+    {
+      "id": "c",
+      "label": "Acknowledge the feeling warmly and stop there, since the emotion is what the customer cares about most.",
+      "is_correct": false,
+      "explanation": "Lead with the feeling and forget the fix and you sound hollow. The acknowledgment has to be followed by responsibility and a real resolution."
+    },
+    {
+      "id": "d",
+      "label": "Open with an explanation of why the company was too busy to handle it sooner.",
+      "is_correct": false,
+      "explanation": "Excuses about being busy are exactly what the prompts rule out. The structure is acknowledge, take responsibility without excuses, then the fix."
+    }
+  ]
+}
+```
+
+## reading
+
 A few ways this goes wrong on the job, all of them avoidable once you know to watch for them.
 
 The first is a data mistake, and it is the most serious. Do not paste a customer's personal details, account number, billing information, or the full ticket thread with their name and email into a public AI tool. When you are rushed, it is tempting to just copy the whole ticket and say "write a reply to this." Don't. Describe the situation generically instead: "a customer whose order arrived damaged," not the actual order number and address. Add the real specifics yourself, by hand, from your own systems after you have the draft. The customer trusted you with that information. A public tool is not part of that trust.
+
+## multiple_choice
+
+```json
+{
+  "stem": "You are rushed and the fastest move feels like copying the whole ticket into a public AI tool and asking it to write a reply. Why is that the most serious mistake?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It wastes time, because pasting a long ticket takes longer than describing the situation.",
+      "is_correct": false,
+      "explanation": "Speed is not the issue here. The problem is exposing data the customer trusted you with, not how many seconds the paste takes."
+    },
+    {
+      "id": "b",
+      "label": "The AI cannot read long tickets accurately, so it will miss details in the thread.",
+      "is_correct": false,
+      "explanation": "The reading is not the concern named here. The serious mistake is putting personal data into a public tool at all, regardless of how well it parses."
+    },
+    {
+      "id": "c",
+      "label": "It puts the customer's personal details into a public tool that is not part of the trust they placed in you; describe the situation generically and add real specifics yourself.",
+      "is_correct": true,
+      "explanation": "Correct. Personal details, account numbers, billing information, and the full thread should never go into a public tool. Describe it generically and add the specifics by hand from your own systems."
+    },
+    {
+      "id": "d",
+      "label": "The tool will automatically send the reply before you have a chance to review it.",
+      "is_correct": false,
+      "explanation": "Drafting tools do not send your replies for you. The actual risk is the customer's data leaving your trusted systems, not an accidental send."
+    }
+  ]
+}
+```
+
+## reading
 
 The second mistake is sending the draft without really reading it. An AI reply can sound empathetic while being subtly generic, and this is the trap, because it reads fine on a quick skim. "We understand how frustrating this must be" is technically warm and completely hollow. A genuinely upset customer can tell when a response is templated at them rather than written to them. The double-charged subscriber who is scared about their money does not want a paragraph that could have been sent to anyone. They want to feel that someone actually saw their specific problem. So read every draft as that specific customer would read it. Cut anything that sounds scripted. Add a detail that proves you read their message. If the draft does not pass that test, it is not done.
 

@@ -16,11 +16,64 @@ AI quality monitoring is spreading fast in customer service, and there is a good
 
 Start with the strengths, because they are genuine. A human supervisor can review maybe two percent of your conversations. An AI can review all of them. It can catch consistency problems you would never see from a sample, like a step you skip when you are tired at the end of a shift. It can surface coaching opportunities while they are still fresh instead of in a review three months later. For a new agent, that fast and steady signal can genuinely speed up learning. None of that is fake, and pretending the tool is worthless will not serve you.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the reading, what is the core difference between the old way of quality review and AI quality monitoring?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The old way scored every interaction while AI monitoring scores only a small sample.",
+      "is_correct": false,
+      "explanation": "It is the reverse. The old way was a supervisor scoring a handful of calls or chats by hand, while the AI scores every single interaction."
+    },
+    {
+      "id": "b",
+      "label": "A human supervisor could review only a small fraction of conversations, while the AI can review all of them, catching consistency problems a sample would miss.",
+      "is_correct": true,
+      "explanation": "Correct. The reading notes a supervisor can review maybe two percent of conversations while an AI can review all of them, surfacing consistency issues you would never see from a sample."
+    },
+    {
+      "id": "c",
+      "label": "AI monitoring removes the rubric entirely and judges interactions on overall feel.",
+      "is_correct": false,
+      "explanation": "The AI still scores against a rubric, checking things like acknowledgment, process, tone, and resolution. It does not replace the rubric with a feel-based judgment."
+    }
+  ]
+}
+```
+
+## reading
+
 Now the blind spots, because they are just as genuine and they are the part nobody warns you about. These systems score patterns, not meaning. They are very good at spotting whether your words match the shape of a "good" interaction and very bad at knowing whether you actually helped the human on the other end.
 
 Picture three real situations. First, a billing agent gets a customer whose mother just died and who is calling to close her account. The standard process is to walk through a retention offer before closing. The agent reads the moment, skips the retention script entirely, and closes the account gently and quickly. The rubric was looking for the retention step. It was not there, so the interaction gets dinged on "process adherence." The agent did exactly the right thing and the score went down.
 
 Second, think about what a rubric actually measures. A typical one scores four things: acknowledgment, process, tone, and resolution. An AI can check that you said "I understand how frustrating this is," that you ran the troubleshooting steps in order, that no harsh words appeared, and that the ticket got marked solved. Each of those is a pattern it can detect. What it cannot detect is whether your "I understand how frustrating this is" landed as sincere or as a hollow line you paste into every chat. It can reward the agent who hits all four checkboxes while leaving the customer feeling like a number, and it can penalize the agent who threw out the script to actually fix the problem. Sincere warmth can read as off-pattern. Checkbox-hitting can read as excellent.
+
+## fill_blank
+
+```json
+{
+  "template": "These systems score {{1}}, not {{2}}. They are good at spotting whether your words match the shape of a good interaction, but bad at knowing whether you actually helped the person.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["patterns", "pattern", "the pattern", "patterns of words"],
+      "ideal": "patterns"
+    },
+    {
+      "id": "2",
+      "accept": ["meaning", "the meaning", "context", "intent"],
+      "ideal": "meaning"
+    }
+  ],
+  "explanation": "The reading states these systems score patterns, not meaning. They detect whether words match the shape of a good interaction but cannot tell whether you genuinely helped the customer."
+}
+```
+
+## reading
 
 Third, picture how scores get used in practice. An agent has a run of low scores over two weeks. On a smart team, that pattern is not a verdict. It is a trigger. It opens a human review where a supervisor pulls the actual conversations and reads them. Maybe the agent really is rushing customers and needs coaching. Or maybe this agent caught a string of unusual, high-stakes cases where breaking the template was the correct call, and the rubric simply had no way to see that. You only learn which by reading the real interactions. The score told you where to look. It did not tell you what you found.
 
@@ -64,6 +117,36 @@ The first and most damaging mistake is treating an AI score as an objective verd
 
 The second mistake comes from the agent's side: gaming the rubric instead of helping the customer. Once you know the AI is checking for "I understand how frustrating this is" and a resolution tag, it is tempting to paste that line into every chat and mark tickets solved to keep your numbers clean, even when the customer is not actually helped. You can hit every checkbox and leave someone worse off than you found them. The rubric was always a rough stand-in for the real goal, which is a customer who got what they needed. The moment you optimize for the stand-in instead of the goal, the score climbs while the actual work gets worse. Hit the rubric because you genuinely served the customer, not the other way around.
 
+## multiple_choice
+
+```json
+{
+  "stem": "A supervisor sees a low AI score, writes up the agent, and never reads the conversation. The reading calls this the first and most damaging mistake. Why?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the supervisor should have waited for several low scores to accumulate before acting on a single number.",
+      "is_correct": false,
+      "explanation": "The problem is not the count of low scores. It is that no consequential decision about a person should rest on a score at all without a human reading the actual conversation."
+    },
+    {
+      "id": "b",
+      "label": "Because the AI score is always wrong and supervisors should ignore the monitoring output completely.",
+      "is_correct": false,
+      "explanation": "The reading does not say the score is always wrong. It says a confident result is not the same as a true one, so the score points you to the conversation that a human still has to read."
+    },
+    {
+      "id": "c",
+      "label": "Because the AI only measured whether the words matched a pattern, so letting a number replace reading the conversation can punish the agent who did the right thing.",
+      "is_correct": true,
+      "explanation": "Correct. The AI did not watch the interaction; it measured pattern-matching. Letting a number stand in for the real conversation can punish good work and reward the agent who gamed the format."
+    }
+  ]
+}
+```
+
+## reading
+
 The third mistake is over-trusting the monitoring AI as an authority, treating it as if it knows something you do not. It does not have secret insight into your conversations. It is a pattern-matcher with a rubric, confident and consistent, and confidence is not the same as being right. This is the general lesson that runs through all of this work: an AI's output is a useful input, not a judgment from on high. The monitoring system is no more an authority than a chatbot or a search result. It gives you a signal. You and your supervisor supply the judgment about what the signal means.
 
 Notice that all three mistakes share one root. They all let the AI's output stand in for human judgment, just in different directions. The supervisor lets the score replace reading the conversation. The agent lets the rubric replace helping the customer. Everyone lets the tool's confidence replace their own thinking. The fix is the same every time. Treat the score as one input, go look at the real thing it points to, and keep a person in the loop wherever the decision actually matters. The tool is good at scale. It is not good at meaning, and meaning is the part that counts.
@@ -72,25 +155,25 @@ Notice that all three mistakes share one root. They all let the AI's output stan
 
 ```json
 {
-  "stem": "A teammate says: 'The AI gives me high quality scores, so I just make sure to use the acknowledgment phrase it checks for and tag every ticket resolved, even when I'm not sure the customer's issue is fully fixed.' What is the problem with this approach?",
+  "stem": "The reading says all three mistakes share one root. What is it?",
   "options": [
     {
       "id": "a",
-      "label": "There is no problem; a high score from the AI means the customer was well served.",
-      "is_correct": false,
-      "explanation": "A high score means the words matched the rubric's patterns, not that the customer was helped. The rubric is a rough stand-in for the real goal, so a high score can hide a customer who was left worse off."
-    },
-    {
-      "id": "c",
-      "label": "The teammate is gaming the rubric, hitting checkboxes the AI detects instead of actually helping the customer, so the score climbs while the real work gets worse.",
+      "label": "They all let the AI's output stand in for human judgment, just in different directions.",
       "is_correct": true,
-      "explanation": "Correct. Optimizing for the stand-in instead of the goal is exactly the trap. Hitting the acknowledgment phrase and a resolved tag satisfies the pattern-matcher while a customer with an unfixed issue gets marked solved and left worse off."
+      "explanation": "Correct. The supervisor lets the score replace reading the conversation, the agent lets the rubric replace helping the customer, and everyone lets the tool's confidence replace their own thinking."
     },
     {
       "id": "b",
-      "label": "The problem is only that the AI is too easy to fool, and the rubric should be made more complex.",
+      "label": "They all come from the rubric being too short and needing more scoring categories.",
       "is_correct": false,
-      "explanation": "A more complex rubric is still a pattern stand-in that can be gamed, and it misses the real issue: the goal is a helped customer, not a satisfied rubric. The fix is keeping a human reviewing real conversations, not endlessly tuning the checklist."
+      "explanation": "The shared root is not the rubric's length. It is letting the AI's output substitute for human judgment, which a longer rubric would not fix."
+    },
+    {
+      "id": "c",
+      "label": "They all happen because the monitoring AI is poorly trained and gives inaccurate scores.",
+      "is_correct": false,
+      "explanation": "The reading frames the issue as a pattern-matcher being trusted too much, not as a poorly trained model. The fix is keeping a human in the loop, not retraining the AI."
     }
   ]
 }

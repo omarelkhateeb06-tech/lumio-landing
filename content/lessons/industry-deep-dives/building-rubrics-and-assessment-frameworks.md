@@ -18,11 +18,70 @@ This is structured drafting, and it is squarely in what AI does well. You descri
 
 Be specific about what you are assessing. The more concrete your description, the less generic the draft. Here is what that looks like across three real assignments.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, why does the rubric so often end up being the thing a teacher meant to make but never finished?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because rubrics rarely make expectations visible to students or help during grade disputes.",
+      "is_correct": false,
+      "explanation": "The segment says the opposite: a clear rubric makes expectations visible, keeps grading consistent, and gives you something to point to when a grade is questioned. The payoff is not in doubt."
+    },
+    {
+      "id": "b",
+      "label": "Because the build is slow, fiddly work, writing parallel level descriptors that distinguish a 3 from a 4, and it competes with everything else on a teacher's plate.",
+      "is_correct": true,
+      "explanation": "Correct. The segment names the build as the problem: writing performance levels across criteria with language that truly separates them is slow work that loses to lesson planning and grading, so the assignment gets graded by feel."
+    },
+    {
+      "id": "c",
+      "label": "Because students prefer to be graded by feel rather than against explicit criteria.",
+      "is_correct": false,
+      "explanation": "Student preference is never mentioned. The obstacle described is the labor of building the rubric, not anyone's preference for vibe-based grading."
+    },
+    {
+      "id": "d",
+      "label": "Because most assignments are too simple to need more than one performance level.",
+      "is_correct": false,
+      "explanation": "Nothing in the segment suggests assignments are too simple. The difficulty is precisely that good rubrics need several parallel levels, which is what makes them tedious to write."
+    }
+  ]
+}
+```
+
+## reading
+
 Take a 10th grade argumentative essay. You might ask: "Build a four-level analytic rubric for a 10th grade argumentative essay. Criteria: thesis clarity, use of evidence, counterargument, organization, and conventions. Levels run from Beginning to Exemplary. For each cell write a short descriptor in observable language a student could self-check against." The draft comes back with thesis clarity moving from "no clear claim, or the claim shifts" at Beginning up to "a precise, arguable claim that frames the whole essay" at Exemplary, and counterargument moving from "none" up to "fairly represents and convincingly rebuts a real opposing view." That is the grid you were dreading, already drafted, with the level-to-level steps spelled out so you can see whether they hold.
 
 Now a middle-school science fair project. The criteria are different, and the AI should follow your lead. You describe it: "Build a three-level rubric for a 7th grade science fair project. Criteria: testable question, controlled procedure, data and analysis, and presentation board. Levels: Approaching, Meets, Exceeds." The model lays out a controlled-procedure row that runs from "one variable changes but others are not controlled" at Approaching, to "the independent variable is isolated and the test is repeated" at Meets, to "controls are documented and the student explains why each one matters" at Exceeds. You can read straight down a column and picture what a Meets project actually looks like on the gym floor.
 
 Or an elementary oral presentation. Younger grades need student-friendly language and fewer levels. You ask for "a three-level rubric for a 2nd grade oral presentation on a favorite animal, criteria of speaking voice, eye contact, content, and using a visual, with descriptors a 7-year-old could understand." The speaking-voice row comes back as "hard to hear" at the bottom, "loud enough most of the time" in the middle, and "clear and easy to hear the whole time" at the top. Short, observable, and something a child could check themselves against before they present.
+
+## fill_blank
+
+```json
+{
+  "template": "Across the three sample assignments, you did not change the {{1}} from one to the next. You changed the {{2}}, the grade, the format, and what mastery looks like, and the rubric's structure followed.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["tool", "AI", "model"],
+      "ideal": "tool"
+    },
+    {
+      "id": "2",
+      "accept": ["description", "prompt", "assignment description"],
+      "ideal": "description"
+    }
+  ],
+  "explanation": "The essay had four levels and academic criteria, the science fair had three levels focused on procedure, and the 2nd grade presentation used child-sized language. The tool stayed the same; only the description changed, and the structure adjusted to match."
+}
+```
+
+## reading
 
 Notice what changed across the three. The argumentative essay had four levels and five academic criteria. The science fair had three levels and a focus on procedure. The 2nd grade presentation had child-sized language and a visual-aid row. You did not adjust the tool, you adjusted the description, and the structure followed. That is the point of describing the assignment in your own words: the more specific you are about grade, format, and what mastery looks like, the closer the first draft lands to something you can actually use.
 
@@ -69,6 +128,42 @@ The payoff is simple. The rubric exists, finished and usable, on the day you act
 The rubric draft comes back looking polished, and that polish is exactly where teachers get tripped up. A few predictable errors show up on the job, and knowing them turns a risky shortcut into a reliable one.
 
 The first is accepting a generic criteria list that omits what you actually teach. The model defaults to the conventional criteria for an assignment type, which means it often leaves out the things that make your version yours. Ask for an argumentative essay rubric and you may get thesis, evidence, and organization, but nothing for the original argument or creative framing you spent two weeks coaching. The fix is a habit: read the criteria first, before you ever look at the descriptors, and ask whether the row list matches what you taught and weighted. Add what is missing, cut what you did not assign. The rubric follows your instruction, not the reverse. If you adjust your teaching to match the AI's list, you have let a generic template quietly rewrite your unit.
+
+## multiple_choice
+
+```json
+{
+  "stem": "This segment says the first predictable error is accepting a generic criteria list. What habit does it recommend to catch it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Read the level descriptors first and assume the criteria are fine if the descriptors sound polished.",
+      "is_correct": false,
+      "explanation": "The segment recommends the reverse order. Polished descriptors are not evidence that the criteria are right; you check the rows before the cells precisely so polish does not lull you."
+    },
+    {
+      "id": "b",
+      "label": "Adjust what you teach next time so it lines up with the criteria the model produced.",
+      "is_correct": false,
+      "explanation": "The segment warns against exactly this: if you adjust your teaching to match the AI's list, you have let a generic template quietly rewrite your unit. The rubric follows your instruction, not the reverse."
+    },
+    {
+      "id": "c",
+      "label": "Trust the model's defaults because conventional criteria for an assignment type are usually complete.",
+      "is_correct": false,
+      "explanation": "The default conventional list is the problem, not the safeguard. It often leaves out the things that make your version yours, like an original-argument or creative-framing row."
+    },
+    {
+      "id": "d",
+      "label": "Read the criteria first, before the descriptors, and confirm the rows match what you taught and weighted, adding what is missing and cutting what you did not assign.",
+      "is_correct": true,
+      "explanation": "Correct. The recommended habit is to check the criteria rows first against your instruction, then add or cut so the rubric reflects your unit rather than a generic template."
+    }
+  ]
+}
+```
+
+## reading
 
 The second is trusting level descriptors that sound fine but cannot be graded consistently. This is the subtle one. A descriptor like "shows strong analysis" reads well and means nothing you can apply the same way twice. The real test is not whether a descriptor sounds good in isolation. It is whether you could grade the gap between Proficient and Exemplary the same way on the first paper and the thirtieth, at 4pm on a Friday. Watch for vague intensifiers, "somewhat," "strong," "effective," that distinguish levels in tone but not in anything observable. Watch for adjacent levels that are the same sentence with a word swapped. When you spot one, rewrite it around something a student or a colleague could actually point to in the work. That is what protects you when a grade gets questioned.
 

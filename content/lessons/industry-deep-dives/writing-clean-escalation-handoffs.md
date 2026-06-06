@@ -18,18 +18,6 @@ The person who picks that up has two bad options. They can reread the entire thr
 
 A clean handoff fixes this, and its anatomy is simple. It has four parts. First, a one-line situation summary, so the receiver knows what they are walking into. Second, what you already tried and the result of each attempt, so they do not repeat your steps or contradict what you told the customer. Third, the customer's current state and what they expect to happen, so the receiver knows the emotional temperature and the goal. Fourth, a specific statement of what you need the receiver to do or decide. Not "please advise." Something the next person can act on.
 
-The reason agents skip this is not laziness. It is time. Writing four tight, accurate parts under pressure is real work, and the queue does not pause while you do it. That is exactly the gap AI closes. You hand the model your rough notes, even half-formed ones, and ask it to structure them into a handoff. What comes back is the clean summary you would write if you had ten unhurried minutes, produced in seconds. You read it, fix anything off, and send it on.
-
-Here is what that looks like in three real situations.
-
-A refund outside the return window. A customer bought a coffee grinder forty days ago, and your return window is thirty. They say it started grinding unevenly after two weeks. You confirmed the purchase date, explained that it is past the window, and offered store credit as a goodwill gesture. They declined the credit and asked for a manager. Your rough note might be: "grinder, 40 days, past window, offered credit, said no, wants mgr." Hand that to AI and the handoff comes back structured: situation is a refund request outside policy; what you tried is confirming the date, explaining the policy, and offering store credit, which was declined; customer state is frustrated but reasonable, feels the product failed early, wants a manager to reconsider; what you need is a decision on a one-time exception or a clear alternative to offer. The senior agent reads four lines and steps in fully briefed.
-
-A billing dispute handed to a senior agent. A customer was charged twice for the same monthly subscription. You confirmed in the system that two charges posted on the same date, issued a refund for the duplicate, and told them it would land in three to five business days. They are still upset because this is the second month it has happened and they want to know why. This is past your tools, so you escalate. The rough note: "double charged again, refunded the dupe, but recurring problem, wants root cause, angry." The structured handoff makes clear that the immediate money issue is already handled, the open question is why the duplicate keeps recurring, and the senior agent needs to investigate the billing record, not re-refund anything. That distinction saves the customer from a second refund and a longer wait.
-
-A technical issue passed to tier 2. A customer cannot log in to their account on the mobile app. You walked them through a password reset, confirmed they are using the right email, and had them reinstall the app. The reset email never arrived and the reinstall did not help. The login works fine on desktop for them, just not mobile. Your note: "no login on mobile, reset email not arriving, reinstalled, desktop works fine, app version current." The handoff tells tier 2 the exact narrowed-down problem so they do not start from "have you tried resetting your password," which the customer has already done twice and will not enjoy hearing a third time. It also flags the desktop-works detail, which points tier 2 toward the mobile app or the email delivery rather than the account itself, saving them the first round of guessing.
-
-In all three, the structure is the easy win AI hands you. The accuracy is yours to confirm before it goes. The next block is the checkpoint on that core idea.
-
 ## multiple_choice
 
 ```json
@@ -66,11 +54,118 @@ In all three, the structure is the easy win AI hands you. The accuracy is yours 
 
 ## reading
 
+The reason agents skip this is not laziness. It is time. Writing four tight, accurate parts under pressure is real work, and the queue does not pause while you do it. That is exactly the gap AI closes. You hand the model your rough notes, even half-formed ones, and ask it to structure them into a handoff. What comes back is the clean summary you would write if you had ten unhurried minutes, produced in seconds. You read it, fix anything off, and send it on.
+
+Here is what that looks like in three real situations.
+
+A refund outside the return window. A customer bought a coffee grinder forty days ago, and your return window is thirty. They say it started grinding unevenly after two weeks. You confirmed the purchase date, explained that it is past the window, and offered store credit as a goodwill gesture. They declined the credit and asked for a manager. Your rough note might be: "grinder, 40 days, past window, offered credit, said no, wants mgr." Hand that to AI and the handoff comes back structured: situation is a refund request outside policy; what you tried is confirming the date, explaining the policy, and offering store credit, which was declined; customer state is frustrated but reasonable, feels the product failed early, wants a manager to reconsider; what you need is a decision on a one-time exception or a clear alternative to offer. The senior agent reads four lines and steps in fully briefed.
+
+## fill_blank
+
+```json
+{
+  "template": "Agents skip writing a clean handoff not out of laziness but because of {{1}}. The model's contribution to the handoff is the {{2}}, which it produces in seconds from your rough notes.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["time", "lack of time", "the queue", "time pressure", "pressure"],
+      "ideal": "time"
+    },
+    {
+      "id": "2",
+      "accept": ["structure", "the structure", "structuring", "shape", "the shape"],
+      "ideal": "structure"
+    }
+  ],
+  "explanation": "Agents skip the four-part handoff because writing it accurately under pressure takes time the queue will not give them. AI closes that gap by taking rough notes and producing the clean structure fast, so the only work left for you is confirming accuracy."
+}
+```
+
+## reading
+
+A billing dispute handed to a senior agent. A customer was charged twice for the same monthly subscription. You confirmed in the system that two charges posted on the same date, issued a refund for the duplicate, and told them it would land in three to five business days. They are still upset because this is the second month it has happened and they want to know why. This is past your tools, so you escalate. The rough note: "double charged again, refunded the dupe, but recurring problem, wants root cause, angry." The structured handoff makes clear that the immediate money issue is already handled, the open question is why the duplicate keeps recurring, and the senior agent needs to investigate the billing record, not re-refund anything. That distinction saves the customer from a second refund and a longer wait.
+
+A technical issue passed to tier 2. A customer cannot log in to their account on the mobile app. You walked them through a password reset, confirmed they are using the right email, and had them reinstall the app. The reset email never arrived and the reinstall did not help. The login works fine on desktop for them, just not mobile. Your note: "no login on mobile, reset email not arriving, reinstalled, desktop works fine, app version current." The handoff tells tier 2 the exact narrowed-down problem so they do not start from "have you tried resetting your password," which the customer has already done twice and will not enjoy hearing a third time. It also flags the desktop-works detail, which points tier 2 toward the mobile app or the email delivery rather than the account itself, saving them the first round of guessing.
+
+In all three, the structure is the easy win AI hands you. The accuracy is yours to confirm before it goes. The next block is the checkpoint on that core idea.
+
+## multiple_choice
+
+```json
+{
+  "stem": "In the billing dispute example, the duplicate charge was already refunded before escalating. Why does the handoff spell that out for the senior agent?",
+  "options": [
+    {
+      "id": "a",
+      "label": "So the senior agent knows to issue a second refund as a goodwill gesture.",
+      "is_correct": false,
+      "explanation": "The opposite. The handoff makes clear the refund is already done precisely so the senior agent does NOT re-refund. A second refund would be the error this detail prevents."
+    },
+    {
+      "id": "b",
+      "label": "Because the customer's emotional state is the only thing that matters in a billing case.",
+      "is_correct": false,
+      "explanation": "State matters, but it is not the point here. The handoff separates the handled money issue from the open question so the receiver works the right problem, not just reads the temperature."
+    },
+    {
+      "id": "c",
+      "label": "So the senior agent re-reads the full thread to confirm the refund themselves.",
+      "is_correct": false,
+      "explanation": "Making the receiver re-read the thread is exactly what a clean handoff avoids. The point of stating the refund is done is to spare that step, not trigger it."
+    },
+    {
+      "id": "d",
+      "label": "So the senior agent knows the money issue is handled and focuses on why the duplicate keeps recurring, instead of re-refunding.",
+      "is_correct": true,
+      "explanation": "Correct. The handoff separates what is already done from what is still open. That tells the senior agent to investigate the billing record for the root cause, and it saves the customer from a second refund and a longer wait."
+    }
+  ]
+}
+```
+
+## reading
+
 The handoff is fast and clean now, which is exactly why the mistakes here are dangerous. They do not look like mistakes. They look like finished work. Here are the ones that bite people on the job.
 
 The first is pasting customer identifiers and personal data into a public tool. Mid-shift, it is tempting to copy your note as-is, full name, email, order number, maybe a card detail, and drop it into whatever AI tool is open in your browser. Do not. A public tool is not your company's system, and customer personal data does not belong there. The fix is simple and costs you nothing: structure the handoff from a de-identified version. Replace names and numbers with placeholders like "customer" and "the order," let AI shape the structure, then attach the real specifics inside your own ticketing system where they belong. The AI never needed the identity to organize the story. It only needed the shape of what happened.
 
 The second mistake is the quiet one: sending a handoff that reads clean but is subtly wrong. This is the trap of good structure. When something is tidy and well-formatted, your brain reads it as correct and moves on. But AI works from your notes, and if your notes were rushed, or if the model filled a small gap on its own, the handoff can misstate things while looking perfect. Maybe it says you offered a refund when you actually offered store credit. Maybe it lists "wants a replacement" when the customer actually wants a refund. Maybe it drops the step where you already confirmed the purchase date, so the receiver redoes it. Each of those errors is small. Each one sends the next person down the wrong path, and they go confidently because the handoff looked authoritative. A clean wrong handoff is worse than a messy note, because nobody doubts it.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Mid-shift, you want to paste your note into a public AI tool to structure the handoff. What does the lesson say to do about the customer's name, email, and order number?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Paste them in as-is, because the AI needs the identity to organize the story correctly.",
+      "is_correct": false,
+      "explanation": "The lesson says the opposite directly: the AI never needed the identity to organize the story, only the shape of what happened. Pasting real personal data into a public tool is the first mistake."
+    },
+    {
+      "id": "b",
+      "label": "Replace them with placeholders like 'customer' and 'the order,' let AI structure the de-identified version, then attach the real specifics in your own system.",
+      "is_correct": true,
+      "explanation": "Correct. A public tool is not your company's system, so personal data does not belong there. De-identify first, let AI shape the structure, and store the real details where they belong in your ticketing system. The fix costs you nothing."
+    },
+    {
+      "id": "c",
+      "label": "Leave the identifiers out entirely and never reconnect them, since the receiver does not need them.",
+      "is_correct": false,
+      "explanation": "Half right. You do keep them out of the public tool, but the receiver does need the real specifics. The lesson says to attach them inside your own ticketing system, not drop them altogether."
+    },
+    {
+      "id": "d",
+      "label": "It is fine as long as you delete the note from the tool afterward.",
+      "is_correct": false,
+      "explanation": "Deleting later does not undo exposing customer data to a tool outside your company's system. The rule is to de-identify before anything is pasted, not to clean up after."
+    }
+  ]
+}
+```
+
+## reading
 
 That leads to the third mistake, which sits underneath the other two: treating the AI output as authority instead of confirming it yourself. The model is a fast assistant, not a witness to the conversation. It did not talk to the customer. You did. So the structure is its contribution, and the accuracy is yours. Before you send any handoff on, read it against what actually happened and ask three plain questions. Did I really try everything it lists, in that order? Did it state what the customer wants correctly, in their words, not a guess? Did it leave out a step I took or a detail that changes the decision? If anything is off, fix it in ten seconds. That ten seconds is the whole game.
 

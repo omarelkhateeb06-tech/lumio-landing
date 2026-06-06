@@ -24,6 +24,42 @@ For a post-surgical patient on a med-surg floor, the shorthand might read: "61F,
 
 That block of text took about 45 seconds to write. It contains everything you need for a compliant nursing progress note: the assessment, the intervention, the patient response, the refusal with stated reason, I and O, wound assessment, and family education with topic.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to Step 1 of the workflow, what is the right way to capture an encounter in shorthand immediately after you leave the room?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Write the note in complete, polished sentences so it is ready to paste later.",
+      "is_correct": false,
+      "explanation": "Step 1 explicitly says do not attempt to format and do not worry about complete sentences. Polishing is exactly the friction the tool is meant to remove later. Your only job at capture is getting the raw clinical facts down fast."
+    },
+    {
+      "id": "b",
+      "label": "Jot the raw clinical facts quickly, the way you would scribble on a scrap of paper, without formatting.",
+      "is_correct": true,
+      "explanation": "Correct. The reading sets the threshold low: whatever you would have written on a scrap of paper before you had an EHR, write that. A 45-second block of shorthand can still contain the assessment, intervention, response, refusal, I and O, and more."
+    },
+    {
+      "id": "c",
+      "label": "Wait until you have a free moment later in the shift so you can write it carefully.",
+      "is_correct": false,
+      "explanation": "The whole point of Step 1 is to capture immediately, before the next task pulls your attention. Waiting is what causes details to soften, which is the exact problem the workflow is designed to avoid."
+    },
+    {
+      "id": "d",
+      "label": "Skip the shorthand and rely on the AI to reconstruct the encounter from a brief summary.",
+      "is_correct": false,
+      "explanation": "The tool removes the friction of expansion, not the friction of observing. It cannot witness the patient, so without your captured facts it has nothing accurate to expand. Capture comes first."
+    }
+  ]
+}
+```
+
+## reading
+
 **Step 2: Expand using a structured prompt.** Open whatever AI tool your organization has approved for clinical use. Paste the shorthand with a prompt like this one:
 
 "Expand these shorthand notes into a structured nursing progress note following an Assessment, Intervention, Response, and Plan format. Use only the facts I provided. Where I did not state something, leave it out rather than guessing. Flag anything that looks incomplete for a clinical note."
@@ -31,6 +67,42 @@ That block of text took about 45 seconds to write. It contains everything you ne
 The output you receive should read something like this: "Patient is a 61-year-old female, post-operative day 2 following right hip arthroplasty. At rest, pain rated 6/10; with movement, 8/10. Toradol 15 mg IV administered at 0945 per orders. Patient ambulated hallway one time with physical therapy assist without shortness of breath or complaints of dizziness; tolerated activity. Declined second PT session, stating fatigue as reason. Foley catheter removed at 0800; patient voided 250 mL of clear yellow urine at 1100. Surgical incision site clean, dry, and intact; no erythema or drainage observed. Daughter present at bedside; patient and family educated regarding anticipated discharge on post-operative day 3 to 4, contingent on occupational therapy evaluation."
 
 That is a publishable nursing progress note. The AI did the sentence construction. You did the clinical work.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The Step 2 expansion prompt includes the instruction: 'Use only the facts I provided. Where I did not state something, leave it out rather than guessing.' Why is that line in the prompt?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It makes the note shorter so it takes less time to read.",
+      "is_correct": false,
+      "explanation": "Length is not the goal. The instruction is about accuracy, not brevity. A note can be long and still honest, or short and still fabricated. The line targets what the tool is allowed to assert, not how much it writes."
+    },
+    {
+      "id": "b",
+      "label": "It forces the AI to use the Assessment, Intervention, Response, and Plan headings.",
+      "is_correct": false,
+      "explanation": "The format structure comes from the separate instruction to follow an Assessment, Intervention, Response, and Plan format. The 'use only the facts I provided' line does something different: it constrains the content to what you actually documented."
+    },
+    {
+      "id": "c",
+      "label": "It tells the tool to leave gaps empty rather than guess, so it does not invent details you never documented.",
+      "is_correct": true,
+      "explanation": "Correct. By instructing the tool to use only your facts and leave gaps empty, the prompt prevents it from filling in plausible-sounding details that were never part of the encounter. The output then reflects your clinical work, not the model's pattern-matching."
+    },
+    {
+      "id": "d",
+      "label": "It lets the AI pull missing values from the patient's chart automatically.",
+      "is_correct": false,
+      "explanation": "The tool has no access to the patient's chart. The instruction does the opposite of pulling in outside data: it tells the model to leave anything you did not state out of the note entirely rather than sourcing or guessing it."
+    }
+  ]
+}
+```
+
+## reading
 
 **Step 3: Read every line before you sign.** This step is not optional. Read the note as if you are a risk manager reviewing it for the first time. Check that every specific claim reflects something you actually observed or documented. The AI can phrase your notes clearly. It cannot witness the patient. Any detail in the note that you did not put in the shorthand is a detail the tool invented, and an invented clinical finding is a documentation error regardless of how fluent it sounds.
 
@@ -90,12 +162,6 @@ The workflow is straightforward, but there are a handful of specific errors that
 
 **Accepting a note that contains a finding you never assessed.** This is the accuracy failure. AI tools trained on clinical notes learn to produce notes that look complete, which means they learn to include negative review-of-systems statements, denial phrases, and assessment interpretations that flesh out a real note. The phrase "patient denied chest pain, shortness of breath, and palpitations" appears in hundreds of thousands of training examples. The tool inserts it into your output because it fits the pattern, not because you asked those questions. If you did not ask, the note now claims you did. That is not a stylistic issue. That is a false record. Read every line and remove every assertion you cannot personally verify.
 
-**Signing without reading because the note looks complete.** A well-formatted AI note is fluent and looks like it was written by a careful clinician. That fluency is a trap. The errors are not obvious typos. They are plausible additions, softened assessments, and synthesized details that read naturally. "Pain well-controlled with current regimen" sounds fine, but if your shorthand said "pain 6/10 rates 8/10 with movement" and you never wrote that it was controlled, the AI added an interpretation. Reading the note carefully takes two to three minutes. Not reading it carefully means you are signing a document you cannot verify.
-
-**Skipping same-day documentation and trying to reconstruct from memory.** The three-step workflow only works well when your shorthand is fresh. Clinicians who capture notes right after the encounter find the AI expansion accurate and complete because the shorthand is detailed. Clinicians who try to reconstruct six hours later find the shorthand thin, which means the AI has less to work with and is more likely to fill gaps with pattern-generated language. The shorthand step is not optional. It is what makes the rest of the workflow reliable. One sentence jotted immediately after an encounter is more useful than a full paragraph reconstructed from memory.
-
-**Letting the tool smooth over a documented refusal or a difficult conversation.** If a patient refused a medication, the note needs to say so in plain language, including the stated reason if one was given. If a family member asked pointed questions about prognosis, that conversation belongs in the record. AI tools tend to soften these entries because they are trained on notes where refusals are often abbreviated and family conversations are often omitted. Review those sections actively. A chart that documents refusal with stated reason protects both the patient and the clinician. A chart that omits it or softens it creates a gap.
-
 ## fill_blank
 
 ```json
@@ -114,6 +180,48 @@ The workflow is straightforward, but there are a handful of specific errors that
     }
   ],
   "explanation": "De-identification protects against unauthorized disclosure of protected health information when using tools that are not covered under your organization's BAA. Removing AI-added findings you never assessed protects against documenting care that did not happen, which is a documentation error regardless of clinical plausibility."
+}
+```
+
+## reading
+
+**Signing without reading because the note looks complete.** A well-formatted AI note is fluent and looks like it was written by a careful clinician. That fluency is a trap. The errors are not obvious typos. They are plausible additions, softened assessments, and synthesized details that read naturally. "Pain well-controlled with current regimen" sounds fine, but if your shorthand said "pain 6/10 rates 8/10 with movement" and you never wrote that it was controlled, the AI added an interpretation. Reading the note carefully takes two to three minutes. Not reading it carefully means you are signing a document you cannot verify.
+
+**Skipping same-day documentation and trying to reconstruct from memory.** The three-step workflow only works well when your shorthand is fresh. Clinicians who capture notes right after the encounter find the AI expansion accurate and complete because the shorthand is detailed. Clinicians who try to reconstruct six hours later find the shorthand thin, which means the AI has less to work with and is more likely to fill gaps with pattern-generated language. The shorthand step is not optional. It is what makes the rest of the workflow reliable. One sentence jotted immediately after an encounter is more useful than a full paragraph reconstructed from memory.
+
+**Letting the tool smooth over a documented refusal or a difficult conversation.** If a patient refused a medication, the note needs to say so in plain language, including the stated reason if one was given. If a family member asked pointed questions about prognosis, that conversation belongs in the record. AI tools tend to soften these entries because they are trained on notes where refusals are often abbreviated and family conversations are often omitted. Review those sections actively. A chart that documents refusal with stated reason protects both the patient and the clinician. A chart that omits it or softens it creates a gap.
+
+## multiple_choice
+
+```json
+{
+  "stem": "A note your AI tool produced reads 'pain well-controlled with current regimen,' and a documented refusal of a second PT session appears in the note simply as 'patient declined therapy.' Your shorthand said 'pain 6/10 rates 8/10 with movement, refused 2nd PT states tired.' Based on the common mistakes described, what should you do before signing?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Sign it. The note is fluent and well-formatted, which means it was written carefully.",
+      "is_correct": false,
+      "explanation": "Fluency is described as a trap, not a sign of accuracy. A polished note can carry softened assessments and synthesized details. Signing a document you have not verified line by line is exactly the mistake the reading warns against."
+    },
+    {
+      "id": "b",
+      "label": "Keep 'well-controlled' since 6/10 is moderate, but rewrite the refusal in vaguer language to sound professional.",
+      "is_correct": false,
+      "explanation": "Both edits go the wrong direction. 'Well-controlled' is an interpretation you never documented and should come out, and the refusal should be made more specific, not vaguer. The stated reason is yours to record and protects both patient and clinician."
+    },
+    {
+      "id": "c",
+      "label": "Leave the softened refusal alone because refusals are routinely abbreviated in charts anyway.",
+      "is_correct": false,
+      "explanation": "The fact that tools learned to abbreviate refusals from training data is precisely why you must review those sections actively. A chart that omits or softens a documented refusal creates a gap rather than protection."
+    },
+    {
+      "id": "d",
+      "label": "Remove the unsupported 'well-controlled' interpretation and restore the refusal with its stated reason in plain language.",
+      "is_correct": true,
+      "explanation": "Correct. 'Well-controlled' is an assessment you never wrote and must be removed or added consciously. The refusal should be documented in plain language with the stated reason ('declined second PT session, stating fatigue'), because that record protects both the patient and the clinician."
+    }
+  ]
 }
 ```
 

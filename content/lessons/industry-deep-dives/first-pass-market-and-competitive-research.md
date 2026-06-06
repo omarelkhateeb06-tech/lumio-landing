@@ -16,15 +16,24 @@ Picture a Tuesday afternoon. You are a corporate development analyst, and your V
 
 So let us be precise about what AI is genuinely good for here, because the line matters more in this lesson than almost anywhere else. AI is excellent at generating the structure of research. Ask it, "I am sizing the market for dental practice management software. What dimensions should a competitive comparison cover, what questions should I be asking the data, and what categories of source would answer each one?" and you will get back a real map. It will suggest you compare on pricing model, target practice size, feature depth, integrations, and switching costs. It will remind you to separate the small-practice segment from large dental service organizations. It will point you toward the kinds of sources that hold the answers: company pricing pages, industry reports, review platforms, regulatory filings. That map is worth keeping. It is the part that saves you the afternoon.
 
+## multiple_choice
+
+```json
+{
+  "stem": "An AI returns a strong research map for the dental software market: dimensions to compare, questions to ask, and the kinds of sources that hold the answers. According to the reading, what is this map best understood as?",
+  "options": [
+    {"id":"a","label":"The orientation scaffolding that AI does well, worth keeping because it saves you the blank-page afternoon.","is_correct":true,"explanation":"Correct. The reading frames structuring the research, the dimensions, questions, and source categories, as exactly what AI is good for, turning a paralyzed afternoon into a structured start in about ten minutes."},
+    {"id":"b","label":"A set of facts about the market that you can quote directly once it looks detailed enough.","is_correct":false,"explanation":"The map is structure, not facts. Detail and polish do not make the underlying specifics true, and the reading is careful to keep structure separate from factual claims."},
+    {"id":"c","label":"A waste of time, since orienting on an unfamiliar industry is the part you should do entirely by hand.","is_correct":false,"explanation":"The reading argues the opposite: orientation is the slow, miserable part, and it is precisely where AI helps most by building the scaffolding fast."}
+  ]
+}
+```
+
+## reading
+
 Now here is the trap, and it is a quiet one. That same model will also hand you a clean table of five competitors with market shares, a total addressable market of some confident-looking dollar figure, and a growth rate quoted to one decimal place. It will name companies. It will attribute a statistic to "industry research." And a meaningful share of those specifics will be wrong, outdated, or invented outright. The model does not know it is guessing. It produces the shape of a fact because the shape is what it learned, not because it pulled the number from a real filing. A precise percentage is not a sourced percentage. A tidy table is not verified research. Specificity and clean formatting feel like evidence, and they are not.
 
 This matters in finance in a way it does not matter for a casual question. If a fabricated market-size number travels from an AI scan into your board memo, and from your memo into a model that someone uses to justify a decision, you have laundered a guess into a citation. Nobody downstream can tell it was never real. The whole chain inherits the error, and your name is on the front page. That is the stakes. So the discipline is simple to state and requires actual spine to follow: treat every fact the AI gives you as a lead, not a finding.
-
-Think of it as two completely separate jobs the AI is doing in the same answer, and you keep them apart on purpose. Job one is structuring: the questions, the categories, the comparison dimensions, the rough orientation on how the industry hangs together. You keep that. Job two is factual claims: every named competitor, every market size, every growth rate, every statistic. Each of those is something you go confirm against a primary source before it enters anything you produce. The competitor list gets checked against the companies' own sites and filings. The market size gets checked against a reputable industry report you can actually name and cite. The growth rate gets checked against a real source with a real date on it. Only the confirmed version crosses the wall into your deliverable.
-
-Two habits make this safe and fast. First, ask the AI for its reasoning and its source categories, not just its answers. Instead of "what is this market worth," ask "what would I need to find, and where, to size this market credibly?" That turns the AI into a research planner instead of a fake encyclopedia, and it hands you a to-do list of things to verify rather than a number to be tempted by. Second, keep a hard wall between the draft and the deliverable. The AI's scan organizes your search. Only sourced, confirmed facts cross into the memo or the model.
-
-Done this way, you get the best of both. A strategy analyst orienting on an unfamiliar industry gets a usable framework in minutes instead of a day. An analyst building a competitive comp set gets a complete list of dimensions to compare and a checklist of where to look. Someone sizing a market for a board memo gets the full question list before they have read a single report. The speed is real. You just never let the AI's confidence substitute for the verification step, because that step is the entire reason anyone trusts the memo at the end.
 
 ## multiple_choice
 
@@ -41,9 +50,45 @@ Done this way, you get the best of both. A strategy analyst orienting on an unfa
 
 ## reading
 
+Think of it as two completely separate jobs the AI is doing in the same answer, and you keep them apart on purpose. Job one is structuring: the questions, the categories, the comparison dimensions, the rough orientation on how the industry hangs together. You keep that. Job two is factual claims: every named competitor, every market size, every growth rate, every statistic. Each of those is something you go confirm against a primary source before it enters anything you produce. The competitor list gets checked against the companies' own sites and filings. The market size gets checked against a reputable industry report you can actually name and cite. The growth rate gets checked against a real source with a real date on it. Only the confirmed version crosses the wall into your deliverable.
+
+Two habits make this safe and fast. First, ask the AI for its reasoning and its source categories, not just its answers. Instead of "what is this market worth," ask "what would I need to find, and where, to size this market credibly?" That turns the AI into a research planner instead of a fake encyclopedia, and it hands you a to-do list of things to verify rather than a number to be tempted by. Second, keep a hard wall between the draft and the deliverable. The AI's scan organizes your search. Only sourced, confirmed facts cross into the memo or the model.
+
+Done this way, you get the best of both. A strategy analyst orienting on an unfamiliar industry gets a usable framework in minutes instead of a day. An analyst building a competitive comp set gets a complete list of dimensions to compare and a checklist of where to look. Someone sizing a market for a board memo gets the full question list before they have read a single report. The speed is real. You just never let the AI's confidence substitute for the verification step, because that step is the entire reason anyone trusts the memo at the end.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The reading describes two separate jobs the AI does in the same answer. Which split correctly matches each job to how you should handle it?",
+  "options": [
+    {"id":"a","label":"Job one is structuring, which you keep; job two is factual claims, every one of which you confirm against a primary source before it enters your work.","is_correct":true,"explanation":"Correct. Structuring covers the questions, categories, and comparison dimensions, and you keep that. Factual claims, named competitors, market sizes, growth rates, statistics, each get confirmed against a primary source first."},
+    {"id":"b","label":"Job one is the factual claims, which you keep as is; job two is the structure, which you can safely discard.","is_correct":false,"explanation":"This reverses the reading. The factual claims are exactly what you must verify, and the structure is the part worth keeping."},
+    {"id":"c","label":"Both jobs are factual, so you can let confirmed and unconfirmed material cross into the deliverable together.","is_correct":false,"explanation":"The reading insists on a hard wall: only sourced, confirmed facts cross into the memo or model. Structure and unverified claims are not the same thing and are not treated the same way."}
+  ]
+}
+```
+
+## reading
+
 The failure modes here are predictable, so you can guard against each one. The most common is laundering. You ask the AI for a quick scan, it hands you a market size, the number looks plausible, and because you are busy and the deadline is Friday, it slides straight into the memo. Two weeks later someone on the deal team asks for the source, and you realize you never had one. The number came from a model that does not cite. By then it has been quoted in two more documents. The fix is the hard wall: nothing crosses from the AI scan into the deliverable until you can name the primary source next to it.
 
 A second trap is anchoring. Once the AI tells you the market is "roughly twelve billion dollars," that number lodges in your head. When you go find the real report, you unconsciously look for figures near twelve billion and wave past the ones that disagree. The AI did not just give you a lead, it gave you a bias. Protect yourself by treating the AI's number as a range to disprove, not a target to confirm. If the real sources cluster far from the AI's guess, trust the sources and notice that the AI was simply wrong.
+
+## fill_blank
+
+```json
+{
+  "template": "The most common failure mode is {{1}}, where an unsourced AI number slides into the memo and gets quoted again before anyone asks for a source. The fix is a hard wall: nothing crosses into the deliverable until you can name the {{2}} next to it.",
+  "blanks": [
+    {"id":"1","accept":["laundering","laundering a guess","money laundering"],"ideal":"laundering"},
+    {"id":"2","accept":["primary source","source","primary source you can name","real source"],"ideal":"primary source"}
+  ],
+  "explanation": "Laundering is when a guess from a model that does not cite slides into your deliverable and gets requoted as if it were sourced. The hard wall stops it: nothing crosses until you can name the primary source beside it."
+}
+```
+
+## reading
 
 A third one is fake authority. Models love to attribute things: "according to industry research," "analysts estimate," "a leading report found." These phrases are almost always decoration, not real citations. There is frequently no specific report behind them. When you see attribution language, do not relax. Treat it as a flashing sign that says "go find the actual document," because the AI cannot hand you the document and often cannot even name it correctly.
 

@@ -16,16 +16,6 @@ Picture Maya, a recruiter staring at 300 applications for one open role on a Fri
 
 A model does not understand fairness. It learns patterns from data. When you ask an AI to predict which candidates are good, it has to learn what good looks like from somewhere, and that somewhere is almost always historical hiring data: who applied before, who got interviewed, who got hired, who got promoted. But that history is not a clean record of merit. It is a record of every decision your industry and your company already made, including the biased ones. So when the model learns to predict who looks like a strong hire, it can quietly learn to reproduce who got hired before. If people with employment gaps were passed over in the past, the model learns gaps are bad. If certain schools or certain names or certain non-traditional career paths were historically screened out, the model learns to screen them out too. It does all of this without malice and without anyone choosing it, while presenting the output as a neutral score. The bias did not disappear. It got faster and quieter and harder to see. That is the core idea worth tattooing on your brain: bias does not vanish when you automate it, it scales.
 
-Scaling is the part HR people underestimate. When a single biased manager rejects a candidate, that is one bad decision affecting one person. When a biased model ranks 300 applications, the same flawed logic touches all 300 at once, consistently, every single time, applied identically across every future role you point it at. Consistency feels like fairness. Here it is the opposite. It is consistent unfairness at scale, with a clean interface on top.
-
-Now bring in Devon, an HR generalist who is trying to build a fair screening process from scratch and assumes the legal risk lives with the obviously bad actors. It does not. Hiring is regulated, and the standard that matters most here is disparate impact: if your screening process produces meaningfully worse outcomes for a protected group, that is a liability regardless of whether a human or a tool produced it, and regardless of whether anyone intended it. You cannot point at the vendor and say the algorithm did it. On top of that, a growing number of places now attach specific obligations to automated employment decision tools: disclosure to candidates that a tool is being used, independent bias audits, and in some cases consent. The details vary by jurisdiction and they keep changing, so the practical takeaway is not a citation to memorize. It is a posture: assume that if a tool is making or heavily shaping a hiring decision, you owe someone an explanation, an audit trail, and a defensible, job-related reason.
-
-So where does that leave AI in screening? In a genuinely useful place, as long as you draw one clean line. Think about Priya, a hiring manager who is nervous about legal exposure but also drowning in volume. AI is excellent at the administrative half of screening: organizing and summarizing. It can take one application and your written job requirements and tell you, in plain language, which of the listed must-have qualifications appear to be present, which are not evidenced, and which are unclear. It can structure messy resumes into a consistent format so a human reviewer compares like with like instead of getting charmed by a pretty layout. It can pull out whether a specific, written, job-related requirement (a particular certification, a language, years in a defined function) is mentioned. That is administrative support. It makes the human faster and more consistent without ever making the call.
-
-What AI must never do is rank, score, or reject. Those are evaluative judgments, and evaluative judgments in hiring must be made by a person against explicit, job-related criteria. The moment a tool outputs an ordering or a number that tells you who is in and who is out, you have handed the regulated decision to the model and inherited all of its hidden inheritance. The clean line is this: AI may make applications easier for a human to evaluate fairly, but AI may never be the evaluator.
-
-The discipline that protects you here is the same discipline that produces better hires anyway. Write your screening criteria down. Tie every one of them to the actual job. Apply them consistently to every candidate. When your criteria are explicit, job-related, and consistently applied, you have something you can defend if a regulator or a rejected applicant ever asks, and you also have a process that finds talent the old gut-feel approach quietly missed. Maya, Devon, and Priya all end up in the same good place: AI does the reading, a person does the judging, and the criteria are on paper where everyone can see them.
-
 ## multiple_choice
 
 ```json
@@ -41,11 +31,66 @@ The discipline that protects you here is the same discipline that produces bette
 
 ## reading
 
+Scaling is the part HR people underestimate. When a single biased manager rejects a candidate, that is one bad decision affecting one person. When a biased model ranks 300 applications, the same flawed logic touches all 300 at once, consistently, every single time, applied identically across every future role you point it at. Consistency feels like fairness. Here it is the opposite. It is consistent unfairness at scale, with a clean interface on top.
+
+Now bring in Devon, an HR generalist who is trying to build a fair screening process from scratch and assumes the legal risk lives with the obviously bad actors. It does not. Hiring is regulated, and the standard that matters most here is disparate impact: if your screening process produces meaningfully worse outcomes for a protected group, that is a liability regardless of whether a human or a tool produced it, and regardless of whether anyone intended it. You cannot point at the vendor and say the algorithm did it. On top of that, a growing number of places now attach specific obligations to automated employment decision tools: disclosure to candidates that a tool is being used, independent bias audits, and in some cases consent. The details vary by jurisdiction and they keep changing, so the practical takeaway is not a citation to memorize. It is a posture: assume that if a tool is making or heavily shaping a hiring decision, you owe someone an explanation, an audit trail, and a defensible, job-related reason.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Under the disparate impact standard described here, when does a screening process create legal liability for the employer?",
+  "options": [
+    {"id":"a","label":"Only when a recruiter can be shown to have personally intended to discriminate against a protected group.","is_correct":false,"explanation":"Intent is not required. The lesson states the liability holds regardless of whether anyone intended it."},
+    {"id":"b","label":"Only when a human, rather than a tool, produced the worse outcomes for a protected group.","is_correct":false,"explanation":"It does not matter whether a human or a tool produced the outcome. You cannot point at the vendor and say the algorithm did it."},
+    {"id":"c","label":"Whenever the process produces meaningfully worse outcomes for a protected group, whether a human or a tool produced it and whether or not anyone intended it.","is_correct":true,"explanation":"Correct. Disparate impact attaches to the outcome itself, independent of who or what produced it and independent of intent."}
+  ]
+}
+```
+
+## reading
+
+So where does that leave AI in screening? In a genuinely useful place, as long as you draw one clean line. Think about Priya, a hiring manager who is nervous about legal exposure but also drowning in volume. AI is excellent at the administrative half of screening: organizing and summarizing. It can take one application and your written job requirements and tell you, in plain language, which of the listed must-have qualifications appear to be present, which are not evidenced, and which are unclear. It can structure messy resumes into a consistent format so a human reviewer compares like with like instead of getting charmed by a pretty layout. It can pull out whether a specific, written, job-related requirement (a particular certification, a language, years in a defined function) is mentioned. That is administrative support. It makes the human faster and more consistent without ever making the call.
+
+What AI must never do is rank, score, or reject. Those are evaluative judgments, and evaluative judgments in hiring must be made by a person against explicit, job-related criteria. The moment a tool outputs an ordering or a number that tells you who is in and who is out, you have handed the regulated decision to the model and inherited all of its hidden inheritance. The clean line is this: AI may make applications easier for a human to evaluate fairly, but AI may never be the evaluator.
+
+The discipline that protects you here is the same discipline that produces better hires anyway. Write your screening criteria down. Tie every one of them to the actual job. Apply them consistently to every candidate. When your criteria are explicit, job-related, and consistently applied, you have something you can defend if a regulator or a rejected applicant ever asks, and you also have a process that finds talent the old gut-feel approach quietly missed. Maya, Devon, and Priya all end up in the same good place: AI does the reading, a person does the judging, and the criteria are on paper where everyone can see them.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to the clean line drawn here, which of these is the one thing AI must never do in screening?",
+  "options": [
+    {"id":"a","label":"Output an ordering, a score, or a reject decision that determines who is in and who is out.","is_correct":true,"explanation":"Correct. Ranking, scoring, and rejecting are evaluative judgments that must be made by a person against explicit, job-related criteria."},
+    {"id":"b","label":"Structure a messy resume into a consistent format so a human can compare like with like.","is_correct":false,"explanation":"This is administrative support. It helps the human review fairly without making the call, so it stays on the safe side of the line."},
+    {"id":"c","label":"State whether a written, job-related must-have appears present, not evidenced, or unclear.","is_correct":false,"explanation":"This is organizing and summarizing against written requirements. It informs the human reviewer rather than deciding for them."}
+  ]
+}
+```
+
+## reading
+
 The mistakes here rarely look like mistakes in the moment. They look like efficiency. Maya's first wrong turn is the most common one: asking the AI to "rank the top 20" or "score these out of 10." That output is an evaluative decision dressed as a summary, and once you act on the ranking, the model made the call. A related trap is the soft version: "Just tell me which ones I should probably skip." Skip is a rejection. Renaming a rejection does not move it back across the line.
 
 A second mistake is trusting a tool because a vendor labeled it bias-free or audited. An audit is a snapshot, not a guarantee, and a tool that was fair on one role or one applicant pool can behave very differently on yours. Devon's instinct to ask vendors hard questions is right, but the answers do not transfer your accountability to them. If the tool shapes a decision and that decision lands harder on a protected group, the disparate impact is still your liability.
 
 A third mistake is feeding the AI things that have nothing to do with the job and everything to do with bias: photos, ages, addresses, graduation years, names, personal details. Even when you are only asking for a summary, an AI that can see a name or a neighborhood can let it leak into the tone or emphasis of what it writes back. The fix is to anchor every request to written, job-related requirements and to explicitly forbid inferences from protected characteristics.
+
+## multiple_choice
+
+```json
+{
+  "stem": "A vendor tells Devon their screening AI is 'independently audited and bias-free.' What is the right takeaway?",
+  "options": [
+    {"id":"a","label":"He can let the tool rank and reject candidates now, since the audit transfers legal accountability to the vendor.","is_correct":false,"explanation":"Accountability does not transfer. If the tool's decisions create a disparate impact, the liability is still the employer's."},
+    {"id":"b","label":"An audit is reassuring but it is a snapshot, not a guarantee, and it does not move accountability off Devon. The tool still must not be the one ranking or rejecting.","is_correct":true,"explanation":"Correct. Audits help, but the employer remains accountable for outcomes, and the evaluative decision must stay with a person on job-related criteria."},
+    {"id":"c","label":"Audits are meaningless, so he should refuse to use any AI in screening at all.","is_correct":false,"explanation":"AI can still safely organize and summarize against written requirements. The lesson draws a line around deciding, not around all AI use."}
+  ]
+}
+```
+
+## reading
 
 A fourth mistake is having no paper trail. Priya summarizes applications with AI but writes her criteria nowhere, so when a strong candidate is passed over and asks why, there is no consistent, job-related reason on record. Undocumented judgment is exactly what disparate-impact scrutiny is built to catch, because without written criteria you cannot show that two similar candidates were treated the same way for the same reasons.
 
@@ -57,11 +102,11 @@ The throughline is simple. The failures come from letting the tool quietly cross
 
 ```json
 {
-  "stem": "A vendor tells Devon their screening AI is 'independently audited and bias-free.' What is the right takeaway?",
+  "stem": "Why does the 'slow drift' described here, where AI summaries quietly become flags, then a shortlist, then the decision, count as a real failure?",
   "options": [
-    {"id":"a","label":"He can let the tool rank and reject candidates now, since the audit transfers legal accountability to the vendor.","is_correct":false,"explanation":"Accountability does not transfer. If the tool's decisions create a disparate impact, the liability is still the employer's."},
-    {"id":"b","label":"An audit is reassuring but it is a snapshot, not a guarantee, and it does not move accountability off Devon. The tool still must not be the one ranking or rejecting.","is_correct":true,"explanation":"Correct. Audits help, but the employer remains accountable for outcomes, and the evaluative decision must stay with a person on job-related criteria."},
-    {"id":"c","label":"Audits are meaningless, so he should refuse to use any AI in screening at all.","is_correct":false,"explanation":"AI can still safely organize and summarize against written requirements. The lesson draws a line around deciding, not around all AI use."}
+    {"id":"a","label":"Because summarizing applications was never a legitimate use of AI in the first place.","is_correct":false,"explanation":"Summarizing against written requirements is the safe, administrative use the lesson endorses. The drift is the problem, not the summary."},
+    {"id":"b","label":"Because the tool gradually crosses from organizing into deciding, so the model ends up evaluating without anyone consciously choosing to let it.","is_correct":true,"explanation":"Correct. The line gets crossed in small steps until the model is the evaluator, which is exactly the regulated decision a person must keep."},
+    {"id":"c","label":"Because flagging favorites is fine as long as a human signs off on the final shortlist at the end.","is_correct":false,"explanation":"Once the tool's flags shape the shortlist, the model is doing the comparing. The lesson says a human must do the comparing every time, even when the answer feels obvious."}
   ]
 }
 ```

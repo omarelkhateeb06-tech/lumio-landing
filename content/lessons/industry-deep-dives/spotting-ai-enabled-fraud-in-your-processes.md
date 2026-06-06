@@ -16,17 +16,41 @@ For most of your career, fraud defense quietly leaned on one comforting fact: at
 
 That world is gone, and it is worth saying plainly so you can stop blaming yourself for feeling uneasy. AI did not invent fraud. It removed the friction and the flaws that used to make fraud easy to catch. A convincing email, a cloned voice on a voicemail, a forged document that matches your exact template down to the logo placement, all of it is now cheap, fast, and very good. The polish of a request is no longer evidence that the request is real. That single sentence is the whole lesson, and everything else is how you live by it.
 
+## multiple_choice
+
+```json
+{
+  "stem": "Across most of your career, what made fraud relatively easy to catch, and what changed?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Fraud was caught because attackers used the wrong channels, and AI changed which channels they use.",
+      "is_correct": false,
+      "explanation": "The old tell was not the channel, it was sloppiness: typos, wrong fonts, a voice that did not match. AI removed those flaws, which is the actual shift."
+    },
+    {
+      "id": "b",
+      "label": "Fraud used to announce itself through sloppiness, and AI removed the flaws so polish is no longer evidence a request is real.",
+      "is_correct": true,
+      "explanation": "Correct. Defense quietly leaned on attackers being sloppy. AI removed the friction and the flaws, so the polish of a request is no longer evidence that the request is real."
+    },
+    {
+      "id": "c",
+      "label": "Fraud was rare before AI, and AI mainly increased how often fraud is attempted.",
+      "is_correct": false,
+      "explanation": "The lesson is not about frequency. AI did not invent fraud, it removed the flaws that used to make fraud easy to catch, so convincing fakes are now cheap, fast, and very good."
+    }
+  ]
+}
+```
+
+## reading
+
 Think about Mara, an accounts payable clerk at a mid-size distributor. One Thursday she gets a voicemail. It is her CFO's voice, the same slightly rushed cadence she hears in every quarterly meeting, saying a confidential acquisition is closing and she needs to push a wire to a new account today, keep it quiet, he will explain later. It sounds exactly like him because it was built from a few minutes of him talking on a public webinar. Nothing about the voice is wrong. The old defense, "does this sound like him," fails completely, because it sounds perfectly like him. The voice was never the thing to verify.
 
 Or take Devin, a controller who opens an email from a long-standing vendor. The email is warm, correctly formatted, references a real recent invoice number, and politely notes the vendor has switched banks, so please update the payment details for the next run. There are no spelling errors, no clumsy phrasing, no broken English. It reads like every legitimate vendor email Devin has processed for years, because an AI model wrote it after studying exactly that kind of email. The request to change bank details is the single highest-value move a fraudster can make, and it arrived looking completely ordinary.
 
 Or Priya, a treasury analyst who receives wire instructions that are, if anything, too clean. Perfect reference numbers, correct beneficiary formatting, a tone of calm authority, an attached document on what looks like real letterhead. The very smoothness that used to reassure her is now neutral information. A flawless message proves nothing about who actually sent it.
-
-Here is the part that should lower your anxiety rather than raise it. The defense was never going to come from you getting better at spotting fakes, because the fakes are now better than your eye. The defense comes from controls that do not depend on judging authenticity at all. The center of it is out-of-band verification. Before any payment, any new account, any vendor bank-detail change, you confirm the instruction through a separate channel you already trusted, not the channel the request arrived on. You call back a number you already had on file, never the number in the email signature, never the number left on the voicemail, never the reply path of the message itself. If the request is real, a thirty-second callback costs nothing. If it is fake, that callback is the wall it cannot climb, because the fraudster does not control the phone on your known contact list.
-
-Layer two more disciplines on top. Dual authorization means funds above a threshold require two sets of eyes and two approvals, so no single faked request can move money alone. A hard rule on vendor bank changes means details only change through a verified, documented process with a callback, regardless of how routine the request looks. And the cultural piece matters as much as the procedural one: pausing to verify an urgent request has to be rewarded, never punished. Attackers weaponize urgency precisely because they know a finance professional who fears looking slow will skip the check. "Before the deal closes today" and "keep this confidential" are not details of a real emergency, they are pressure designed to switch off your verification reflex.
-
-AI is not only the attacker's tool, by the way. It can help you scan transaction patterns for anomalies, flag duplicate or oddly timed invoices, and even draft your verification procedures. Use it. But notice the asymmetry: AI helps you detect, it does not get to be the thing you trust. The principle underneath every tool is simpler than any tool. In a world where requests can be perfectly faked, you trust the channel, not the content. A perfect message is just a message. A callback to a number you already trusted is proof. Build your processes so that no amount of polish on a fake can move a dollar on its own, and the anxiety starts to fade, because you are no longer relying on catching the uncatchable. You are relying on a rule.
 
 ## multiple_choice
 
@@ -58,17 +82,11 @@ AI is not only the attacker's tool, by the way. It can help you scan transaction
 
 ## reading
 
-The failures here rarely come from careless people. They come from good instincts being turned against you, so it helps to name exactly how it goes wrong.
+Here is the part that should lower your anxiety rather than raise it. The defense was never going to come from you getting better at spotting fakes, because the fakes are now better than your eye. The defense comes from controls that do not depend on judging authenticity at all. The center of it is out-of-band verification. Before any payment, any new account, any vendor bank-detail change, you confirm the instruction through a separate channel you already trusted, not the channel the request arrived on. You call back a number you already had on file, never the number in the email signature, never the number left on the voicemail, never the reply path of the message itself. If the request is real, a thirty-second callback costs nothing. If it is fake, that callback is the wall it cannot climb, because the fraudster does not control the phone on your known contact list.
 
-The most common mistake is verifying through the channel the request arrived on. Devin, the controller, gets the vendor bank-change email and replies to it, or calls the phone number in the signature, and gets a friendly confirmation. But if the email is fraudulent, the reply path and that number belong to the fraudster. The "confirmation" is the same person who sent the lie, saying the lie again. Verification only counts when it travels through a separate channel you already held, never one handed to you inside the suspicious request.
+Layer two more disciplines on top. Dual authorization means funds above a threshold require two sets of eyes and two approvals, so no single faked request can move money alone. A hard rule on vendor bank changes means details only change through a verified, documented process with a callback, regardless of how routine the request looks. And the cultural piece matters as much as the procedural one: pausing to verify an urgent request has to be rewarded, never punished. Attackers weaponize urgency precisely because they know a finance professional who fears looking slow will skip the check. "Before the deal closes today" and "keep this confidential" are not details of a real emergency, they are pressure designed to switch off your verification reflex.
 
-The second mistake is treating polish as proof. Priya sees a too-perfect wire instruction and relaxes, because in the past, sloppiness was the warning sign and smoothness meant legitimate. AI inverted that. A flawless email, a correct reference number, real-looking letterhead, none of it tells you who actually sent the message. When you catch yourself thinking "this looks completely legitimate, so it must be," that is the exact moment to slow down, because looking legitimate is now free to fake.
-
-The third mistake is letting urgency and confidentiality override process. "Before the deal closes today" and "keep this between us" are not incidental, they are the attack. Urgency rushes you past the callback. Confidentiality isolates you so you cannot ask a colleague who might say "wait, we always verify bank changes." A real executive will understand a verification step. A fraudster needs you to skip it, so any request that pressures you to skip it deserves more scrutiny, not less.
-
-The fourth mistake is having no rule, only judgment. If verifying is something individuals choose to do when a request feels off, fraud wins on the day the fake feels perfectly on. Judgment is exactly what AI defeats. The fix is a standing rule that applies regardless of how the request looks: vendor bank details change only through a verified callback, wires above a threshold need dual approval, period. Rules do not get tired, flattered, or rushed.
-
-The last mistake is cultural, and it is the one leaders cause. If your team treats a paused, double-checked payment as the clerk being difficult or slow, you have trained people to skip the very control that protects you. The clerk who calls back to verify an urgent CFO wire should be thanked, even when the request turns out to be real, because that callback is the system working. Punish the pause and you have quietly disabled your strongest defense.
+AI is not only the attacker's tool, by the way. It can help you scan transaction patterns for anomalies, flag duplicate or oddly timed invoices, and even draft your verification procedures. Use it. But notice the asymmetry: AI helps you detect, it does not get to be the thing you trust. The principle underneath every tool is simpler than any tool. In a world where requests can be perfectly faked, you trust the channel, not the content. A perfect message is just a message. A callback to a number you already trusted is proof. Build your processes so that no amount of polish on a fake can move a dollar on its own, and the anxiety starts to fade, because you are no longer relying on catching the uncatchable. You are relying on a rule.
 
 ## fill_blank
 
@@ -80,6 +98,78 @@ The last mistake is cultural, and it is the one leaders cause. If your team trea
     {"id":"2","accept":["polish","quality","appearance","authenticity","look"],"ideal":"polish"}
   ],
   "explanation": "Verification must travel through an out-of-band channel you already trusted, not one supplied by the request, since the polish of a message is now cheap to fake and tells you nothing about its true sender."
+}
+```
+
+## reading
+
+The failures here rarely come from careless people. They come from good instincts being turned against you, so it helps to name exactly how it goes wrong.
+
+The most common mistake is verifying through the channel the request arrived on. Devin, the controller, gets the vendor bank-change email and replies to it, or calls the phone number in the signature, and gets a friendly confirmation. But if the email is fraudulent, the reply path and that number belong to the fraudster. The "confirmation" is the same person who sent the lie, saying the lie again. Verification only counts when it travels through a separate channel you already held, never one handed to you inside the suspicious request.
+
+The second mistake is treating polish as proof. Priya sees a too-perfect wire instruction and relaxes, because in the past, sloppiness was the warning sign and smoothness meant legitimate. AI inverted that. A flawless email, a correct reference number, real-looking letterhead, none of it tells you who actually sent the message. When you catch yourself thinking "this looks completely legitimate, so it must be," that is the exact moment to slow down, because looking legitimate is now free to fake.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Devin replies directly to a vendor's bank-change email and calls the phone number in its signature, and gets a friendly confirmation. Why does this fail to verify the request?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because email confirmations are never valid, and only a confirmation in writing on official letterhead can count.",
+      "is_correct": false,
+      "explanation": "Letterhead is exactly the kind of polish that is now free to fake. The problem is not the format of the reply, it is that the reply travels back through the channel the request itself supplied."
+    },
+    {
+      "id": "b",
+      "label": "Because if the email is fraudulent, the reply path and that number belong to the fraudster, so it is the same person confirming their own lie.",
+      "is_correct": true,
+      "explanation": "Correct. Verification only counts when it travels through a separate channel you already held, never one handed to you inside the suspicious request. Replying or calling the signature number reaches the fraudster again."
+    },
+    {
+      "id": "c",
+      "label": "Because Devin should have trusted the polish of the email, since a flawless, error-free message proves it came from the real vendor.",
+      "is_correct": false,
+      "explanation": "The opposite is true. Treating polish as proof is itself one of the named mistakes. A flawless email tells you nothing about who actually sent it."
+    }
+  ]
+}
+```
+
+## reading
+
+The third mistake is letting urgency and confidentiality override process. "Before the deal closes today" and "keep this between us" are not incidental, they are the attack. Urgency rushes you past the callback. Confidentiality isolates you so you cannot ask a colleague who might say "wait, we always verify bank changes." A real executive will understand a verification step. A fraudster needs you to skip it, so any request that pressures you to skip it deserves more scrutiny, not less.
+
+The fourth mistake is having no rule, only judgment. If verifying is something individuals choose to do when a request feels off, fraud wins on the day the fake feels perfectly on. Judgment is exactly what AI defeats. The fix is a standing rule that applies regardless of how the request looks: vendor bank details change only through a verified callback, wires above a threshold need dual approval, period. Rules do not get tired, flattered, or rushed.
+
+The last mistake is cultural, and it is the one leaders cause. If your team treats a paused, double-checked payment as the clerk being difficult or slow, you have trained people to skip the very control that protects you. The clerk who calls back to verify an urgent CFO wire should be thanked, even when the request turns out to be real, because that callback is the system working. Punish the pause and you have quietly disabled your strongest defense.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why is 'having no rule, only judgment' treated as a mistake, and what fixes it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Judgment is the very thing AI defeats, so the fix is a standing rule that applies regardless of how the request looks.",
+      "is_correct": true,
+      "explanation": "Correct. If verifying is left to individual judgment, fraud wins on the day the fake feels perfectly on. A standing rule, such as verified callbacks for bank changes and dual approval over a threshold, does not get tired, flattered, or rushed."
+    },
+    {
+      "id": "b",
+      "label": "Experienced staff have unreliable judgment, so they should defer to whoever is most senior on every payment.",
+      "is_correct": false,
+      "explanation": "The point is not seniority. The problem is that any judgment, however experienced, can be beaten on the day a fake looks perfect, which is why a rule that applies regardless of appearance is needed."
+    },
+    {
+      "id": "c",
+      "label": "Rules slow teams down, so the better fix is to train people to spot fakes more reliably by eye.",
+      "is_correct": false,
+      "explanation": "Spotting fakes by eye is exactly what AI defeats. The lesson argues for a standing rule precisely because human judgment cannot be relied on to catch a perfect fake."
+    }
+  ]
 }
 ```
 

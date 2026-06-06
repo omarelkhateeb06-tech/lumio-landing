@@ -18,18 +18,6 @@ It cannot reliably give you current facts. The model learned from text up to a c
 
 It cannot do reliable math or counting on its own. This surprises people, because computers are supposed to be good at math. But ChatGPT is not calculating; it is predicting what the answer probably looks like. It can lay out the right steps and then quietly fumble the arithmetic, or miscount items in a list. When Dana, a bookkeeper, asked it to total a column of expenses, the steps were perfect and the sum was off by ninety dollars. Any number that matters must be checked, ideally in an actual calculator or spreadsheet.
 
-It cannot know your private context. It does not know your client's name, your last email, your team's deadline, or what is in your files, unless you tell it. By default it is not connected to your inbox, your calendar, your shared drive, or your company systems. It is a stranger who is brilliant with words but knows nothing about your specific world until you brief it. This is also why pasting sensitive information into a public AI tool is risky: you are handing private details to an outside system.
-
-It cannot exercise true judgment or take accountability. It can imitate the shape of advice, but it does not understand stakes, ethics, or consequences, and it cannot be held responsible when it is wrong. The responsibility never transfers to the tool. A nurse who uses AI to draft a patient note still signs that note and owns every word. A paralegal who uses AI to summarize a contract still owns the summary in front of the partner. A teacher who uses AI to write a parent email still answers for what it says. The accountability stays with the human, always.
-
-It cannot verify its own claims. If you ask "are you sure?" it cannot actually go check. It will often just produce another confident-sounding answer, sometimes doubling down on a wrong one, sometimes flipping to a different wrong one. It has no way to look up whether what it just said is true. Verification has to come from you, against a real source, outside the tool. Picture Leah, a marketing coordinator, who got a campaign launch date from ChatGPT and typed back "are you certain about that date?" The model apologized and offered a completely different date, just as confidently. She had no way to know which one, if either, was right, because both were predictions, not lookups. The "are you sure" loop feels like quality control but produces nothing you can trust.
-
-It cannot follow your evolving situation in real time. The model only knows what is in front of it in the current conversation. It does not remember that your project scope changed last Tuesday, that a teammate already handled the budget line, or that the client moved the meeting. If a detail is not in the chat, it is not in the model's head. Owen, a project lead, asked it to "update the plan we discussed," forgetting the model had no record of the new constraints from his call that morning. It produced a confident plan built on the old assumptions. Anything situational has to be supplied fresh, every time.
-
-So what should you never fully delegate? Anything where being wrong has real consequences and the responsibility is yours: final medical, legal, or financial decisions; sending current facts you have not verified; math that money or safety depends on; and anything involving private or confidential information you would not hand to a stranger. Use AI to draft, explain, restructure, and brainstorm. Keep the judgment, the verification, and the final sign-off for yourself.
-
-None of this makes AI weak. It makes it a brilliant first-draft engine and a poor final authority. The whole game is to let it get you to eighty percent fast, then bring your own judgment, your private context, and your verification to the last twenty percent. People who understand this get enormous value with very little risk. People who skip it end up explaining to their boss why the confident document they sent was wrong.
-
 ## multiple_choice
 
 ```json
@@ -45,15 +33,53 @@ None of this makes AI weak. It makes it a brilliant first-draft engine and a poo
 
 ## reading
 
+It cannot know your private context. It does not know your client's name, your last email, your team's deadline, or what is in your files, unless you tell it. By default it is not connected to your inbox, your calendar, your shared drive, or your company systems. It is a stranger who is brilliant with words but knows nothing about your specific world until you brief it. This is also why pasting sensitive information into a public AI tool is risky: you are handing private details to an outside system.
+
+It cannot exercise true judgment or take accountability. It can imitate the shape of advice, but it does not understand stakes, ethics, or consequences, and it cannot be held responsible when it is wrong. The responsibility never transfers to the tool. A nurse who uses AI to draft a patient note still signs that note and owns every word. A paralegal who uses AI to summarize a contract still owns the summary in front of the partner. A teacher who uses AI to write a parent email still answers for what it says. The accountability stays with the human, always.
+
+It cannot verify its own claims. If you ask "are you sure?" it cannot actually go check. It will often just produce another confident-sounding answer, sometimes doubling down on a wrong one, sometimes flipping to a different wrong one. It has no way to look up whether what it just said is true. Verification has to come from you, against a real source, outside the tool. Picture Leah, a marketing coordinator, who got a campaign launch date from ChatGPT and typed back "are you certain about that date?" The model apologized and offered a completely different date, just as confidently. She had no way to know which one, if either, was right, because both were predictions, not lookups. The "are you sure" loop feels like quality control but produces nothing you can trust.
+
+## multiple_choice
+
+```json
+{
+  "stem": "You ask AI to summarize a contract and it does a great job. The summary turns out to contain a serious error that costs the client. According to the reading, who is accountable?",
+  "options": [
+    { "id": "a", "label": "The AI tool, since it produced the summary.", "is_correct": false, "explanation": "The reading is explicit that responsibility never transfers to the tool. It cannot be held responsible when it is wrong." },
+    { "id": "b", "label": "Nobody, because everyone knows AI makes mistakes.", "is_correct": false, "explanation": "The accountability does not disappear. It stays with the human who used the tool and owned the work." },
+    { "id": "c", "label": "The human who used it and owns the summary, because accountability never transfers to the tool.", "is_correct": true, "explanation": "Correct. As the reading puts it, the paralegal who uses AI to summarize a contract still owns the summary. The accountability stays with the human, always." }
+  ]
+}
+```
+
+## reading
+
+It cannot follow your evolving situation in real time. The model only knows what is in front of it in the current conversation. It does not remember that your project scope changed last Tuesday, that a teammate already handled the budget line, or that the client moved the meeting. If a detail is not in the chat, it is not in the model's head. Owen, a project lead, asked it to "update the plan we discussed," forgetting the model had no record of the new constraints from his call that morning. It produced a confident plan built on the old assumptions. Anything situational has to be supplied fresh, every time.
+
+So what should you never fully delegate? Anything where being wrong has real consequences and the responsibility is yours: final medical, legal, or financial decisions; sending current facts you have not verified; math that money or safety depends on; and anything involving private or confidential information you would not hand to a stranger. Use AI to draft, explain, restructure, and brainstorm. Keep the judgment, the verification, and the final sign-off for yourself.
+
+None of this makes AI weak. It makes it a brilliant first-draft engine and a poor final authority. The whole game is to let it get you to eighty percent fast, then bring your own judgment, your private context, and your verification to the last twenty percent. People who understand this get enormous value with very little risk. People who skip it end up explaining to their boss why the confident document they sent was wrong.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Owen asks AI to \"update the plan we discussed,\" but it had no record of the new constraints from his morning call. Why did it confidently produce a plan built on old assumptions?",
+  "options": [
+    { "id": "a", "label": "Because it was having a bad day and made a one-time mistake.", "is_correct": false, "explanation": "This is not a glitch. The model simply cannot follow your evolving situation; it only knows what is in the current conversation." },
+    { "id": "b", "label": "Because the model only knows what is in front of it in the chat, so details not supplied are not in its head.", "is_correct": true, "explanation": "Correct. The reading explains that if a detail is not in the chat, it is not in the model's head, so anything situational has to be supplied fresh every time." },
+    { "id": "c", "label": "Because it secretly remembered the wrong details from the call.", "is_correct": false, "explanation": "It had no record of the call at all. It cannot remember things outside the current conversation, which is exactly the limit at play." }
+  ]
+}
+```
+
+## reading
+
 The most common mistake is treating AI as a search engine for current facts. People ask it for today's prices, this week's news, or what their policy says now, and accept the confident reply. Because it cannot know recent or private facts, it fills the gap with a hallucination that looks identical to a real answer. The fix is to never ask the model for a fact it cannot know. Get current and private facts from the real source, then paste them in so the model only has to do the wording.
 
 The second mistake is trusting its math. People assume a computer is automatically good with numbers and copy its totals straight into invoices or reports. But it is predicting what the answer looks like, not calculating, so it can be quietly off. The fix is to treat any number that matters as unverified until you confirm it in a real calculator or spreadsheet, and to never let AI be the final arithmetic on anything involving money or safety.
 
 The third mistake is assuming the tool shares the blame when something goes wrong. It does not. "The AI told me" has never protected anyone whose name was on the document. Consider an accountant who lets ChatGPT classify a client's expenses and files the return without reviewing the categories. When the deduction is challenged, the tax authority does not write to the chatbot. It writes to the accountant, whose license and reputation are on the line. The model felt like a colleague sharing the work, but accountability never left the human chair. The fix is to mentally keep ownership of everything you send: if your name signs it, you verified it, and you stand behind it, no matter how much AI helped draft it.
-
-The fourth mistake is asking the AI to check itself. When something feels off, people type "are you sure?" and trust the reply. The model cannot actually verify its own claims; it just generates more plausible text and may confidently repeat or replace the error. The fix is to verify outside the tool, against a real source, every time the stakes are real.
-
-The last mistake is the most expensive: pasting confidential information into a public AI tool. People drop in client names, patient details, or internal data to get a better draft, forgetting they just sent private information to an outside system. The fix is to strip or anonymize sensitive details before you paste, or use an approved tool your organization has vetted.
 
 ## fill_blank
 
@@ -65,6 +91,25 @@ The last mistake is the most expensive: pasting confidential information into a 
     { "id": "2", "accept": ["human", "person", "you", "user"], "ideal": "human" }
   ],
   "explanation": "AI predicts what answers look like rather than calculating, so it can be quietly wrong on numbers, and accountability for any AI-assisted work always stays with the human who signs it."
+}
+```
+
+## reading
+
+The fourth mistake is asking the AI to check itself. When something feels off, people type "are you sure?" and trust the reply. The model cannot actually verify its own claims; it just generates more plausible text and may confidently repeat or replace the error. The fix is to verify outside the tool, against a real source, every time the stakes are real.
+
+The last mistake is the most expensive: pasting confidential information into a public AI tool. People drop in client names, patient details, or internal data to get a better draft, forgetting they just sent private information to an outside system. The fix is to strip or anonymize sensitive details before you paste, or use an approved tool your organization has vetted.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, what is the fix for the most expensive mistake of pasting confidential information into a public AI tool?",
+  "options": [
+    { "id": "a", "label": "Ask the AI to promise it will keep the information secret.", "is_correct": false, "explanation": "A promise from the tool does not protect anything. The information has already gone to an outside system." },
+    { "id": "b", "label": "Strip or anonymize sensitive details before you paste, or use an approved tool your organization has vetted.", "is_correct": true, "explanation": "Correct. The reading says to remove or anonymize private details first, or rely on a tool your organization has actually vetted." },
+    { "id": "c", "label": "Paste it quickly so the system has less time to read it.", "is_correct": false, "explanation": "Speed makes no difference. Once private data is in an outside system, the risk is already there." }
+  ]
 }
 ```
 

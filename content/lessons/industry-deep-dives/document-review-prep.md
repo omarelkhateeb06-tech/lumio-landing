@@ -18,9 +18,54 @@ Think of a document review job as three phases. There is the work before you ope
 
 **Before you start: build a review framework.** The fastest way to fall behind is to open a stack of contracts and start reading with no plan. You end up noticing different things in document one than in document forty, and your review is inconsistent. Inconsistency is how real issues slip through, because the thing you would have caught on a fresh morning gets missed at the end of a long afternoon. Instead, tell AI the matter type and what you are reviewing for, and ask it to build you a checklist. Say you are a paralegal supporting a due diligence matter where your firm is reviewing a target company's employment contracts. You might prompt: "I am reviewing employment agreements in an M&A due diligence matter. Build me a checklist of clauses and red flags to look for in each one, including change-of-control provisions, non-compete terms, severance triggers, and assignment of inventions." Now you read every contract through the same clear lens. You are not hunting blind, and nothing slips because you were tired by document forty. The checklist is yours to edit, too: cross off what does not apply, add the items the AI did not know to include, and you have a tool you can reuse on the next matter of the same type.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the lesson, why should you build a review checklist with AI before opening the first document?",
+  "options": [
+    {
+      "id": "a",
+      "label": "So the AI can read the contracts for you and flag the issues automatically.",
+      "is_correct": false,
+      "explanation": "The checklist does not hand the reading to the AI. You still read every contract yourself; the checklist just keeps your attention consistent."
+    },
+    {
+      "id": "b",
+      "label": "So your review stays consistent across every document, since reading with no plan means you notice different things in document one than in document forty.",
+      "is_correct": true,
+      "explanation": "Correct. Inconsistency is how real issues slip through, and a shared checklist means you read every contract through the same clear lens even late in a long matter."
+    },
+    {
+      "id": "c",
+      "label": "So you never have to edit or adjust the list once the AI produces it.",
+      "is_correct": false,
+      "explanation": "The opposite is true. The checklist is yours to edit: cross off what does not apply and add the items the AI did not know to include."
+    }
+  ]
+}
+```
+
+## reading
+
 **During: organize what you find.** As you read and flag, your notes pile up fast and lose shape. Here AI turns scatter into a record. Imagine you are reviewing a batch of commercial leases for a real estate acquisition, and across twelve leases you have flagged assorted clauses about renewal options, assignment restrictions, and early termination. Paste your flagged text in and prompt: "Here are the clauses I flagged across these twelve leases. Organize them into a table with columns for document name, clause type, and the issue I noted." In seconds you have a clean grid instead of a messy list, and you can see patterns, like three leases sharing the same problematic assignment clause, that were invisible in your running notes.
 
 **After: draft the issue summary.** When the review is done, someone needs a memo. AI can give you the first structure. Picture a compliance review where you flagged data-handling problems across a set of vendor agreements. You prompt: "Based on the flagged issues below, draft an issue summary memo organized by severity, from highest risk to lowest." You get a clean skeleton organized the way the partner wants to read it, with the worst problems up top and the minor ones below. Then you edit every line and verify each point, but you did not start from a blank page. For a tired reviewer at the end of a long matter, that first structure is the difference between a memo that goes out tonight and one that waits until tomorrow.
+
+## fill_blank
+
+```json
+{
+  "template": "During the review, AI turns your scattered notes into a {{1}} so patterns become visible; when the review is done, it can draft the first {{2}} of an issue summary memo for you to edit and verify.",
+  "blanks": [
+    { "id": "1", "accept": ["table", "grid", "record"], "ideal": "table" },
+    { "id": "2", "accept": ["structure", "draft", "skeleton"], "ideal": "structure" }
+  ],
+  "explanation": "AI organizes flagged clauses into a clean table where patterns like a shared assignment clause stand out, and it gives you a first memo structure so you are not starting from a blank page. You still edit every line and verify each point."
+}
+```
+
+## reading
 
 Now the limits, and these are not optional in legal work.
 
@@ -68,14 +113,6 @@ Most problems with AI in document review do not come from the tool being wrong. 
 
 **Pasting privileged documents into a public tool.** A quick paste into a free, public chatbot can put privileged client material onto a third party's servers. That is a confidentiality and privilege problem, and it does not un-happen. Use only a tool your firm has approved for sensitive material, and genericize whatever you can before it goes anywhere near AI.
 
-**Skipping verification of organized entries against the source.** When AI produces a clean table, it looks finished, and a finished-looking thing is tempting to trust. But organizing involves restating, and restating can drift. A clause about a 90-day cure period might land in the table as "30-day cure period." Always read each entry back against the actual clause before it goes in a memo or a deal point.
-
-**Treating review judgment as mechanical.** It is easy to talk yourself into believing the review is just pattern-matching that AI can do. It is not. Deciding what is a real problem, what needs escalation, and what to advise on is the trained, professional core of the work. That is the part you do not outsource.
-
-**Trusting an AI-drafted issue memo without checking each cited clause.** The memo may read beautifully and cite "Section 7.2." Before it goes out, open the document and confirm Section 7.2 says what the memo claims. A confident, well-written memo built on one misread clause is more dangerous than messy notes, because no one questions it.
-
-The thread through all of these: AI is excellent at structure and terrible at significance. Keep it on the structure.
-
 ## fill_blank
 
 ```json
@@ -86,6 +123,44 @@ The thread through all of these: AI is excellent at structure and terrible at si
     { "id": "2", "accept": ["judgment", "judgement", "decision"], "ideal": "judgment" }
   ],
   "explanation": "AI can sort and organize, but it has no view of the matter's strategy or stakes, so its 'material' labels are guesses. Deciding what is truly material is a judgment that remains a human responsibility, verified against the source."
+}
+```
+
+## reading
+
+**Skipping verification of organized entries against the source.** When AI produces a clean table, it looks finished, and a finished-looking thing is tempting to trust. But organizing involves restating, and restating can drift. A clause about a 90-day cure period might land in the table as "30-day cure period." Always read each entry back against the actual clause before it goes in a memo or a deal point.
+
+**Treating review judgment as mechanical.** It is easy to talk yourself into believing the review is just pattern-matching that AI can do. It is not. Deciding what is a real problem, what needs escalation, and what to advise on is the trained, professional core of the work. That is the part you do not outsource.
+
+**Trusting an AI-drafted issue memo without checking each cited clause.** The memo may read beautifully and cite "Section 7.2." Before it goes out, open the document and confirm Section 7.2 says what the memo claims. A confident, well-written memo built on one misread clause is more dangerous than messy notes, because no one questions it.
+
+The thread through all of these: AI is excellent at structure and terrible at significance. Keep it on the structure.
+
+## multiple_choice
+
+```json
+{
+  "stem": "An AI-organized table looks clean and finished, and an AI-drafted memo reads beautifully and cites 'Section 7.2.' Why is this still dangerous?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because organizing involves restating, which can drift, so a 90-day cure period might land as '30-day,' and a confident memo built on one misread clause goes unquestioned.",
+      "is_correct": true,
+      "explanation": "Correct. A finished-looking output is tempting to trust, but you must read each entry back against the source and confirm every cited clause before relying on it."
+    },
+    {
+      "id": "b",
+      "label": "Because AI output can never be used in legal work and must always be retyped by hand.",
+      "is_correct": false,
+      "explanation": "Organizing findings is exactly what AI is good for. The fix is to verify each entry against the source, not to throw the output away."
+    },
+    {
+      "id": "c",
+      "label": "Because a clean table proves the review judgment was already done correctly.",
+      "is_correct": false,
+      "explanation": "A clean appearance proves nothing about significance. AI is excellent at structure and terrible at significance, so the judgment and verification remain yours."
+    }
+  ]
 }
 ```
 

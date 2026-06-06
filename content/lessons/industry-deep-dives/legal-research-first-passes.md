@@ -16,16 +16,6 @@ Most legal research starts the same uncomfortable way. A matter lands on your de
 
 Here is the safe and effective way to use it, with the kind of work you actually do.
 
-Use it to understand an unfamiliar concept in plain language. Say a tenant walks in upset that a neighbor has been mowing and fencing off a strip of their backyard for years and now claims it. You have heard the phrase adverse possession but you do not work in property disputes. A good first prompt is, "Explain in plain language how adverse possession generally works, and the main elements courts usually look at." In seconds you learn that courts typically weigh things like open and notorious use, continuous possession over a statutory period, and use that is hostile to the owner's rights. Now you know the shape of the problem. You know the words to search and the questions to ask. You are no longer starting from a blank page, and that is the entire point of a first pass.
-
-Use it to frame research questions and build a checklist of angles. Imagine a client whose landlord kept the full security deposit after they moved out of an apartment, claiming vague "cleaning and damages." You can prompt, "I am researching a landlord-tenant dispute about a withheld security deposit. What are the key issues I should investigate, and what questions should I be asking?" AI is genuinely good at this. It will surface angles you might want to check, such as whether the state requires the landlord to send an itemized list of deductions within a set number of days, whether failure to do so triggers penalties, whether there are limits on what counts as normal wear and tear, and whether the deposit had to be held in a separate account. That is a useful map of where to dig. It is not a finding. Every one of those angles still has to be confirmed against your state's actual statute and deadlines.
-
-Use it to translate dense statutory text into plain English. Paste in a paragraph of a building code or a tax provision written in the usual run-on legal style and ask for a plain-language restatement of what it requires and who it applies to. Picture a provision that reads, "No lessor shall withhold any portion of a security deposit except for amounts reasonably necessary to remedy tenant defaults in the payment of rent or to repair damages to the premises exclusive of ordinary wear and tear." You can ask the tool to restate that in plain words and it will tell you, in effect, the landlord can only keep money for unpaid rent or real damage, not for normal aging of the apartment. This is one of the safer uses because you are giving the tool the authoritative text and asking it only to rephrase what you supplied, not to recall law from memory. You still read the original yourself, but the plain version helps you understand it faster, and it helps you spot the words that matter, like "reasonably necessary" and "ordinary wear and tear," which are often where the dispute actually lives.
-
-Now the hard line, and it is not optional. Never treat AI output as legal authority. The tool invents statute numbers that look completely real. It fabricates case names and citations, complete with plausible volume and page numbers, for cases that were never decided. It states rules that sound right but are outdated, or that are correct in one state and flatly wrong in yours, and it does all of this with total confidence and no warning. It does not know what changed last month, and it does not know which jurisdiction governs your matter unless you tell it, and even then you should not trust its answer. A fluent, well-organized, internally consistent response is not evidence that anything in it is true. Consider a paralegal who asks for the filing deadline to answer a complaint and gets a clean, specific number of days. If that number is wrong, a missed deadline can end the case. That risk does not go away because the answer was confident.
-
-So every rule, citation, deadline, and element you plan to rely on gets verified in an authoritative legal research database or the primary source itself. The workflow fits in one line. AI helps you understand the territory and ask sharper questions, then real legal sources give you the verified answers. Orientation from the tool, authority from the law.
-
 ## multiple_choice
 
 ```json
@@ -62,6 +52,88 @@ So every rule, citation, deadline, and element you plan to rely on gets verified
 
 ## reading
 
+Use it to understand an unfamiliar concept in plain language. Say a tenant walks in upset that a neighbor has been mowing and fencing off a strip of their backyard for years and now claims it. You have heard the phrase adverse possession but you do not work in property disputes. A good first prompt is, "Explain in plain language how adverse possession generally works, and the main elements courts usually look at." In seconds you learn that courts typically weigh things like open and notorious use, continuous possession over a statutory period, and use that is hostile to the owner's rights. Now you know the shape of the problem. You know the words to search and the questions to ask. You are no longer starting from a blank page, and that is the entire point of a first pass.
+
+Use it to frame research questions and build a checklist of angles. Imagine a client whose landlord kept the full security deposit after they moved out of an apartment, claiming vague "cleaning and damages." You can prompt, "I am researching a landlord-tenant dispute about a withheld security deposit. What are the key issues I should investigate, and what questions should I be asking?" AI is genuinely good at this. It will surface angles you might want to check, such as whether the state requires the landlord to send an itemized list of deductions within a set number of days, whether failure to do so triggers penalties, whether there are limits on what counts as normal wear and tear, and whether the deposit had to be held in a separate account. That is a useful map of where to dig. It is not a finding. Every one of those angles still has to be confirmed against your state's actual statute and deadlines.
+
+## multiple_choice
+
+```json
+{
+  "stem": "You ask AI to surface the key issues in a withheld security deposit dispute and it returns a clean checklist of angles, like itemized-deduction deadlines and limits on normal wear and tear. What have you actually obtained?",
+  "options": [
+    {
+      "id": "a",
+      "label": "A set of verified findings you can state as the law in your memo.",
+      "is_correct": false,
+      "explanation": "The checklist is not a finding. Each angle still has to be confirmed against your state's actual statute and deadlines before it counts as law."
+    },
+    {
+      "id": "b",
+      "label": "Confirmation that your state requires an itemized list within a set number of days.",
+      "is_correct": false,
+      "explanation": "AI raising that angle does not confirm it applies in your state. Whether the deadline exists and what it is must be checked against the actual statute."
+    },
+    {
+      "id": "c",
+      "label": "A useful map of where to dig, with every angle still needing confirmation against your state's actual statute and deadlines.",
+      "is_correct": true,
+      "explanation": "Correct. Framing research questions is exactly what AI is good at. The output is a map of angles to investigate, not findings, so each one gets verified in the real statute."
+    },
+    {
+      "id": "d",
+      "label": "Nothing useful, since AI cannot help frame research questions.",
+      "is_correct": false,
+      "explanation": "AI is genuinely good at framing research questions and surfacing angles you might miss. The value is real; it is just orientation rather than authority."
+    }
+  ]
+}
+```
+
+## reading
+
+Use it to translate dense statutory text into plain English. Paste in a paragraph of a building code or a tax provision written in the usual run-on legal style and ask for a plain-language restatement of what it requires and who it applies to. Picture a provision that reads, "No lessor shall withhold any portion of a security deposit except for amounts reasonably necessary to remedy tenant defaults in the payment of rent or to repair damages to the premises exclusive of ordinary wear and tear." You can ask the tool to restate that in plain words and it will tell you, in effect, the landlord can only keep money for unpaid rent or real damage, not for normal aging of the apartment. This is one of the safer uses because you are giving the tool the authoritative text and asking it only to rephrase what you supplied, not to recall law from memory. You still read the original yourself, but the plain version helps you understand it faster, and it helps you spot the words that matter, like "reasonably necessary" and "ordinary wear and tear," which are often where the dispute actually lives.
+
+Now the hard line, and it is not optional. Never treat AI output as legal authority. The tool invents statute numbers that look completely real. It fabricates case names and citations, complete with plausible volume and page numbers, for cases that were never decided. It states rules that sound right but are outdated, or that are correct in one state and flatly wrong in yours, and it does all of this with total confidence and no warning. It does not know what changed last month, and it does not know which jurisdiction governs your matter unless you tell it, and even then you should not trust its answer. A fluent, well-organized, internally consistent response is not evidence that anything in it is true. Consider a paralegal who asks for the filing deadline to answer a complaint and gets a clean, specific number of days. If that number is wrong, a missed deadline can end the case. That risk does not go away because the answer was confident.
+
+So every rule, citation, deadline, and element you plan to rely on gets verified in an authoritative legal research database or the primary source itself. The workflow fits in one line. AI helps you understand the territory and ask sharper questions, then real legal sources give you the verified answers. Orientation from the tool, authority from the law.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Which use of AI in this lesson is described as one of the safer ones, and why?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Asking it to recall the filing deadline for answering a complaint, because deadlines are simple facts.",
+      "is_correct": false,
+      "explanation": "That is one of the riskier uses. A confident but wrong deadline can end the case, and the number must be verified in an authoritative source."
+    },
+    {
+      "id": "b",
+      "label": "Pasting in a statutory paragraph and asking it to restate that text in plain words, because you supply the authoritative text and ask it only to rephrase, not to recall law from memory.",
+      "is_correct": true,
+      "explanation": "Correct. Giving the tool the authoritative text and asking only for a plain-language restatement keeps it from inventing law, which is why this is one of the safer uses. You still read the original yourself."
+    },
+    {
+      "id": "c",
+      "label": "Asking it to supply the controlling case names and citations, because it provides volume and page numbers.",
+      "is_correct": false,
+      "explanation": "AI fabricates case names and citations with plausible-looking volume and page numbers for cases that were never decided. This is exactly what you must never treat as authority."
+    },
+    {
+      "id": "d",
+      "label": "Asking it to confirm which state's law governs, because it answers with confidence.",
+      "is_correct": false,
+      "explanation": "Confidence is not evidence. The tool does not reliably know which jurisdiction governs your matter, so this is not a safe use."
+    }
+  ]
+}
+```
+
+## reading
+
 The failures in this kind of research are predictable, which is good news, because predictable mistakes are easy to guard against once you can name them. Here are the ones that catch legal professionals most often.
 
 Citing a statute number the AI handed you without confirming it exists and is current. The number will look perfectly formatted and authoritative. That formatting tells you nothing. AI produces citations that point to nothing, or that point to a provision that was repealed or renumbered. Pull it up in your database before it goes anywhere near a memo or a filing.
@@ -69,6 +141,42 @@ Citing a statute number the AI handed you without confirming it exists and is cu
 Trusting a fluent, internally consistent explanation as if it were a finding. When a paragraph reads smoothly and every part agrees with every other part, your brain wants to accept it. But coherence is not accuracy. A confident, tidy answer about the elements of a fraud claim can still be the wrong jurisdiction's version, or simply made up. Treat the explanation as a map of what to verify, never as the verified result.
 
 Assuming the AI knows your jurisdiction's current law. Non-compete rules, security deposit deadlines, and statutes of limitations vary sharply from state to state and change over time. The tool does not know which state governs your matter unless you tell it, and even then it may give you another state's rule or a version that was amended last year. Currency and jurisdiction are exactly the two things you confirm yourself.
+
+## multiple_choice
+
+```json
+{
+  "stem": "An AI explanation of the elements of a fraud claim reads smoothly, and every part agrees with every other part. Why is that not a reason to treat it as a finding?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because long explanations are always less accurate than short ones.",
+      "is_correct": false,
+      "explanation": "Length is not the issue. The point is that coherence, at any length, does not establish accuracy."
+    },
+    {
+      "id": "b",
+      "label": "Because a smooth explanation means the AI is guessing and a choppy one means it is confident.",
+      "is_correct": false,
+      "explanation": "Writing style does not signal reliability either way. Fluent text can be wrong and is produced with the same confidence as correct text."
+    },
+    {
+      "id": "c",
+      "label": "Because internally consistent answers are always fabricated.",
+      "is_correct": false,
+      "explanation": "They are not always fabricated. The problem is that you cannot tell from coherence alone, so the explanation must be verified rather than assumed false or true."
+    },
+    {
+      "id": "d",
+      "label": "Because coherence is not accuracy; a confident, tidy answer can still be the wrong jurisdiction's version or simply made up, so it is a map of what to verify, not the verified result.",
+      "is_correct": true,
+      "explanation": "Correct. Your brain wants to accept smooth, self-consistent text, but coherence does not make it true or jurisdiction-correct. Treat it as a map of what to verify, never as the result."
+    }
+  ]
+}
+```
+
+## reading
 
 Pasting confidential matter facts into a public tool while researching. It is tempting to drop in real client names, addresses, and case specifics to get a sharper answer. On a public consumer tool, that can breach client confidentiality and your duty to protect it. Research the general legal concept with the details stripped out, or use a tool your firm has approved for confidential work.
 

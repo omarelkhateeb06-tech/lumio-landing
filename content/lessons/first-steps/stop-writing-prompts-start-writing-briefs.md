@@ -18,6 +18,36 @@ Here is the shift. A prompt is a question. A brief is a set of instructions. The
 
 A good brief answers six things a competent assistant would ask before they started. You do not need a form. You just need to cover them.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the reading, why does the Google habit of typing the shortest possible thing tend to produce mediocre AI results?",
+  "options": [
+    {
+      "id": "a",
+      "label": "AI is slower than a search engine, so short inputs waste its speed",
+      "is_correct": false,
+      "explanation": "The reading actually calls the AI fast. Speed is not the issue. The issue is that a search-style short input does not tell the AI about your specific situation."
+    },
+    {
+      "id": "b",
+      "label": "Search engines give better answers than AI, so the habit carries over poorly",
+      "is_correct": false,
+      "explanation": "The reading does not rank the two tools that way. The point is that AI is not a search engine, so the search habit of typing the shortest thing does not fit it."
+    },
+    {
+      "id": "c",
+      "label": "AI is not a search engine, and a one-line input leaves it knowing nothing about your situation",
+      "is_correct": true,
+      "explanation": "Correct. Search engines trained us to type the shortest possible thing, but the AI knows nothing about your specific situation until you tell it, so the short input leaves it guessing."
+    }
+  ]
+}
+```
+
+## reading
+
 **Context:** What is the situation? What has already been decided? "We are a 30-person nonprofit that runs an after-school reading program, and we just got a $50,000 grant we want to announce to our donor list" gives the AI a world to work in. Without it, the AI is writing into a void.
 
 **Goal:** What is this supposed to accomplish? "I want donors to feel proud they supported us, and I want to set up a future ask" is a goal. When the AI knows what success looks like, it makes better choices about what to emphasize.
@@ -29,16 +59,6 @@ A good brief answers six things a competent assistant would ask before they star
 **Format:** What shape should it take? An email with a subject line, three social posts, a one-page letter. Say it, or the AI will guess.
 
 **Examples:** If you have a past piece you liked, paste it. "Match the voice of this newsletter we sent in March: [paste]" is the single fastest way to get your own tone back out of the AI.
-
-Let me show you the gap with a real example. A school office administrator needs to tell parents that the school is switching to a new pickup system. The prompt version is "write an email about the new pickup procedure." The AI returns a stiff, generic notice that misses every detail that matters, because it has none of them. It pads the whole thing with phrases like "we are committed to student safety" that say nothing. The model did not fail. It did exactly what you asked: write about a topic with no facts attached.
-
-The brief version reads like this: "I am the front-office administrator at an elementary school with about 400 students. Write an email to all parents announcing that, starting October 6th, afternoon pickup moves from the front circle to the back lot off Maple Street, and that every car needs the new numbered tag we mailed home last week. The goal is to prevent confusion and traffic backups on day one. Parents are busy and skim, so put the date, the new location, and the tag requirement near the top. Keep it under 180 words, friendly but clear, and do not bury the key change in a long intro. Format it as an email with a subject line, and end with a line telling parents to reply if they did not receive a tag." That brief produces a sendable email in one shot. The prompt produces a draft that needs three rounds of you typing "no, also mention the tags" and "make it shorter."
-
-Count what the brief did. It gave the role, the situation, the exact change, the goal, the audience behavior, the constraints, the format, and a closing action. It took ninety seconds to write. The prompt took five seconds and cost twenty minutes of back-and-forth. Briefing is slower to start and faster to finish.
-
-Here is a second example. A freelance bookkeeper follows up with a client sixty days late on an invoice. The prompt "write a payment reminder" gives back a cold form letter that damages the relationship. The brief reads: "I am a freelance bookkeeper. Write a follow-up email to a long-term client, a bakery owner named Dana, whose invoice for $1,200 is now sixty days past due. We have worked together three years and I want to keep things warm, so the tone should be friendly and assume good faith. The goal is to get it paid within a week without making Dana feel cornered. Mention I can split it into two payments if cash flow is tight. Keep it under 120 words, sign it from Maria, and do not use the words 'overdue' or 'failure to pay.'" That brief produces an email Dana would respond to. The extra lines each remove a guess: the history sets the warmth, the payment split gives an easy yes, and the banned words steer the AI off the backfiring tone.
-
-The mental move that makes this easy: before you type, picture handing the task to a smart new hire on their first day. Everything you would explain to them belongs in your brief. If they would have to ask "who is this for?" or "how long should it be?" then your brief is missing a piece. The AI will never ask a clarifying question on its own. It fills the gap with the most average answer, so answer the questions in advance.
 
 ## multiple_choice
 
@@ -70,6 +90,46 @@ The mental move that makes this easy: before you type, picture handing the task 
 
 ## reading
 
+Let me show you the gap with a real example. A school office administrator needs to tell parents that the school is switching to a new pickup system. The prompt version is "write an email about the new pickup procedure." The AI returns a stiff, generic notice that misses every detail that matters, because it has none of them. It pads the whole thing with phrases like "we are committed to student safety" that say nothing. The model did not fail. It did exactly what you asked: write about a topic with no facts attached.
+
+The brief version reads like this: "I am the front-office administrator at an elementary school with about 400 students. Write an email to all parents announcing that, starting October 6th, afternoon pickup moves from the front circle to the back lot off Maple Street, and that every car needs the new numbered tag we mailed home last week. The goal is to prevent confusion and traffic backups on day one. Parents are busy and skim, so put the date, the new location, and the tag requirement near the top. Keep it under 180 words, friendly but clear, and do not bury the key change in a long intro. Format it as an email with a subject line, and end with a line telling parents to reply if they did not receive a tag." That brief produces a sendable email in one shot. The prompt produces a draft that needs three rounds of you typing "no, also mention the tags" and "make it shorter."
+
+Count what the brief did. It gave the role, the situation, the exact change, the goal, the audience behavior, the constraints, the format, and a closing action. It took ninety seconds to write. The prompt took five seconds and cost twenty minutes of back-and-forth. Briefing is slower to start and faster to finish.
+
+Here is a second example. A freelance bookkeeper follows up with a client sixty days late on an invoice. The prompt "write a payment reminder" gives back a cold form letter that damages the relationship. The brief reads: "I am a freelance bookkeeper. Write a follow-up email to a long-term client, a bakery owner named Dana, whose invoice for $1,200 is now sixty days past due. We have worked together three years and I want to keep things warm, so the tone should be friendly and assume good faith. The goal is to get it paid within a week without making Dana feel cornered. Mention I can split it into two payments if cash flow is tight. Keep it under 120 words, sign it from Maria, and do not use the words 'overdue' or 'failure to pay.'" That brief produces an email Dana would respond to. The extra lines each remove a guess: the history sets the warmth, the payment split gives an easy yes, and the banned words steer the AI off the backfiring tone.
+
+The mental move that makes this easy: before you type, picture handing the task to a smart new hire on their first day. Everything you would explain to them belongs in your brief. If they would have to ask "who is this for?" or "how long should it be?" then your brief is missing a piece. The AI will never ask a clarifying question on its own. It fills the gap with the most average answer, so answer the questions in advance.
+
+## multiple_choice
+
+```json
+{
+  "stem": "In the school pickup example, why did the prompt version (\"write an email about the new pickup procedure\") produce a stiff, generic notice?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The AI failed to understand the request and made an error",
+      "is_correct": false,
+      "explanation": "The reading is explicit that the model did not fail. It did exactly what was asked: write about a topic with no facts attached."
+    },
+    {
+      "id": "b",
+      "label": "The prompt gave it a topic but none of the facts that matter, so it had nothing to work with",
+      "is_correct": true,
+      "explanation": "Correct. The AI returns a generic notice that misses every detail because it has none of them, and it pads with empty phrases like \"we are committed to student safety.\""
+    },
+    {
+      "id": "c",
+      "label": "The administrator used the wrong tone in the prompt",
+      "is_correct": false,
+      "explanation": "Tone was not the issue. The problem was that the prompt attached no facts, so the AI wrote about a topic with nothing concrete to say."
+    }
+  ]
+}
+```
+
+## reading
+
 When people first try to write briefs instead of prompts, a handful of mistakes keep them stuck. Here is what goes wrong and how to fix each one.
 
 **Mistake 1: Most people add detail but forget the goal.** They will describe the situation in depth and still never say what the message is supposed to accomplish. A brief that explains the whole grant but never says "I want donors to feel proud and set up a future ask" leaves the AI guessing about what to emphasize. Always answer the question "what do I want the reader to think, feel, or do after this?" That one sentence steers everything else.
@@ -77,6 +137,36 @@ When people first try to write briefs instead of prompts, a handful of mistakes 
 **Mistake 2: People describe the audience as themselves.** They write for the version of the reader who already knows everything they know. A teacher writes a parent email full of school jargon because the jargon is obvious to her. State who the reader actually is and what they do not know. "Parents who have never used our online portal" is worth more than three sentences of instructions.
 
 **Mistake 3: People list what they want but never what they do not want.** Rejection criteria are half of a good brief and the half everyone skips. "Do not start with 'We are excited to announce.' Do not use corporate jargon. Do not exceed 150 words." These negative rules are often more powerful than the positive ones, because they cut off the AI's most common bad habits before they appear.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The reading says one common mistake is describing the audience \"as themselves.\" What does that look like in practice?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Writing for the reader as if they already know everything you know, like a teacher using school jargon parents will not follow",
+      "is_correct": true,
+      "explanation": "Correct. People write for the version of the reader who knows everything they know. The fix is to state who the reader actually is and what they do not know."
+    },
+    {
+      "id": "b",
+      "label": "Forgetting to state what the message should accomplish",
+      "is_correct": false,
+      "explanation": "That is the goal mistake, described separately. Describing the audience as themselves is about assuming the reader already knows what you know."
+    },
+    {
+      "id": "c",
+      "label": "Listing what you want but never what you do not want",
+      "is_correct": false,
+      "explanation": "That is the missing rejection-criteria mistake. The audience mistake is writing for a reader who supposedly already knows everything you do."
+    }
+  ]
+}
+```
+
+## reading
 
 **Mistake 4: People treat the brief as one-and-done and never reuse it.** They write a careful brief for the monthly newsletter, get a great result, and then start from scratch the next month. Save your good briefs. The context, audience, and constraints rarely change. Next time you only swap in the new content and the AI gives you the same quality with a tenth of the effort. Keep a simple notes file with your three or four best briefs in it. A volunteer coordinator who saves the brief for "monthly update to our 200 volunteers" will reuse the same role, audience description, and tone rules every single month, and only paste in the new events. The first brief takes two minutes. Every reuse after that takes ten seconds.
 

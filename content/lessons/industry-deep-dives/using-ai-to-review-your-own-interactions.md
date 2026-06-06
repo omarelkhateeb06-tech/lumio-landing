@@ -16,11 +16,64 @@ Most people get better at their work through feedback, and customer service agen
 
 The core move is simple: bring AI your own work and ask it to coach you. Take a reply you sent, or one you are about to send, strip out anything that identifies the customer, and ask a focused question. The quality of what you get back depends almost entirely on the quality of what you ask. "How was this?" gets you a polite shrug and some flattery, because open praise is the path of least resistance for the tool. "Where did I sound defensive?" or "Did I acknowledge the emotion before I jumped to the solution?" gets you something you can act on tomorrow. The narrower the question, the more honest and usable the answer.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the core move described, why does a narrow question like 'Where did I sound defensive?' work better than 'How was this?'",
+  "options": [
+    {
+      "id": "a",
+      "label": "An open question like 'How was this?' pulls the tool toward flattery, while a narrow question forces a specific, usable answer you can act on.",
+      "is_correct": true,
+      "explanation": "Correct. Open praise is the path of least resistance for the tool, so a vague question gets a polite shrug. The narrower the question, the more honest and usable the answer."
+    },
+    {
+      "id": "b",
+      "label": "Narrow questions are faster for the tool to process, so the feedback arrives sooner.",
+      "is_correct": false,
+      "explanation": "Speed is not the point. The reason narrow questions work is that they force the tool past flattery into something specific you can act on, not that they are quicker to compute."
+    },
+    {
+      "id": "c",
+      "label": "A narrow question lets you skip removing the customer's identifying details first.",
+      "is_correct": false,
+      "explanation": "The opposite is implied. You still strip anything that identifies the customer regardless of how you phrase the question. The narrowness only affects the quality of the feedback."
+    }
+  ]
+}
+```
+
+## reading
+
 Here is what that looks like in practice. Say a customer wrote in furious that their order arrived broken for the second time. You replied, and now you want to check yourself. You paste a de-identified version into the AI: "Here is how I responded to a frustrated customer whose order was damaged twice. Did I acknowledge how annoyed they were before I started explaining the replacement process? Be specific." The AI points out that your first sentence was "I have gone ahead and processed a new order for you." Practical, yes, but it skipped right past the person's feelings. It suggests opening with one line that names the frustration first, then moving to the fix. That is a concrete habit you can carry into the next damaged-order ticket and the hundred after it.
 
 A second example. You are about to send a reply to a customer asking for a refund that falls outside your policy window. You are not sure if your wording lands as firm-but-kind or as cold. So you ask: "Does any line in this read as dismissive or like I am hiding behind the rules?" The AI flags your sentence "Unfortunately, our policy states that refunds are only available within thirty days." It explains that "unfortunately our policy states" reads as defensive and puts the company between you and the customer. It suggests reframing around what you can do: "Here is what I am able to offer you instead," followed by the option. Same outcome for the customer, very different temperature.
 
 A third use is rehearsal. The AI can role-play a difficult customer so you can practice live before a real one shows up. You tell it: "Play an angry customer whose subscription auto-renewed without warning. Push back on me. I want to practice staying calm and acknowledging the frustration before I explain the cancellation steps." It pushes, you respond, it pushes again. That kind of low-stakes, judgment-free reps are nearly impossible to get on the floor, where every conversation is real and counts. You get to fumble the first attempt in private and arrive at the live ticket already warmed up.
+
+## fill_blank
+
+```json
+{
+  "template": "In the refund example, the line 'unfortunately, our policy states' reads as {{1}} because it puts the company between you and the customer, so the suggested fix reframes around what you {{2}} for them instead.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["defensive", "dismissive", "cold", "hiding behind the rules"],
+      "ideal": "defensive"
+    },
+    {
+      "id": "2",
+      "accept": ["can do", "are able to do", "can offer", "are able to offer", "can do for them"],
+      "ideal": "can do"
+    }
+  ],
+  "explanation": "The AI flags 'unfortunately our policy states' as reading defensive and putting the company between you and the customer. It suggests reframing around what you can do, such as 'Here is what I am able to offer you instead,' for the same outcome at a very different temperature."
+}
+```
+
+## reading
 
 A fourth use is spotting your own filler and softeners. Say you tend to over-apologize, opening three different lines with "So sorry about that." You paste a recent reply and ask: "Am I apologizing more than this situation needs, and does it weaken my message?" The AI counts the apologies back to you and points out that the repeated "so sorry" starts to sound automatic instead of sincere. It suggests one clear apology up front, then confident, helpful language for the rest. You did not need a manager to catch that. You just needed to ask the right question of a tool that reads your text closely and does not get bored.
 
@@ -61,6 +114,36 @@ Two things keep this safe and useful. First, keep customer identifiers and perso
 The tool only helps if you use it well, and there are a few mistakes that quietly cancel out the benefit. They are easy to make, so it is worth naming them plainly.
 
 The first is a privacy mistake. In a hurry, agents paste the entire conversation straight from the ticket, the customer's full name, their account number, their email, the order ID, all of it. None of that information helps the AI coach your tone or your structure. You are reviewing how you wrote, not who you wrote to. Before anything goes into the tool, scrub the identifiers. Replace the name with "the customer," strip the account and order numbers, remove the email and phone. If you would not want that data sitting in a third-party tool, do not put it there. The de-identified version teaches you exactly the same lesson.
+
+## multiple_choice
+
+```json
+{
+  "stem": "When the privacy mistake says to scrub identifiers before pasting a conversation, what is the reason it gives that this costs you nothing?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The tool refuses to process replies that still contain account numbers or emails.",
+      "is_correct": false,
+      "explanation": "Nothing in the passage says the tool blocks identifiers. The point is that you choose to strip them because they do not help, not that the tool forces you to."
+    },
+    {
+      "id": "b",
+      "label": "The identifying details do not help the AI coach your tone or structure, so the de-identified version teaches exactly the same lesson.",
+      "is_correct": true,
+      "explanation": "Correct. You are reviewing how you wrote, not who you wrote to. None of the customer data helps coach your tone or structure, so the scrubbed version teaches the same lesson with no loss."
+    },
+    {
+      "id": "c",
+      "label": "Removing identifiers makes the AI's feedback arrive faster and in more detail.",
+      "is_correct": false,
+      "explanation": "Speed and detail are not the reason given. The reason is that the identifying data is irrelevant to coaching your writing, so removing it changes nothing about the lesson."
+    }
+  ]
+}
+```
+
+## reading
 
 The second is asking the wrong question. "Was this good?" feels efficient, but it is the worst prompt you can give. Open-ended approval questions pull the AI toward reassurance, and you walk away with a warm feeling and nothing to change. The fix is to aim the question at a specific behavior you can hear in your own writing. "Where did I sound defensive?" "Did I name the emotion before the solution?" "Was my next step clear, or did I leave the customer guessing?" "Did I over-apologize?" Specific in, specific out. A pointed question forces the tool past flattery and into something you can actually drill.
 

@@ -20,11 +20,70 @@ Every hour you save on documentation is an hour available for something else. Th
 
 This requires a deliberate choice, not a passive one. If your clinic does not actively redirect saved time toward patients, it will be absorbed into the operational backlog. That is not a technology problem. It is a workflow decision. Before you start using AI for any category of patient message, decide in advance what you are going to do with the time you get back.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the reading, what is the clinical case for AI-assisted patient communication?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Throughput: seeing more patients in the same number of hours.",
+      "is_correct": false,
+      "explanation": "The reading explicitly states the case is not throughput. The example of the nurse practitioner makes clear the gain is not sixteen more patients seen."
+    },
+    {
+      "id": "b",
+      "label": "Presence: the saved time lands on direct patient contact, like a real conversation instead of a voicemail and a three-day wait.",
+      "is_correct": true,
+      "explanation": "Correct. The reading says the value is presence, not throughput, and that the tool's value is only realized if the time it creates lands on direct patient contact."
+    },
+    {
+      "id": "c",
+      "label": "Cost reduction: fewer staff hours spent on documentation overall.",
+      "is_correct": false,
+      "explanation": "Cost is not the argument made in the reading. The focus is on where the saved minutes go, specifically toward patients rather than the backlog."
+    },
+    {
+      "id": "d",
+      "label": "Accuracy: AI drafts contain fewer errors than human-written ones.",
+      "is_correct": false,
+      "explanation": "The reading does not claim AI is more accurate. Its point is about redirecting saved time toward patient presence, not about error rates."
+    }
+  ]
+}
+```
+
+## reading
+
 **Never send a patient message in the AI's default voice.**
 
 AI writes competent, smooth, slightly hollow prose. For a logistics reminder, that may be fine. For anything emotional, hollow is cold, and cold lands badly. Consider the difference between two follow-up messages sent after a cancer screening with an inconclusive result. The first is an AI default: "We are writing to inform you that your recent screening returned an inconclusive result. Please schedule a follow-up appointment at your earliest convenience." The second takes thirty additional seconds to revise: "Hi Mrs. Reyes, I wanted to reach out personally about your recent screening. The result was inconclusive, which I know sounds worrying, but it does not mean we found something concerning. It means we need a clearer picture. I would like to schedule you for a follow-up in the next two weeks so we can be thorough. Please call us or reply here and we will get that on the calendar." Both messages carry the same clinical fact. One reads as care. The other reads as administration.
 
 The rule is simple: use AI for the structure and the first draft, then add the specific human detail. That means the patient's actual concern, a line that sounds like you, a reassurance only someone who knows the situation can give. A medical assistant who fields six appointment-reminder messages a day can do this efficiently with one brief revision step. The goal is not to rewrite the whole message. The goal is to add the one or two lines that make the patient feel seen.
+
+## fill_blank
+
+```json
+{
+  "template": "The rule for AI-assisted messages is to use AI for the structure and the {{1}}, then add the specific human {{2}} that makes the patient feel seen.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["first draft", "draft", "first-draft"],
+      "ideal": "first draft"
+    },
+    {
+      "id": "2",
+      "accept": ["detail", "details", "human detail"],
+      "ideal": "detail"
+    }
+  ],
+  "explanation": "The reading states the rule plainly: use AI for the structure and the first draft, then add the specific human detail, such as the patient's actual concern, a line that sounds like you, or a reassurance only someone who knows the situation can give."
+}
+```
+
+## reading
 
 **Keep the hard conversations human from the start.**
 
@@ -88,18 +147,6 @@ Many clinicians run a prompt, read the output, decide it "looks fine," and send 
 
 Some clinicians use AI to draft the opening message before a goals-of-care conversation, a serious diagnosis disclosure, or a condolence. The intention is efficiency or preparedness. The result is that the patient or family receives words that were generated, not chosen, at the moment that matters most. A family receiving a message about transitioning a parent to comfort care does not need perfectly structured prose. They need to feel that the clinician writing to them actually thought about them. Starting with an AI draft in these situations is not a time savings. It is a liability, clinically and relationally. Reserve AI drafts for the messages where efficiency is the primary value. Let hard conversations begin with you.
 
-**Mistake three: letting the time AI saves get absorbed into more charts.**
-
-This is the most invisible mistake and the most common. When AI-assisted drafting saves a coordinator fifteen minutes a day, those minutes do not automatically become patient contact time. They become available time, and available time fills with the next thing on the list. The fix is intentional: before you start using AI for a task category, decide what you will do with the time it returns. Name a specific patient contact task that gets the time back.
-
-**Mistake four: skipping the final human read.**
-
-The final read before sending is the simplest and most consistently skipped safeguard. It takes ten seconds. The reason it gets skipped is that a clean, grammatically correct AI draft makes the review step feel redundant. It is not. The final read is not a grammar check. It is a care check: does this message sound like a person, and does it serve this particular patient? That question catches the flat closing line, the clinical jargon that slipped through, and the missing acknowledgment that the patient was worried. Build the habit before you need it.
-
-**A note on privacy.**
-
-If you are using an AI tool that has not been reviewed and approved for your organization's patient data policy, use de-identified or generic examples when drafting. Use a fictional name or a placeholder, and add the real patient detail yourself before sending. This protects patient privacy while still letting you benefit from the tool.
-
 ## multiple_choice
 
 ```json
@@ -129,6 +176,54 @@ If you are using an AI tool that has not been reviewed and approved for your org
       "label": "Sending without revision is only a problem if the message contains the patient's name.",
       "is_correct": false,
       "explanation": "Including a name is one part of personalizing a message, but a message can include a name and still read as a form letter. The issue is whether the message acknowledges the patient's actual emotional situation, not just whether it includes identifying details."
+    }
+  ]
+}
+```
+
+## reading
+
+**Mistake three: letting the time AI saves get absorbed into more charts.**
+
+This is the most invisible mistake and the most common. When AI-assisted drafting saves a coordinator fifteen minutes a day, those minutes do not automatically become patient contact time. They become available time, and available time fills with the next thing on the list. The fix is intentional: before you start using AI for a task category, decide what you will do with the time it returns. Name a specific patient contact task that gets the time back.
+
+**Mistake four: skipping the final human read.**
+
+The final read before sending is the simplest and most consistently skipped safeguard. It takes ten seconds. The reason it gets skipped is that a clean, grammatically correct AI draft makes the review step feel redundant. It is not. The final read is not a grammar check. It is a care check: does this message sound like a person, and does it serve this particular patient? That question catches the flat closing line, the clinical jargon that slipped through, and the missing acknowledgment that the patient was worried. Build the habit before you need it.
+
+**A note on privacy.**
+
+If you are using an AI tool that has not been reviewed and approved for your organization's patient data policy, use de-identified or generic examples when drafting. Use a fictional name or a placeholder, and add the real patient detail yourself before sending. This protects patient privacy while still letting you benefit from the tool.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The reading calls letting AI-saved time get absorbed into more charts the most invisible and most common mistake. What does it recommend as the fix?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Track the exact number of minutes saved each day so you can report them later.",
+      "is_correct": false,
+      "explanation": "The reading does not suggest measuring or reporting the minutes. It warns that available time silently fills with the next thing on the list unless you act intentionally."
+    },
+    {
+      "id": "b",
+      "label": "Use AI for fewer task categories so less time is saved in the first place.",
+      "is_correct": false,
+      "explanation": "Saving less time is the opposite of the goal. The point is to capture the time AI saves and deliberately redirect it, not to avoid saving it."
+    },
+    {
+      "id": "c",
+      "label": "Before using AI for a task category, decide what you will do with the time it returns and name a specific patient contact task that gets it back.",
+      "is_correct": true,
+      "explanation": "Correct. The reading says the fix is intentional: decide in advance what you will do with the returned time, and name a specific patient contact task that gets it back, so it is not absorbed into the backlog."
+    },
+    {
+      "id": "d",
+      "label": "Skip the final human read on logistics messages to save even more time.",
+      "is_correct": false,
+      "explanation": "This conflates two separate mistakes. Mistake four warns against skipping the final read, and it is the simplest safeguard to keep. It is not a remedy for absorbed time."
     }
   ]
 }
@@ -190,4 +285,3 @@ Choose one category of patient message you actually send on a regular basis: bor
 - Write a prompt template for your chosen message category that tells the AI the patient's general emotional context (waiting on a result, coming back after a scare, following up on something they were anxious about), instructs it to keep the tone warm and plain, and explicitly leaves a bracketed placeholder for one specific human detail you will fill in yourself before sending.
 - Run the prompt on a de-identified example, read the draft out loud once, and revise it by hand to add your personal layer: the patient's actual concern in your own words, a reassurance that reflects the specific situation, or a line that signals a real person read their message.
 - Write a two-line final-read checklist you will use before sending any AI-assisted patient message, for example: "Does this sound like a person speaking to a person, not a system sending a notification? Is there one line in here that only someone who read this patient's actual message could have written?" Keep the checklist somewhere you will actually see it.
-

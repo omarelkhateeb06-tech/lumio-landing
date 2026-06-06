@@ -18,9 +18,81 @@ Picture the sentence that shows up in almost every one of these documents: "Empl
 
 Think about Priya, an HR generalist at a 90-person company with no AI policy at all. People keep asking her if they are allowed to use these tools, and she keeps saying some version of "be careful." That is not guidance. It is worry passed along. Or think about Daniel, a people-ops lead who inherited a scary two-thousand-word legalese draft from an old legal review. It bans almost everything in language no one reads, so the team quietly ignores it and uses AI anyway, just without telling anyone. Both of them have the same problem. The document on file is not the thing shaping behavior.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the opening, which statement best describes the real situation HR faces with AI at work?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Employees are already using AI today, so the question is whether they do it with guidance or guessing.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson opens by stating use is already happening now, not a future decision, and the open question is guidance versus guessing."
+    },
+    {
+      "id": "b",
+      "label": "AI use is a future risk HR gets to decide whether to permit before anyone starts.",
+      "is_correct": false,
+      "explanation": "The lesson explicitly rejects this framing. It says AI use is not a future risk you are deciding whether to allow; it is happening right now."
+    },
+    {
+      "id": "c",
+      "label": "Most employees wait for a written policy before they touch any AI tool.",
+      "is_correct": false,
+      "explanation": "The opposite is described. When there is no clear answer, people invent their own, each a slightly different one, rather than waiting."
+    },
+    {
+      "id": "d",
+      "label": "A vague sentence like 'use AI responsibly' is enough to guide a colleague through a real task.",
+      "is_correct": false,
+      "explanation": "The Priya and Daniel framing and the chatbot example show vague lines tell people nothing, so they make their own call and the policy changes nothing."
+    }
+  ]
+}
+```
+
+## reading
+
 A policy people actually follow has different properties, and they are not complicated. First, it is short. A person should be able to read the whole thing in about two minutes. Second, it is concrete. It is built on real examples of how your people genuinely work, not on hypothetical scenarios a lawyer imagined. Third, it is framed around enabling good use, not only forbidding things. A document that says nothing but no gets ignored the very first time AI is genuinely helpful, because people are not going to leave an obvious win on the table just because a PDF told them to. The goal is a document that changes what people do, not one that covers the company while everyone improvises underneath it.
 
 This is where AI can genuinely help you, and it is well suited to the task. A model can produce a clean structure and plain, readable language fast. It can take your messy notes and turn them into something a new hire could follow. What it absolutely cannot do is supply the judgment. The model does not know your specific risks. It does not know your data classifications, which tools you have actually approved, what your customers expect, or the day-to-day realities of your teams. A generic AI-generated policy that either bans everything or permits everything has skipped exactly the part that you, the HR professional, exist to provide. The drafting is the easy half. The judgment is yours, and it is the half that matters.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The lesson says AI is well suited to drafting a policy. What does it say AI cannot do?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Produce a clean structure and plain, readable language quickly.",
+      "is_correct": false,
+      "explanation": "This is named as something AI is good at. The lesson says a model can produce clean structure and readable language fast."
+    },
+    {
+      "id": "b",
+      "label": "Turn messy notes into something a new hire could follow.",
+      "is_correct": false,
+      "explanation": "This is also listed as a strength. AI can take your messy notes and turn them into something readable; it is the drafting half."
+    },
+    {
+      "id": "c",
+      "label": "Supply the judgment, since it does not know your risks, data classifications, approved tools, or team realities.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson states the model cannot supply judgment because it does not know your specific risks, data classifications, approved tools, or daily realities. That half is yours."
+    },
+    {
+      "id": "d",
+      "label": "Write any usable text at all without legal supervision.",
+      "is_correct": false,
+      "explanation": "The lesson credits AI with doing the drafting well; the gap is judgment, not the ability to write usable text."
+    }
+  ]
+}
+```
+
+## reading
 
 So what makes a policy stick? A few concrete pieces. You want clear green-light examples, the things people can just go ahead and do: drafting and editing internal documents, brainstorming ideas, summarizing public or non-sensitive material, learning how to do something. Naming these matters more than it sounds, because permission removes the hesitation that pushes good use into hiding. You also want clear red-light examples, the genuine lines: pasting customer data, personal information, or confidential figures into tools that are not on your approved list, and letting AI make a final decision about a person, such as a hire, a promotion, or a termination. Those are the situations where a wrong move actually hurts someone.
 
@@ -61,6 +133,42 @@ And finally, plain language. Write it so a new hire on day one could read it, un
 The most common way these policies go wrong is that HR hands the whole job to the AI and ships whatever comes back. You ask a model to "write an AI use policy," and it produces something that looks polished and professional. It reads well. And it is useless, because it is generic. It bans pasting "sensitive data" without ever naming what your company counts as sensitive. It references "approved tools" without knowing which tools you approved. It is a beautiful template with the actual decisions left blank, and those blanks are the only part that protects anyone. The model wrote the easy half and skipped the half that is your job.
 
 The second failure is fear-driven framing. When a policy is built only from worry, it becomes a wall of no. Daniel, the people-ops lead, inherited exactly this: a draft so focused on everything that could go wrong that it forbade nearly everything useful. The predictable result is that people stop reading it and stop trusting it. Worse, a fear-only policy pushes AI use into hiding. If every honest question feels like it might get you in trouble, you stop asking and just quietly do the thing. Now you have less visibility into AI use than before you wrote the policy, which is the exact opposite of the goal.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does the lesson call a generic, AI-written policy useless even when it reads polished and professional?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because it is too short for anyone to take seriously.",
+      "is_correct": false,
+      "explanation": "Length is not the complaint here. The problem is that the polished draft is generic, not that it is short."
+    },
+    {
+      "id": "b",
+      "label": "Because it uses too many concrete examples specific to one team.",
+      "is_correct": false,
+      "explanation": "The opposite is true. The generic draft lacks specifics; it bans 'sensitive data' and cites 'approved tools' without naming either."
+    },
+    {
+      "id": "c",
+      "label": "Because legal review always rejects AI-generated text.",
+      "is_correct": false,
+      "explanation": "The lesson does not mention legal review rejecting it. The flaw is that the actual decisions are left blank, which is the only part that protects anyone."
+    },
+    {
+      "id": "d",
+      "label": "Because it leaves the actual decisions blank, banning 'sensitive data' and citing 'approved tools' without naming what they are.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson says it is a beautiful template with the decisions left blank, and those blanks are the only part that protects anyone; the model did the easy half and skipped your job."
+    }
+  ]
+}
+```
+
+## reading
 
 A third failure is skipping the gray zone. Many policies list some greens and some reds and then stop, as if every situation falls neatly into one bucket. Real work is full of in-between cases. Can I summarize this internal report that is not public but also not exactly confidential? When the policy is silent, the careful person freezes and the casual person guesses, and neither outcome is what you wanted. Naming one easy way to ask resolves almost all of this. It is the cheapest, highest-value line in the document.
 

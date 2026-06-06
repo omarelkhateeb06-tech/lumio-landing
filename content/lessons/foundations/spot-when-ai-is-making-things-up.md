@@ -22,26 +22,6 @@ Jenny is a nurse educator writing a patient handout. She asked for a "recent stu
 
 Marcus runs the support desk at a software company. He asked ChatGPT how to change a setting in a tool his team uses, and it walked him through a clear path: open Settings, click the Advanced tab, toggle the option under "Data Retention." The steps were confident and well ordered. The problem was that the Advanced tab did not exist in that product, and neither did the toggle. The model had seen thousands of software menus during training and assembled the most typical-looking path, not the real one. Marcus only realized when he tried to follow his own instructions and could not find the screen. This is the same machinery as the fake citation and the fake study, just pointed at a different kind of fact. The model fills any gap with the most plausible-sounding shape, whether that shape is a court case, a percentage, or a menu that was never there.
 
-So how do you catch it? Watch for these tells.
-
-First, suspiciously specific details, especially citations. When AI gives you a study, a statistic, a court case, a quote, or a named source, treat it as unverified until you check it yourself. Invented citations are often more precise than real ones, with exact percentages and tidy years. Always go find the original.
-
-Second, confident claims about anything recent. The model has a training cutoff and no live view of the world. If it tells you about this quarter's earnings, last week's news, or a current price without hedging, it is guessing. Recent plus confident equals verify.
-
-Third, no hedging where there should be. On genuinely uncertain or obscure topics, a careful answer will say "I am not certain, but" or "this varies." When an answer charges straight through territory that should be murky with total confidence, that confidence is a warning sign, not a comfort.
-
-Fourth, internal contradictions. Hallucinations sometimes disagree with themselves within the same response, saying the deadline is the 15th in one paragraph and the 20th in another. Read the whole answer before you act on any part of it.
-
-Now the practical part: how do you verify? You do not have to fact-check every word, only the parts you would stake your reputation on. Three quick habits cover most of it.
-
-Ask for sources, then actually check them. If ChatGPT names a study or a rule, ask "what is the source for that?" and then go find it on Google. If you cannot find the source, treat the claim as false, not as "probably fine."
-
-Cross-check the load-bearing facts. Take the one or two facts the whole document depends on, the dollar amount, the date, the legal rule, and confirm each one against a real source. Everything else can be lower stakes.
-
-Use the right tool for the fact in the first place. As you learned with Google versus ChatGPT, do not ask the writer for current facts at all. Get the verifiable fact from a real source and paste it in, so there is nothing for the model to invent.
-
-The goal is not to stop using AI. It is to use it where "mostly right and I will edit it" is fine, which is most writing and brainstorming, and to verify hard before anything goes out with your name attached. The people who get burned are not the ones who use AI. They are the ones who paste its confident answer straight into a document without ever asking "can I actually check this?"
-
 ## multiple_choice
 
 ```json
@@ -57,15 +37,15 @@ The goal is not to stop using AI. It is to use it where "mostly right and I will
 
 ## reading
 
-The most common mistake is treating confidence as evidence. People read a smooth, certain, well-formatted answer and feel it must be true, because in human conversation confidence usually tracks knowledge. With AI that link is broken. The tone is identical whether the answer is correct or invented. The fix is to mentally separate "this sounds sure" from "this is verified" and to remember that for AI, the first tells you nothing about the second.
+So how do you catch it? Watch for these tells.
 
-The second mistake is verifying the wrong way: asking ChatGPT to check itself. People notice a shaky answer and reply "are you sure?" or "is that real?" The model will often double down with even more confident-sounding detail, or flip and apologize and invent a different wrong answer, because it is still just predicting plausible text. It cannot actually look up whether its own claim is true. The fix is to verify outside the tool, against a real source on Google or the original document, never by interrogating the model.
+First, suspiciously specific details, especially citations. When AI gives you a study, a statistic, a court case, a quote, or a named source, treat it as unverified until you check it yourself. Invented citations are often more precise than real ones, with exact percentages and tidy years. Always go find the original.
 
-The third mistake is trusting the precise stuff most. Our instinct says a specific citation with a journal name and an exact percentage is more trustworthy than a vague claim. With hallucinations it is often the reverse: the specificity is the disguise. The fix is to flip your instinct. When AI hands you a number, a named study, a quote, or a court case, raise your guard rather than lowering it, and go confirm the original.
+Second, confident claims about anything recent. The model has a training cutoff and no live view of the world. If it tells you about this quarter's earnings, last week's news, or a current price without hedging, it is guessing. Recent plus confident equals verify.
 
-The fourth mistake is all-or-nothing verification. People either check nothing because it is tedious, or they try to fact-check every sentence and give up. Neither works. The fix is to find the load-bearing facts, the few claims the whole document rests on, and verify only those hard. A drafted email tone does not need a source. The dollar figure, the legal deadline, and the medication dose do. Spend your verification energy where being wrong actually hurts.
+Third, no hedging where there should be. On genuinely uncertain or obscure topics, a careful answer will say "I am not certain, but" or "this varies." When an answer charges straight through territory that should be murky with total confidence, that confidence is a warning sign, not a comfort.
 
-A fifth mistake is assuming a tool that cites its sources is automatically safe. Newer assistants sometimes attach links to back up a claim, and people see the link and relax. But a link is not the same as a fact that matches it. The model can summarize a source incorrectly, or attach a real-looking URL that does not actually say what the sentence claims. A finance analyst once shipped a memo citing a "press release" link, and the page, when a colleague finally opened it, said the opposite of the memo. The fix is to open the link and read the relevant line yourself, not to treat the presence of a citation as proof. A source you have not read is just a more convincing version of an unverified claim, and the extra polish makes it easier, not harder, to wave through.
+Fourth, internal contradictions. Hallucinations sometimes disagree with themselves within the same response, saying the deadline is the 15th in one paragraph and the 20th in another. Read the whole answer before you act on any part of it.
 
 ## fill_blank
 
@@ -77,6 +57,73 @@ A fifth mistake is assuming a tool that cites its sources is automatically safe.
     { "id": "2", "accept": ["verify", "check", "confirm", "cross-check"], "ideal": "verify" }
   ],
   "explanation": "Over-specific detail is part of how hallucinations disguise themselves. The right response to a named source is to verify it against the original, not to trust the precision."
+}
+```
+
+## reading
+
+Now the practical part: how do you verify? You do not have to fact-check every word, only the parts you would stake your reputation on. Three quick habits cover most of it.
+
+Ask for sources, then actually check them. If ChatGPT names a study or a rule, ask "what is the source for that?" and then go find it on Google. If you cannot find the source, treat the claim as false, not as "probably fine."
+
+Cross-check the load-bearing facts. Take the one or two facts the whole document depends on, the dollar amount, the date, the legal rule, and confirm each one against a real source. Everything else can be lower stakes.
+
+Use the right tool for the fact in the first place. As you learned with Google versus ChatGPT, do not ask the writer for current facts at all. Get the verifiable fact from a real source and paste it in, so there is nothing for the model to invent.
+
+The goal is not to stop using AI. It is to use it where "mostly right and I will edit it" is fine, which is most writing and brainstorming, and to verify hard before anything goes out with your name attached. The people who get burned are not the ones who use AI. They are the ones who paste its confident answer straight into a document without ever asking "can I actually check this?"
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to the verify step, how much of an AI-written document should you actually fact-check?",
+  "options": [
+    { "id": "a", "label": "Every single sentence, word by word, before you trust any of it.", "is_correct": false, "explanation": "The reading says you do not have to fact-check every word. Checking everything is the trap that makes people give up." },
+    { "id": "b", "label": "Only the load-bearing parts you would stake your reputation on, like the dollar amount, the date, or the rule.", "is_correct": true, "explanation": "Correct. The reading says to verify only the parts you would stake your reputation on, and to confirm the one or two facts the document depends on." },
+    { "id": "c", "label": "None of it, as long as the answer sounds confident and well written.", "is_correct": false, "explanation": "Confidence is exactly what you cannot trust. The reading tells you to verify the load-bearing facts hard before your name goes on it." },
+    { "id": "d", "label": "Only the parts that already sound uncertain or hedged.", "is_correct": false, "explanation": "The reading points you at the load-bearing facts, not at the tone. A confident-sounding claim still needs checking if the document rests on it." }
+  ]
+}
+```
+
+## reading
+
+The most common mistake is treating confidence as evidence. People read a smooth, certain, well-formatted answer and feel it must be true, because in human conversation confidence usually tracks knowledge. With AI that link is broken. The tone is identical whether the answer is correct or invented. The fix is to mentally separate "this sounds sure" from "this is verified" and to remember that for AI, the first tells you nothing about the second.
+
+The second mistake is verifying the wrong way: asking ChatGPT to check itself. People notice a shaky answer and reply "are you sure?" or "is that real?" The model will often double down with even more confident-sounding detail, or flip and apologize and invent a different wrong answer, because it is still just predicting plausible text. It cannot actually look up whether its own claim is true. The fix is to verify outside the tool, against a real source on Google or the original document, never by interrogating the model.
+
+The third mistake is trusting the precise stuff most. Our instinct says a specific citation with a journal name and an exact percentage is more trustworthy than a vague claim. With hallucinations it is often the reverse: the specificity is the disguise. The fix is to flip your instinct. When AI hands you a number, a named study, a quote, or a court case, raise your guard rather than lowering it, and go confirm the original.
+
+## multiple_choice
+
+```json
+{
+  "stem": "You notice a shaky claim and reply 'are you sure that's real?' Why is this the wrong way to verify?",
+  "options": [
+    { "id": "a", "label": "Because the model gets offended and stops answering.", "is_correct": false, "explanation": "It is not about the model's feelings. The problem is that it still cannot look up whether its own claim is true." },
+    { "id": "b", "label": "Because asking twice wastes one of your daily messages.", "is_correct": false, "explanation": "The reading never mentions message limits. The real issue is that the model cannot check itself." },
+    { "id": "c", "label": "Because the model is still just predicting plausible text, so it may double down or invent a new wrong answer instead of actually checking.", "is_correct": true, "explanation": "Correct. The model cannot look up whether its own claim is true, so you verify outside the tool against a real source, never by interrogating the model." }
+  ]
+}
+```
+
+## reading
+
+The fourth mistake is all-or-nothing verification. People either check nothing because it is tedious, or they try to fact-check every sentence and give up. Neither works. The fix is to find the load-bearing facts, the few claims the whole document rests on, and verify only those hard. A drafted email tone does not need a source. The dollar figure, the legal deadline, and the medication dose do. Spend your verification energy where being wrong actually hurts.
+
+A fifth mistake is assuming a tool that cites its sources is automatically safe. Newer assistants sometimes attach links to back up a claim, and people see the link and relax. But a link is not the same as a fact that matches it. The model can summarize a source incorrectly, or attach a real-looking URL that does not actually say what the sentence claims. A finance analyst once shipped a memo citing a "press release" link, and the page, when a colleague finally opened it, said the opposite of the memo. The fix is to open the link and read the relevant line yourself, not to treat the presence of a citation as proof. A source you have not read is just a more convincing version of an unverified claim, and the extra polish makes it easier, not harder, to wave through.
+
+## multiple_choice
+
+```json
+{
+  "stem": "A newer assistant attaches a source link to a claim. Based on this reading, what should you do?",
+  "options": [
+    { "id": "a", "label": "Relax, because a tool that cites its sources is automatically safe.", "is_correct": false, "explanation": "This is exactly the fifth mistake. A link is not the same as a fact that matches it." },
+    { "id": "b", "label": "Open the link and read the relevant line yourself, since the model can attach a URL that does not actually say what the sentence claims.", "is_correct": true, "explanation": "Correct. A source you have not read is just a more convincing version of an unverified claim, so you open it and check the relevant line." },
+    { "id": "c", "label": "Count the number of links; more links means the answer is more trustworthy.", "is_correct": false, "explanation": "The number of links proves nothing. The reading warns that a real-looking link can fail to support the claim it sits next to." },
+    { "id": "d", "label": "Ask the assistant whether its own link is accurate.", "is_correct": false, "explanation": "The model cannot reliably check itself. You open the link and read the relevant line yourself instead." }
+  ]
 }
 ```
 

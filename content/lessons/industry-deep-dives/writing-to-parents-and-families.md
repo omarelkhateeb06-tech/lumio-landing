@@ -18,9 +18,81 @@ This is a place AI genuinely earns its keep, because the difficulty here is tone
 
 The method is simple. You give the model four things: the situation, the facts you want to convey, the tone you are aiming for, and what you know about the family in general terms. Then you ask for a draft, read it the way the parent will read it, and shape it until it sounds like you. The AI does the first hard 80 percent, finding a warm and direct way in. You do the last 20 percent, the part that depends on knowing this family and this child.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to this opening, why is parent communication a place where AI genuinely earns its keep?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the hard part is tone and framing, not facts, and finding the right words is exactly the kind of writing problem these tools help with.",
+      "is_correct": true,
+      "explanation": "Correct. You already know what happened; the difficulty is saying it in a way that keeps the family on your side, and that is a writing problem AI is built for."
+    },
+    {
+      "id": "b",
+      "label": "Because AI knows the facts of the incident better than the teacher who was present.",
+      "is_correct": false,
+      "explanation": "The teacher already has the facts and was there. The text is explicit that the difficulty is tone and framing, not facts."
+    },
+    {
+      "id": "c",
+      "label": "Because parent messages do not really matter, so a rough AI draft is good enough.",
+      "is_correct": false,
+      "explanation": "The opening stresses the opposite: these messages carry real weight and can land wrong in a dozen ways, which is why getting the tone right matters."
+    },
+    {
+      "id": "d",
+      "label": "Because AI removes the need for the teacher to decide what to say at all.",
+      "is_correct": false,
+      "explanation": "The method keeps you deciding what to say. The model does the first pass on tone and structure; you do the last 20 percent that depends on knowing the family."
+    }
+  ]
+}
+```
+
+## reading
+
 Here is what that looks like in practice. Say it is Thursday and an 8th grader has missed three homework assignments this week. The student is sharp and engaged in class, which makes the pattern more worth flagging early, not less. You might prompt: "Draft a warm but direct email to a parent of a middle school student. The facts: three homework assignments missed this week, the student is capable and engaged in class, and I want us to partner on a plan rather than place blame. Open by noting something genuine and specific about the student, state the pattern plainly, propose one small shared next step, and invite a quick call. Keep it under 150 words and easy to read on a phone." What comes back is a calm, structured starting point. You add the student's name and the specific assignments by hand, soften one line that reads a little stiff, and send it before your prep period ends.
 
 Take a second example, a playground conflict. Two second graders had a shoving match over a four square ball at recess, no injuries, but one child went home upset and you want to reach that family before the story arrives secondhand at dinner. The tone you need is different here. You want to reassure, not alarm, and you want to signal that you handled it in the moment. So you tell the model: "Draft a brief, calm note to a parent about a minor recess conflict. Tone: reassuring, not alarming, makes clear the situation was handled at school and the children are fine. The facts: a disagreement over playground equipment, both children talked it through with me, no one was hurt. Let the parent know in case it comes up at home, and invite them to reach out with questions." That draft will not catastrophize, which is exactly the trap a tired teacher writing at 4 p.m. can fall into.
+
+## multiple_choice
+
+```json
+{
+  "stem": "In the playground-conflict example, what makes the prompt's requested tone different from the missing-homework one?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It asks the model to be blunt so the parent grasps how serious the incident was.",
+      "is_correct": false,
+      "explanation": "The goal here is the opposite of blunt. A blunt note risks catastrophizing a minor incident, which is the trap the text warns against."
+    },
+    {
+      "id": "b",
+      "label": "It asks for a reassuring, not-alarming tone that makes clear the situation was already handled at school and the children are fine.",
+      "is_correct": true,
+      "explanation": "Correct. The recess note aims to reassure and signal you handled it in the moment, so the family is not alarmed when the story reaches home."
+    },
+    {
+      "id": "c",
+      "label": "It asks the model to leave out what happened so the parent stays calm.",
+      "is_correct": false,
+      "explanation": "The prompt still states the facts plainly: a disagreement over equipment, both children talked it through, no one was hurt. It reassures without hiding what happened."
+    },
+    {
+      "id": "d",
+      "label": "It asks for a long, formal message so the parent takes the incident seriously.",
+      "is_correct": false,
+      "explanation": "The note is meant to be brief and calm, not long and formal. The point is to avoid alarming a family over a minor conflict."
+    }
+  ]
+}
+```
+
+## reading
 
 Third, a conference follow-up about a reading struggle. You met the family at conferences, you sensed the parent was worried but did not want to say so, and you promised to send a plan. The facts are sensitive and the stakes feel high to this family. You might write: "Draft a follow-up email after a parent conference about a 3rd grader who is reading below grade level. Tone: warm, hopeful, concrete, honest about the gap without alarming the family. Acknowledge our conversation, name one or two specific things we will try in class, suggest one simple thing they can do at home, and set a check-in date." The model gives you a frame that names a hard thing gently and ends on a plan, which is the hardest tone to hit when you are writing it cold.
 
@@ -66,12 +138,6 @@ The mistakes here are not really about the AI. They are about forgetting that a 
 
 The first is pasting private information into a public tool. It is tempting, in the name of a more accurate draft, to paste in a student's full name, their grade history, a behavior log, or sensitive family details like a recent divorce or a custody arrangement. Do not. A public AI tool is not a place you control, and student records carry real privacy obligations. The fix is simple and costs you nothing: describe the situation generically. Write "a middle school student who has missed three assignments this week," not the name and the gradebook. Write "a family going through a hard transition at home," not the details. The model only needs the shape of the situation to draft good tone and structure. You add the real specifics by hand, after the draft comes back, in a document you control.
 
-The second mistake is sending the draft without reading it the way the parent will read it. You wrote the prompt, so you read the reply through the lens of what you meant. The parent has none of that context. They have a phone screen, a busy evening, and a flash of worry about their child. The model can strike a tone that is a notch colder and more clinical than you intended. A line like "Please ensure the student completes all assignments going forward" reads fine to you and reads like a scolding to a tired parent. So read every draft out loud, slowly, as if you are the parent opening it. The cold lines jump out immediately when you hear them. Soften them, and the whole message lands the way you meant.
-
-The third mistake is treating the AI draft as an authority instead of a first pass. The model is good at structure and at finding a diplomatic opening. It does not know this child, this family, or the three years of history you have with them. If the draft says something that is not quite true, or skips the genuine detail that would actually reassure this particular parent, you fix it. The words have to sound like you, because the parent knows your voice from every other note you have sent. A message that suddenly sounds like a corporate form letter does not build trust, it spends it. Keep your phrasing, your warmth, the small specific thing only you would notice about their kid.
-
-There is a quieter fourth trap worth naming: letting the speed make you careless. Because the draft comes back in seconds, it is tempting to fire off a hard message faster than you would have written it by hand. Some messages deserve a pause. A behavior incident or a hard conference follow-up may still warrant a night to sit, or a quick read by a colleague. The AI removes the labor of writing. It does not remove your judgment about timing and whether email is even the right channel. Sometimes the AI helps you realize the message should be a phone call instead, and that is a win too.
-
 ## multiple_choice
 
 ```json
@@ -101,6 +167,48 @@ There is a quieter fourth trap worth naming: letting the speed make you careless
       "label": "Use a fake name and fake details so the message feels specific without exposing the real student.",
       "is_correct": false,
       "explanation": "Inventing details risks them surviving into a real message and confusing the family. Describe the situation generically and add the true specifics by hand instead."
+    }
+  ]
+}
+```
+
+## reading
+
+The second mistake is sending the draft without reading it the way the parent will read it. You wrote the prompt, so you read the reply through the lens of what you meant. The parent has none of that context. They have a phone screen, a busy evening, and a flash of worry about their child. The model can strike a tone that is a notch colder and more clinical than you intended. A line like "Please ensure the student completes all assignments going forward" reads fine to you and reads like a scolding to a tired parent. So read every draft out loud, slowly, as if you are the parent opening it. The cold lines jump out immediately when you hear them. Soften them, and the whole message lands the way you meant.
+
+The third mistake is treating the AI draft as an authority instead of a first pass. The model is good at structure and at finding a diplomatic opening. It does not know this child, this family, or the three years of history you have with them. If the draft says something that is not quite true, or skips the genuine detail that would actually reassure this particular parent, you fix it. The words have to sound like you, because the parent knows your voice from every other note you have sent. A message that suddenly sounds like a corporate form letter does not build trust, it spends it. Keep your phrasing, your warmth, the small specific thing only you would notice about their kid.
+
+There is a quieter fourth trap worth naming: letting the speed make you careless. Because the draft comes back in seconds, it is tempting to fire off a hard message faster than you would have written it by hand. Some messages deserve a pause. A behavior incident or a hard conference follow-up may still warrant a night to sit, or a quick read by a colleague. The AI removes the labor of writing. It does not remove your judgment about timing and whether email is even the right channel. Sometimes the AI helps you realize the message should be a phone call instead, and that is a win too.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does this section say you should read every AI draft out loud as if you were the parent opening it?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because reading aloud makes the message longer and more formal.",
+      "is_correct": false,
+      "explanation": "Reading aloud is a tone check, not a way to add length or formality. The aim is to catch lines that land wrong, not to bulk the message up."
+    },
+    {
+      "id": "b",
+      "label": "Because you read the draft through what you meant, while the parent has none of that context and the model can sound a notch colder than you intended, so cold lines jump out when you hear them.",
+      "is_correct": true,
+      "explanation": "Correct. The parent has a phone screen, a busy evening, and worry, not your context. Reading aloud surfaces the clinical lines so you can soften them before sending."
+    },
+    {
+      "id": "c",
+      "label": "Because the speed of the draft means it is always safe to send immediately once you have skimmed it.",
+      "is_correct": false,
+      "explanation": "The section warns that speed can make you careless. Some messages deserve a pause, and you still read carefully rather than skim and send."
+    },
+    {
+      "id": "d",
+      "label": "Because the parent expects the message to sound like a corporate form letter.",
+      "is_correct": false,
+      "explanation": "A form-letter voice spends trust rather than building it. The point of reading aloud is to keep the message sounding warm and like you."
     }
   ]
 }

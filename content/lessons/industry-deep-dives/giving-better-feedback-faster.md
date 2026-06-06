@@ -20,14 +20,6 @@ The move is simple. You give the AI three things: the assignment or rubric you a
 
 Let me show you what this looks like with real work.
 
-Take a 7th grade persuasive essay arguing the school day should start later. Your rubric has three things on it: a clear claim, two pieces of evidence, and a counterargument. You read the essay and your honest reaction is, "Claim is strong and clear. Only one piece of evidence and it is really just an opinion dressed up as a fact. No counterargument at all. The writing itself is lively and fun to read." That is your whole assessment, and it took you about forty seconds. Now you hand the AI the rubric, the essay, and that reaction, and you ask it to write warm, specific feedback addressed to the student: open with a real strength, name the two gaps with a concrete fix for each, and close with one encouraging next step. What comes back is a 120 word note that praises the lively voice, explains the difference between an opinion and a cited fact, asks for one source the student could add, points out that a counterargument was missing and shows where it would go, and ends on a "you are close, here is the next move" note. You read it, you tweak one sentence, it goes out. You did the thinking. The AI did the writing.
-
-Now scale it up. You have a stack of thirty biology lab reports on enzyme activity, all graded against the same rubric: hypothesis, procedure, data table, and analysis. As you skim each one, you are mostly writing the same three or four reactions in different combinations. "Data table is clean, but the analysis just restates the numbers instead of explaining what they mean." "Hypothesis is missing entirely, jumped straight into procedure." "Strong analysis, but no control mentioned." You can write these shorthand reactions fast because you are a biology teacher and this is exactly the judgment you are trained to make. Then you batch them. You give the AI your rubric once, and for each report you paste the student's work and your two-line reaction, and it expands each one into a feedback paragraph in a consistent, encouraging voice. Thirty reports that would have taken you a full evening of margin-writing now take you the time to skim and react, plus a few minutes per report to read and approve the expanded note. The student gets a real paragraph instead of a checkmark.
-
-Or take something shorter. A set of short-answer history responses where students had to explain one cause of the Great Depression in three or four sentences. You read thirty of them. Some nail it, some confuse a cause with an effect, some give a real cause but no explanation of the mechanism. Your shorthand for one might be, "Identified bank failures correctly, but never explained why a bank failure hurt ordinary families." That single sentence of judgment is the whole point. The AI turns it into two or three sentences of student-facing feedback that names the strength, explains the missing link, and points the student toward the connection they almost made. You would never have written that out by hand for all thirty. Now you can.
-
-In every one of these cases, notice what you did and what the AI did. You read the work. You decided what was strong and what was weak. You made the call about whether bank failures were explained or just named. The AI never made a single judgment about quality. It took your judgment and made it longer, warmer, and more specific than a rushed margin note ever could be. That division of labor is the entire skill. Keep the judgment. Give away the typing.
-
 ## multiple_choice
 
 ```json
@@ -58,11 +50,108 @@ In every one of these cases, notice what you did and what the AI did. You read t
 
 ## reading
 
+Take a 7th grade persuasive essay arguing the school day should start later. Your rubric has three things on it: a clear claim, two pieces of evidence, and a counterargument. You read the essay and your honest reaction is, "Claim is strong and clear. Only one piece of evidence and it is really just an opinion dressed up as a fact. No counterargument at all. The writing itself is lively and fun to read." That is your whole assessment, and it took you about forty seconds. Now you hand the AI the rubric, the essay, and that reaction, and you ask it to write warm, specific feedback addressed to the student: open with a real strength, name the two gaps with a concrete fix for each, and close with one encouraging next step. What comes back is a 120 word note that praises the lively voice, explains the difference between an opinion and a cited fact, asks for one source the student could add, points out that a counterargument was missing and shows where it would go, and ends on a "you are close, here is the next move" note. You read it, you tweak one sentence, it goes out. You did the thinking. The AI did the writing.
+
+Now scale it up. You have a stack of thirty biology lab reports on enzyme activity, all graded against the same rubric: hypothesis, procedure, data table, and analysis. As you skim each one, you are mostly writing the same three or four reactions in different combinations. "Data table is clean, but the analysis just restates the numbers instead of explaining what they mean." "Hypothesis is missing entirely, jumped straight into procedure." "Strong analysis, but no control mentioned." You can write these shorthand reactions fast because you are a biology teacher and this is exactly the judgment you are trained to make. Then you batch them. You give the AI your rubric once, and for each report you paste the student's work and your two-line reaction, and it expands each one into a feedback paragraph in a consistent, encouraging voice. Thirty reports that would have taken you a full evening of margin-writing now take you the time to skim and react, plus a few minutes per report to read and approve the expanded note. The student gets a real paragraph instead of a checkmark.
+
+## fill_blank
+
+```json
+{
+  "template": "In the lab-report example, the teacher gives the AI the {{1}} only once, then for each report pastes the student's work and a two-line {{2}} for the model to expand.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["rubric", "the rubric"],
+      "ideal": "rubric"
+    },
+    {
+      "id": "2",
+      "accept": ["reaction", "shorthand reaction", "shorthand", "judgment"],
+      "ideal": "reaction"
+    }
+  ],
+  "explanation": "The rubric is supplied once because it is the same for the whole stack, while the student's work and the teacher's short reaction change with each report. The AI expands the reaction into a full paragraph; it never forms the judgment itself."
+}
+```
+
+## reading
+
+Or take something shorter. A set of short-answer history responses where students had to explain one cause of the Great Depression in three or four sentences. You read thirty of them. Some nail it, some confuse a cause with an effect, some give a real cause but no explanation of the mechanism. Your shorthand for one might be, "Identified bank failures correctly, but never explained why a bank failure hurt ordinary families." That single sentence of judgment is the whole point. The AI turns it into two or three sentences of student-facing feedback that names the strength, explains the missing link, and points the student toward the connection they almost made. You would never have written that out by hand for all thirty. Now you can.
+
+In every one of these cases, notice what you did and what the AI did. You read the work. You decided what was strong and what was weak. You made the call about whether bank failures were explained or just named. The AI never made a single judgment about quality. It took your judgment and made it longer, warmer, and more specific than a rushed margin note ever could be. That division of labor is the entire skill. Keep the judgment. Give away the typing.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Across the essay, lab report, and history examples, what is the one thing the AI never does?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Expand a short reaction into a longer, warmer, more specific note for the student.",
+      "is_correct": false,
+      "explanation": "This is exactly what the AI does do in every example. It takes your shorthand and makes it longer and kinder than a rushed margin note."
+    },
+    {
+      "id": "b",
+      "label": "Write feedback in a consistent, encouraging voice across a whole stack of work.",
+      "is_correct": false,
+      "explanation": "This is one of the AI's jobs. It keeps the tone consistent across thirty reports so each student gets a real paragraph."
+    },
+    {
+      "id": "c",
+      "label": "Decide whether the work was strong or weak in the first place.",
+      "is_correct": true,
+      "explanation": "Correct. The passage is explicit that the AI never made a single judgment about quality. You read the work and made the call; the model only phrased it. That division of labor is the entire skill."
+    },
+    {
+      "id": "d",
+      "label": "Point the student toward a connection they almost made.",
+      "is_correct": false,
+      "explanation": "The history example shows the AI doing exactly this, pointing the student toward the link they nearly reached. It is part of the wording work, not the judgment."
+    }
+  ]
+}
+```
+
+## reading
+
 The workflow is simple, but there are a few ways it goes wrong on a real Tuesday with a real stack of papers. Knowing them ahead of time saves you from learning them the hard way.
 
 The first is a privacy problem, and it is the one with real consequences. If you paste a student's actual work into a free public AI tool with their name on the page, you may be handing identifiable student data to a company whose terms let them keep and train on it. A 7th grader's essay with their name in the header is a student record. Strip names before pasting, or use a tool your school or district has approved for student data. This is not a judgment call you want to discover you got wrong after the fact, so build the habit of removing names every time, even when you are tired and it feels like a hassle.
 
 The second is the temptation to outsource the assessment itself. It is genuinely faster to paste an essay and type "is this a good essay, and write feedback." Do not do this. The AI does not know your students, your standards, or what this particular kid was capable of last month. It will produce a confident judgment that sounds right and may be wrong. The moment you let the model decide whether the work is good, you have given away the only part of grading that required you. Feed it your judgment, not a blank essay.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does the lesson tell you to strip a student's name out of their work before pasting it into a free public AI tool?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because a named essay is identifiable student data the tool's terms may let the company keep and train on.",
+      "is_correct": true,
+      "explanation": "Correct. A 7th grader's essay with their name in the header is a student record, and a free public tool may keep and train on what you paste. Removing names protects that data."
+    },
+    {
+      "id": "b",
+      "label": "Because the AI writes better feedback when it does not know whose work it is reading.",
+      "is_correct": false,
+      "explanation": "The reason given is privacy, not feedback quality. The name has no bearing on how good the expanded note is."
+    },
+    {
+      "id": "c",
+      "label": "Because the student should not know a tool was used to help write their feedback.",
+      "is_correct": false,
+      "explanation": "The passage never frames it as hiding the tool from the student. The concern is handing identifiable student data to a company that may keep it."
+    }
+  ]
+}
+```
+
+## reading
 
 The third shows up when you send AI feedback without reading it. The model is built to be encouraging, so it will invent a strength that is not in the work. It will tell a student their "vivid use of evidence" was wonderful when the whole problem was that there was no evidence. It will also soften a gap you wanted named plainly, turning "you never answered the question" into "you might consider exploring the prompt further," which the student will not understand as a problem. Read every note before it goes out. You are the one signing the feedback, so it has to say what you mean.
 

@@ -27,29 +27,6 @@ Here is what a shipping-delay template looks like once AI drafts it and you tidy
 
 Notice the shape. There is acknowledgment, then the key information, then a concrete next step. The bracketed parts are the only things that change per customer. That structure is the stable 80 percent. The specifics, the name, the order number, the new date, are the 20 percent you fill from your own order system, never by pasting a real customer's details into a public AI tool.
 
-A refund-request template follows the same logic, just with different blanks:
-
-> Hi [customer name],
-> Thanks for letting me know, and I am happy to help with your refund for order [order number].
-> I have processed a refund of [refund amount] back to your [payment method]. You should see it within [refund timeframe], depending on your bank.
-> If you do not see it by then, reply here and I will track it down for you.
-> Take care,
-> [agent name]
-
-The placeholders for amount, payment method, and timeframe are the four things you pull from your refund system each time. The reassurance at the end is baked into the template, so every customer gets it, not just the ones you remember to reassure.
-
-A password-reset template is shorter but earns its place in the library because you send it constantly:
-
-> Hi [customer name],
-> Happy to help you get back into your account. I have sent a password reset link to [email on file]. It is good for [link expiry window], so use it soon.
-> If the email is not in your inbox in a few minutes, check your spam folder. Still nothing? Reply here and I will send a fresh link.
-> Cheers,
-> [agent name]
-
-Build ten or fifteen of these across your common cases and your team stops starting from zero on routine work. A how-to question about resetting two-factor authentication gets the same clear walkthrough every time. An account-change request to update a billing email follows the same verify, confirm, reassure path on every ticket. The payoff shows up in two places. First, speed. You open the right template, fill four blanks from your systems, and send a polished reply in under a minute instead of staring at a blank box. Second, consistency as a real asset. A shared library means every customer with the same issue gets your best answer, written once when you were thinking clearly, instead of the version you can muster on a busy Friday afternoon when ten chats are open at once.
-
-There is a discipline that keeps a library healthy. The template is a starting point, not a wall to hide behind. The placeholders are not decoration, they are the contract that says "this part must be personalized before send." And the library only stays good if you treat each template as something you wrote on purpose, with a tone you chose and information you verified, rather than whatever the AI happened to produce. Get the base right once, personalize each send from your real systems, and you free up your real attention for the tickets that do not fit a mold. That is the point of the whole exercise: not to sound like a robot at scale, but to handle the easy 80 percent so well that you have energy left for the hard 20.
-
 ## multiple_choice
 
 ```json
@@ -80,17 +57,87 @@ There is a discipline that keeps a library healthy. The template is a starting p
 
 ## reading
 
+A refund-request template follows the same logic, just with different blanks:
+
+> Hi [customer name],
+> Thanks for letting me know, and I am happy to help with your refund for order [order number].
+> I have processed a refund of [refund amount] back to your [payment method]. You should see it within [refund timeframe], depending on your bank.
+> If you do not see it by then, reply here and I will track it down for you.
+> Take care,
+> [agent name]
+
+The placeholders for amount, payment method, and timeframe are the four things you pull from your refund system each time. The reassurance at the end is baked into the template, so every customer gets it, not just the ones you remember to reassure.
+
+A password-reset template is shorter but earns its place in the library because you send it constantly:
+
+> Hi [customer name],
+> Happy to help you get back into your account. I have sent a password reset link to [email on file]. It is good for [link expiry window], so use it soon.
+> If the email is not in your inbox in a few minutes, check your spam folder. Still nothing? Reply here and I will send a fresh link.
+> Cheers,
+> [agent name]
+
+## fill_blank
+
+```json
+{
+  "template": "In the refund template, the parts you pull from your refund system each send, like the {{1}}, are written as bracketed placeholders, while the {{2}} at the end is baked into the template so every customer receives it.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["refund amount", "amount", "payment method", "refund timeframe", "timeframe", "order number", "specifics", "details"],
+      "ideal": "refund amount"
+    },
+    {
+      "id": "2",
+      "accept": ["reassurance", "reassuring line", "closing reassurance", "promise to help", "follow-up offer"],
+      "ideal": "reassurance"
+    }
+  ],
+  "explanation": "The variable details such as the refund amount, payment method, and timeframe are placeholders you fill from your own system. The reassurance at the close is built into the template so every customer gets it, not just the ones you remember to reassure."
+}
+```
+
+## reading
+
+Build ten or fifteen of these across your common cases and your team stops starting from zero on routine work. A how-to question about resetting two-factor authentication gets the same clear walkthrough every time. An account-change request to update a billing email follows the same verify, confirm, reassure path on every ticket. The payoff shows up in two places. First, speed. You open the right template, fill four blanks from your systems, and send a polished reply in under a minute instead of staring at a blank box. Second, consistency as a real asset. A shared library means every customer with the same issue gets your best answer, written once when you were thinking clearly, instead of the version you can muster on a busy Friday afternoon when ten chats are open at once.
+
+There is a discipline that keeps a library healthy. The template is a starting point, not a wall to hide behind. The placeholders are not decoration, they are the contract that says "this part must be personalized before send." And the library only stays good if you treat each template as something you wrote on purpose, with a tone you chose and information you verified, rather than whatever the AI happened to produce. Get the base right once, personalize each send from your real systems, and you free up your real attention for the tickets that do not fit a mold. That is the point of the whole exercise: not to sound like a robot at scale, but to handle the easy 80 percent so well that you have energy left for the hard 20.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, what are the two main payoffs of building a shared template library?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Lower software costs and fewer tickets overall, because templates discourage customers from writing in.",
+      "is_correct": false,
+      "explanation": "The segment never claims templates reduce ticket volume or cut software costs. The payoffs it names are speed and consistency, not deflection or budget savings."
+    },
+    {
+      "id": "b",
+      "label": "Speed, since you fill a few blanks and send a polished reply in under a minute, and consistency, since every customer with the same issue gets your best answer.",
+      "is_correct": true,
+      "explanation": "Correct. The segment names exactly these two: speed from filling a few blanks instead of starting blank, and consistency as a real asset, written once when you were thinking clearly."
+    },
+    {
+      "id": "c",
+      "label": "Perfect grammar and a fully automated inbox that needs no human review before sending.",
+      "is_correct": false,
+      "explanation": "The discipline part stresses the opposite: a template is a starting point you personalize and verify each send, not a hands-off automation. Speed and consistency are the stated payoffs."
+    }
+  ]
+}
+```
+
+## reading
+
 Templates save enormous time, but a few predictable mistakes can quietly undo the benefit. Knowing them in advance keeps your library an asset instead of a liability.
 
 The first and most serious is pasting real customer data into a public AI tool to generate or tweak a template. It feels harmless because you are "just making a template," but the moment you drop in a real name, email, order number, or address, you have sent that person's information to an outside system you do not control. Templates are generic by design. Build them with placeholders like [customer name] and [order number], and fill the real details only inside your own approved systems, where they belong.
 
 The second mistake is hiding behind a template for a ticket that needs a human. A template is built for the common, straightforward case. When a ticket is unusual, or the customer is clearly upset, angry, or distressed, forcing them into a generic slot reads as cold and processed. A grieving customer asking to close a deceased relative's account does not want your refund template with the blanks filled in. The skill is recognizing the exception and writing to the person directly. Templates handle the routine so you have the time and attention to do exactly that.
-
-The third mistake is adding a template to the library without reviewing it first. AI drafts are a strong starting point, not a finished product. If a template has an awkward phrase, a wrong policy detail, or a tone that is a touch too breezy, that flaw does not stay small. A template sent five hundred times is a flaw repeated five hundred times. Read every new template out loud, check it against your actual policies, and fix the off notes before it joins the library. One careful review up front saves you from a mistake that compounds across hundreds of customers.
-
-The fourth mistake is treating the AI's output as authority. The AI does not know your refund window, your shipping carriers, or your account-change rules. It will happily write "you should see your refund within three to five business days" even if your real timeframe is different, simply because it sounds plausible. Never let a confident-sounding sentence stand in for a fact you have not checked. You are the one who knows the policy, so you are the one who verifies every claim a template makes about money, timing, or process before it ships.
-
-Put simply: keep real customer data out of public tools, write individually when a ticket needs a person, review every template before it joins the library, and verify the facts rather than trusting the AI's tone. Do those four things and your library stays a tool you can rely on instead of a quiet source of repeated errors.
 
 ## multiple_choice
 
@@ -115,6 +162,42 @@ Put simply: keep real customer data out of public tools, write individually when
       "label": "Conclude that templates do not work and delete the library so this never happens again.",
       "is_correct": false,
       "explanation": "That overcorrects. Templates handle the bulk of routine volume well. The point is to write individually for the exceptions, not to abandon a library that serves most of your tickets."
+    }
+  ]
+}
+```
+
+## reading
+
+The third mistake is adding a template to the library without reviewing it first. AI drafts are a strong starting point, not a finished product. If a template has an awkward phrase, a wrong policy detail, or a tone that is a touch too breezy, that flaw does not stay small. A template sent five hundred times is a flaw repeated five hundred times. Read every new template out loud, check it against your actual policies, and fix the off notes before it joins the library. One careful review up front saves you from a mistake that compounds across hundreds of customers.
+
+The fourth mistake is treating the AI's output as authority. The AI does not know your refund window, your shipping carriers, or your account-change rules. It will happily write "you should see your refund within three to five business days" even if your real timeframe is different, simply because it sounds plausible. Never let a confident-sounding sentence stand in for a fact you have not checked. You are the one who knows the policy, so you are the one who verifies every claim a template makes about money, timing, or process before it ships.
+
+Put simply: keep real customer data out of public tools, write individually when a ticket needs a person, review every template before it joins the library, and verify the facts rather than trusting the AI's tone. Do those four things and your library stays a tool you can rely on instead of a quiet source of repeated errors.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The AI confidently writes that a refund will land in three to five business days. Based on this segment, why should you not trust that line as written?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because three to five days is always too slow, and customers expect refunds the same day.",
+      "is_correct": false,
+      "explanation": "The segment makes no claim about what timeframe is fast or acceptable. The issue is not the number itself but that the AI cannot know your real refund window."
+    },
+    {
+      "id": "b",
+      "label": "Because the AI writes in a tone that is too formal for refund messages and needs to be softened first.",
+      "is_correct": false,
+      "explanation": "Tone is a separate review point. The specific problem here is factual: the AI does not know your actual policy and may state a plausible-sounding timeframe that is simply wrong."
+    },
+    {
+      "id": "c",
+      "label": "Because the AI does not know your real refund window and will state a plausible-sounding figure anyway, so you must verify every claim about money, timing, or process before it ships.",
+      "is_correct": true,
+      "explanation": "Correct. The segment warns against treating the AI's output as authority. A confident sentence is not a checked fact, so you verify claims about money, timing, and process yourself before the template ships."
     }
   ]
 }

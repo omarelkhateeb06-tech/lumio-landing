@@ -16,15 +16,24 @@ Job descriptions tend to get written backwards. Someone opens the last version f
 
 This is the trap most postings fall into, and it is worth seeing clearly before you try to fix it. A job description is not a contract or a legal screen. It is the first message a candidate ever receives from you, and like any first message, it can either invite someone in or push them away. When a description is a wishlist written for the company, it reads as a list of reasons to feel unqualified. The capable people, the ones with options, are the first to self-select out, because they have other roles to consider and no reason to apply for one that seems to want someone else. The people who stay are often the ones who apply to everything regardless. So the wishlist does not raise your quality. It lowers it, while shrinking the pile.
 
+## multiple_choice
+
+```json
+{
+  "stem": "A strong, qualified candidate reads a posting, sees they meet only eight of twenty bullets, and closes the tab. According to this lesson, what has the posting actually done?",
+  "options": [
+    {"id":"a","label":"It successfully raised the quality of the applicant pool by setting a high bar.","is_correct":false,"explanation":"The lesson says the opposite. The wishlist does not raise your quality; it lowers it while shrinking the pile, because the capable people leave first."},
+    {"id":"b","label":"It correctly screened out someone who was genuinely unqualified for the role.","is_correct":false,"explanation":"The candidate was strong and qualified. The bullets were a wishlist, not a real measure of fitness, so the posting filtered out someone it should have wanted."},
+    {"id":"c","label":"It filtered out exactly the kind of capable person it was hoping to reach, because the wishlist read as a list of reasons to feel unqualified.","is_correct":true,"explanation":"Correct. The capable people with options self-select out first, so a wishlist written for the company pushes away the very candidates you wanted while shrinking the pile."}
+  ]
+}
+```
+
+## reading
+
 Here is the good news, and the reason this is a perfect job for AI. Rewriting a job description is a clarity, framing, and tone problem, not a facts problem. The model does not need to know your company secrets or invent anything. You supply the substance: what the role really does day to day, which requirements are genuine must-haves versus nice-to-haves, and what makes your team worth joining. The model takes that raw material and turns it into a posting written for the reader instead of for the filing cabinet. It is the same task you would do yourself if you had a quiet afternoon and a talent for plain writing, and it is exactly the kind of rewrite a model does fast and well.
 
 Picture a recruiter named Dani who is filling a mid-level operations analyst role. The inherited posting asks for a bachelor's degree, seven or more years of experience, and proficiency in four named tools. Dani knows the job is really about pulling weekly performance data, building a few simple dashboards, and flagging process bottlenecks to the ops team. A capable person with one or two solid years could do it. So Dani writes a prompt that gives the model the real picture: "Draft a job description for a mid-level operations analyst. Day to day, the role pulls weekly performance data, builds simple dashboards, and flags process bottlenecks to the ops team. The genuine must-haves are comfort with spreadsheets, clear written communication, and one to two years in an analytical role. Everything else is a nice-to-have. Write it in plain language to attract a capable candidate who may not tick every box, keep the requirements list short and honest, and avoid jargon or inflated experience asks." The model returns a posting that sounds like a real human describing a real job, and the wishlist is gone.
-
-Notice what made that prompt work. Dani named the audience, the capable candidate who may not meet every line, and the goal, to attract rather than to screen. Dani separated must-haves from nice-to-haves out loud, so the model knew which requirements were load-bearing and which were just noise carried over from the old version. And Dani described what the role actually does, which gives the model something true to write about instead of a generic template. Those three moves, real day-to-day, honest must-haves, and a named audience, are the whole technique. Everything else is refinement.
-
-Think about what the role offers, too, not just what it demands. A strong description spends as much energy on why someone would want this job as on what they need to bring. What will the new hire learn, who will they work with, what does the team actually feel like on a good week? AI is happy to lead with that if you tell it to. The shift from "here is our list of requirements" to "here is interesting work and the kind of person who would enjoy it" is small to write and large in effect. It is the difference between a posting that sorts people out and one that draws them in.
-
-None of this hands the judgment to the machine. You are still the person who decides what the role genuinely requires, who knows your team, and who can tell an honest description from a flattering one. The model is fast at phrasing and bad at knowing what is true about your workplace. Used well, it gives you a clean first draft in minutes so you can spend your time on the part that matters: deciding what to ask for, and saying it in a way the right person actually wants to answer.
 
 ## multiple_choice
 
@@ -41,15 +50,31 @@ None of this hands the judgment to the machine. You are still the person who dec
 
 ## reading
 
+Notice what made that prompt work. Dani named the audience, the capable candidate who may not meet every line, and the goal, to attract rather than to screen. Dani separated must-haves from nice-to-haves out loud, so the model knew which requirements were load-bearing and which were just noise carried over from the old version. And Dani described what the role actually does, which gives the model something true to write about instead of a generic template. Those three moves, real day-to-day, honest must-haves, and a named audience, are the whole technique. Everything else is refinement.
+
+Think about what the role offers, too, not just what it demands. A strong description spends as much energy on why someone would want this job as on what they need to bring. What will the new hire learn, who will they work with, what does the team actually feel like on a good week? AI is happy to lead with that if you tell it to. The shift from "here is our list of requirements" to "here is interesting work and the kind of person who would enjoy it" is small to write and large in effect. It is the difference between a posting that sorts people out and one that draws them in.
+
+None of this hands the judgment to the machine. You are still the person who decides what the role genuinely requires, who knows your team, and who can tell an honest description from a flattering one. The model is fast at phrasing and bad at knowing what is true about your workplace. Used well, it gives you a clean first draft in minutes so you can spend your time on the part that matters: deciding what to ask for, and saying it in a way the right person actually wants to answer.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Based on this segment, what are the three moves that make up 'the whole technique' for prompting a job description, with everything else being refinement?",
+  "options": [
+    {"id":"a","label":"A long requirements list, a formal tone, and a company-first framing.","is_correct":false,"explanation":"These are the habits the lesson warns against. A long list and company-first framing are what push capable candidates away."},
+    {"id":"b","label":"Asking the model to invent perks, guessing at salary, and copying a competitor's posting.","is_correct":false,"explanation":"None of these appear in the lesson. The model should not invent facts, and the technique is built on supplying the truth about your role."},
+    {"id":"c","label":"Letting the model decide the must-haves, hiding the audience, and keeping the role vague.","is_correct":false,"explanation":"This is the reverse of the technique. You must decide the must-haves, name the audience, and describe what the role actually does."},
+    {"id":"d","label":"The real day-to-day, honest must-haves, and a named audience.","is_correct":true,"explanation":"Correct. The lesson states these three moves, real day-to-day, honest must-haves, and a named audience, are the whole technique, and everything else is refinement."}
+  ]
+}
+```
+
+## reading
+
 The most common way this goes wrong is trusting the first draft too much. A model trained on the open internet has read thousands of bloated job descriptions, so when you ask it for one, its instinct is to reach for the same inflated requirements everyone else uses. Ask for an operations analyst posting with no guidance and you will often get "bachelor's degree required" and "five or more years of experience" without ever telling it to. Those lines did not come from you. They came from the template average baked into the model. If you paste the draft straight into your posting, you have just reimported the exact wishlist you were trying to escape, now with a fresh coat of paint.
 
 Consider an HR generalist named Marcus who inherited a JD for a customer support lead. He asks AI to "make it sound more appealing" and gets back a smoother version that still demands a degree and five years of experience. The writing is better. The barrier is identical. Marcus did not tell the model which requirements were real, so it kept all of them and simply polished the prose. The lesson is that better phrasing does not fix an exclusionary list. You have to do the thinking about must-haves first, then let the model write, not the other way around.
-
-The second failure is skipping the review for inclusive and accurate language. A model can produce coded phrasing that quietly narrows your pool, things like "recent graduate," "digital native," or a wall of aggressive, competitive language that reads as a signal about who belongs. None of that is usually intentional, but it does real damage, because it tells whole groups of qualified people that the role was not written for them. Your job after the draft is to read it the way a candidate would and ask: does this honestly describe the work, and does it invite the broadest qualified pool, or does it subtly screen people out?
-
-There is also the honesty trap. AI is good at making things sound appealing, sometimes more appealing than they are. If the model writes that the team is "fast-paced and collaborative" but the real job is heads-down and high-pressure, you will attract people who leave in three months. A description that oversells is not kindness; it is a slow, expensive mismatch. Keep the model honest by feeding it the real texture of the role, the good and the demanding, and by cutting any line that sounds true only because it sounds nice.
-
-The fix for all three is the same simple discipline. Decide the real must-haves before you prompt. Read the draft as a critic, not a customer. And remember that the model is a fast writer with no knowledge of your workplace, so the substance and the final judgment stay with you.
 
 ## fill_blank
 
@@ -61,6 +86,28 @@ The fix for all three is the same simple discipline. Decide the real must-haves 
     {"id":"2","accept":["applicant","candidate"],"ideal":"applicant"}
   ],
   "explanation": "Generic templates push the model toward inflated, exclusionary requirements like an unneeded degree or too many years of experience. Left in, they narrow and distort the applicant pool by pushing strong candidates to self-select out."
+}
+```
+
+## reading
+
+The second failure is skipping the review for inclusive and accurate language. A model can produce coded phrasing that quietly narrows your pool, things like "recent graduate," "digital native," or a wall of aggressive, competitive language that reads as a signal about who belongs. None of that is usually intentional, but it does real damage, because it tells whole groups of qualified people that the role was not written for them. Your job after the draft is to read it the way a candidate would and ask: does this honestly describe the work, and does it invite the broadest qualified pool, or does it subtly screen people out?
+
+There is also the honesty trap. AI is good at making things sound appealing, sometimes more appealing than they are. If the model writes that the team is "fast-paced and collaborative" but the real job is heads-down and high-pressure, you will attract people who leave in three months. A description that oversells is not kindness; it is a slow, expensive mismatch. Keep the model honest by feeding it the real texture of the role, the good and the demanding, and by cutting any line that sounds true only because it sounds nice.
+
+The fix for all three is the same simple discipline. Decide the real must-haves before you prompt. Read the draft as a critic, not a customer. And remember that the model is a fast writer with no knowledge of your workplace, so the substance and the final judgment stay with you.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The model drafts a posting that calls your team 'fast-paced and collaborative,' but the real job is heads-down and high-pressure. According to this segment, why is leaving that line in a problem?",
+  "options": [
+    {"id":"a","label":"An oversold description is a slow, expensive mismatch, because it attracts people who leave in three months.","is_correct":true,"explanation":"Correct. The honesty trap means a description that oversells is not kindness; it draws in people who leave quickly once the real texture of the role does not match what was promised."},
+    {"id":"b","label":"It is fine, because making the role sound appealing is the whole point of a posting.","is_correct":false,"explanation":"Appeal that is not true is the honesty trap. The lesson says to cut any line that sounds true only because it sounds nice."},
+    {"id":"c","label":"The only risk is that competitors might copy your appealing phrasing.","is_correct":false,"explanation":"The lesson never raises this concern. The real cost is a mismatch that leads good hires to leave, not imitation by competitors."},
+    {"id":"d","label":"It matters only for legal reasons, since job postings must be factually accurate by law.","is_correct":false,"explanation":"The lesson frames this as a fit and retention problem, not a legal one. The damage is people leaving in three months, not a compliance issue."}
+  ]
 }
 ```
 

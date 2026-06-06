@@ -20,11 +20,41 @@ Think of it like the standing instructions you would give a new assistant on day
 
 Here is exactly what to put in there. Three pieces.
 
+## multiple_choice
+
+```json
+{
+  "stem": "Where does ChatGPT keep this permanent background note about you?",
+  "options": [
+    { "id": "a", "label": "In a new chat window you have to reopen each morning", "is_correct": false, "explanation": "No. The whole point is that you do not reopen it each time. It lives in Settings and is read silently before every conversation." },
+    { "id": "b", "label": "In Settings under 'Personalization,' in a feature called Custom Instructions", "is_correct": true, "explanation": "Right. In ChatGPT it lives in Settings under 'Personalization' as Custom Instructions, with a Memory toggle that can save facts over time." },
+    { "id": "c", "label": "Nowhere; you have to retype your background at the start of every chat", "is_correct": false, "explanation": "That is exactly the habit this lesson ends. There is a settings box that holds the background once so you stop retyping it." }
+  ]
+}
+```
+
+## reading
+
 First, who you are and who you serve. Be specific about the job, not vague about the industry. A paralegal at a small family-law firm should write: "I am a paralegal at a three-attorney family law firm in Ohio. I draft client intake summaries, discovery requests, and correspondence. My readers are attorneys who want facts fast, and sometimes clients who are stressed and not legally trained." That one paragraph means the AI stops giving you generic "legal" answers and starts matching your actual workload.
 
 Second, how you want answers written. This is where you stop fighting the AI's default habits. An office manager who is sick of bloated, flowery replies should write: "Be direct and skip the preamble. Do not open with 'Certainly!' or 'Great question.' Use short paragraphs and bullet points for any list. Keep it to plain English at about an eighth-grade level. If you are not sure about a fact, say so instead of guessing." Every one of those lines is a habit you would otherwise have to correct by hand in every single chat.
 
 Third, your recurring context, meaning the stuff you find yourself typing again and again. A high school history teacher might add: "I teach 11th grade U.S. History to about 140 students across five sections. My state standards are Texas TEKS. I differentiate for students reading below grade level. When I ask for worksheets or quizzes, default to that audience unless I say otherwise." Now "make me a quiz on the New Deal" produces something usable on the first try, because the AI already knows the grade, the subject, and the standards.
+
+## fill_blank
+
+```json
+{
+  "template": "The first piece to include is who you are and who you serve, and it should be specific about the {{1}}, not vague about the {{2}}.",
+  "blanks": [
+    { "id": 1, "accept": ["job", "role", "your job", "your role"], "ideal": "job" },
+    { "id": 2, "accept": ["industry", "field", "sector"], "ideal": "industry" }
+  ],
+  "explanation": "The reading says to be specific about the job, not vague about the industry. 'Healthcare' or 'legal' is too broad; naming the exact role is what makes the AI match your real workload."
+}
+```
+
+## reading
 
 Here is a full example for an HR manager, start to finish, the kind you could paste in today:
 
@@ -56,6 +86,21 @@ Most people who try custom instructions make one of three predictable mistakes, 
 The first mistake is being vague. People write things like "I work in healthcare" or "make answers good." That is so general the AI cannot do anything useful with it. "Healthcare" could mean a surgeon, a billing clerk, or a hospice chaplain, and "good" means nothing at all. The fix is to write as if you were describing your job to a temp who starts tomorrow. Not "I work in healthcare" but "I am a charge nurse on a medical-surgical floor; I write shift handoff notes and patient education sheets." Specificity is the entire point. If your instructions would fit fifty different jobs, they are too thin.
 
 The second mistake is stuffing a single task in there. Someone gets excited, writes "always respond as a poem" or "I am working on the Henderson account," and forgets about it. A week later every answer is weirdly poetic, or every answer assumes a project that wrapped up. Remember the rule: custom instructions are for who you are, not what you need today. If you catch the AI behaving strangely across unrelated chats, the first place to check is your instructions for a leftover task.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to the reading, what is the fix for vague instructions like 'I work in healthcare'?",
+  "options": [
+    { "id": "a", "label": "Leave them broad on purpose so the AI can help with any topic", "is_correct": false, "explanation": "Broad is the trap. If your instructions would fit fifty different jobs, they are too thin and the AI cannot do anything useful with them." },
+    { "id": "b", "label": "Add the single task you need done today instead", "is_correct": false, "explanation": "That is a different mistake. Stuffing one task in there warps future answers. The fix for vagueness is specificity about your role, not a task." },
+    { "id": "c", "label": "Write as if describing your job to a temp who starts tomorrow, naming your exact role and the documents you produce", "is_correct": true, "explanation": "Exactly. The reading says to be specific, like 'I am a charge nurse on a medical-surgical floor who writes shift handoff notes.' Specificity is the entire point." }
+  ]
+}
+```
+
+## reading
 
 The third mistake is the opposite problem: people fill it in once and never look again, even after their job changes. The teacher who switched from 9th grade to 11th grade still has "I teach 9th grade" sitting in there, so every quiz comes out at the wrong level. Treat your instructions like a job description that needs an occasional update. When your role, audience, or standards change, spend two minutes editing the box.
 

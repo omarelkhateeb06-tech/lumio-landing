@@ -16,7 +16,60 @@ For legal professionals, confidentiality is not a preference, it is a profession
 
 Start with how these tools actually handle your text, because the risk is invisible if you do not understand it. When you type into a free, public AI service, your input does not just vanish after it answers. It may be stored on the company's servers, reviewed by its staff for quality and safety, and used to train future versions of the model. That last part matters most. Information used in training can resurface later in ways no one can fully predict or pull back. None of that is compatible with privileged and confidential client information. Pasting a client's name, their matter details, or a privileged communication into a public tool can be a breach even if nothing visibly goes wrong, because the disclosure already happened the moment the text was sent.
 
+## multiple_choice
+
+```json
+{
+  "stem": "When you type confidential text into a free, public AI service, what does the lesson say can happen to that input?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It is automatically deleted once the tool finishes answering, so it never persists.",
+      "is_correct": false,
+      "explanation": "The lesson states the opposite: the input does not just vanish after the tool answers. It can persist on the company's servers."
+    },
+    {
+      "id": "b",
+      "label": "It may be stored on the company's servers, reviewed by staff, and used to train future versions of the model.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson lists exactly these three outcomes, and notes that training use matters most because the information can resurface later in unpredictable ways."
+    },
+    {
+      "id": "c",
+      "label": "It stays encrypted and inaccessible to anyone at the company under all circumstances.",
+      "is_correct": false,
+      "explanation": "The lesson says staff may review the input for quality and safety, so it is not inaccessible to everyone at the company."
+    }
+  ]
+}
+```
+
+## reading
+
 Picture a concrete example. A paralegal at a small firm is helping with an employment dispute. The client, a warehouse worker, says she was fired days after reporting blocked fire exits to her manager. To save time, the paralegal pastes the full story into a free chatbot, client name and employer included, and asks for a list of legal issues. The summary that comes back is genuinely useful. But the client's identity, the employer's name, and the heart of a privileged matter have now left the firm and entered an outside company's system. Nothing on screen looks wrong. The breach is real anyway. Now take a second example from litigation. An assistant pastes a draft settlement figure and the opposing party's name into a public tool to clean up the language. That figure and that pairing are exactly what the firm is obligated to keep private, and they are now sitting in a system the firm does not control. In both cases the work felt routine, and that is precisely why the risk is easy to miss.
+
+## fill_blank
+
+```json
+{
+  "template": "In the examples, the breach happens even though nothing on {{1}} looks wrong, because the disclosure already occurred the moment the text {{2}} the firm.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["screen", "the screen", "screen looks wrong", "the screen looks wrong"],
+      "ideal": "screen"
+    },
+    {
+      "id": "2",
+      "accept": ["left", "left the firm", "leaves", "left control of"],
+      "ideal": "left"
+    }
+  ],
+  "explanation": "The lesson stresses that the work felt routine and nothing on screen looked wrong, yet the confidential material had already left the firm and entered an outside system. The breach is tied to the moment of disclosure, not to any visible error."
+}
+```
+
+## reading
 
 So here are the rules that keep you safe. They are simple, and together they cover almost every situation you will face.
 
@@ -67,6 +120,36 @@ The rules are clear, so the trouble usually comes from small habits that feel ha
 **Pasting full matter details and the client name, then deleting the chat.** This is the most common one, and the deletion is what makes it feel safe. It is not. The disclosure happened the instant you sent the text. Deleting the conversation on your screen does nothing about the copy that already reached the company's servers. You cannot undo a disclosure by closing a window.
 
 **Adding an instruction that tells the AI to "keep this confidential."** It feels responsible, like a disclaimer at the bottom of an email. But the AI does not enforce your prompt. How your input is stored, reviewed, and used is set by the company's data policy, not by a sentence you typed. Telling a public tool to keep a secret does not change what the tool is allowed to do with it.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does deleting the chat after pasting full matter details and the client name fail to fix the problem?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the firm's policy requires you to keep a record of every AI conversation you start.",
+      "is_correct": false,
+      "explanation": "The lesson does not raise a record-keeping requirement here. The problem with deletion is about disclosure, not retention rules."
+    },
+    {
+      "id": "b",
+      "label": "Because deleting the chat actually triggers the tool to train on the text faster.",
+      "is_correct": false,
+      "explanation": "The lesson makes no such claim. Deletion is ineffective because the disclosure already happened, not because it speeds up training."
+    },
+    {
+      "id": "c",
+      "label": "Because the disclosure happened the instant the text was sent, and deleting the window does nothing about the copy that already reached the company's servers.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson states you cannot undo a disclosure by closing a window, since the copy already reached the company's servers when you sent it."
+    }
+  ]
+}
+```
+
+## reading
 
 **Including just the client name, thinking a name alone is harmless.** A name tied to a matter is confidential. If you ask a public tool a question about "the Delgado custody case," you have linked a real person to a legal proceeding, which is exactly the kind of fact you are obligated to protect. The name plus the context is the breach, even without the details.
 

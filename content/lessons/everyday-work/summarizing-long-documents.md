@@ -18,13 +18,39 @@ The mistake almost everyone makes is asking for a plain "summarize this." That g
 
 So hand the AI three things along with the document. First, who you are: your role and what you care about. Second, what you are trying to decide or do. Third, how you want the answer shaped: the format, the length, the focus. Those three pieces turn a generic recap into a brief aimed straight at your job.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to the reading, what is the difference between a useless summary and a great one?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The great one is much longer and covers every section of the document.",
+      "is_correct": false,
+      "explanation": "Length is not the point. A neutral summary that weights every part equally is exactly the generic result the reading warns against."
+    },
+    {
+      "id": "b",
+      "label": "Whether you told the AI what you are trying to do, so the summary is shaped by your purpose.",
+      "is_correct": true,
+      "explanation": "Right. The reading says a good summary is shaped by your purpose, and the difference comes down to whether you told the AI what you are trying to do."
+    },
+    {
+      "id": "c",
+      "label": "Whether you used a paid AI tool instead of a free one.",
+      "is_correct": false,
+      "explanation": "The reading never ties quality to the tool you pay for. It ties it to giving the AI your role, your decision, and the shape you want."
+    }
+  ]
+}
+```
+
+## reading
+
 Here is a real example. An office manager gets a revised travel and expense policy, 22 pages long, most of it boilerplate. Instead of reading it all, she pastes it in and writes: "I am an office manager and I need to know whether this new policy changes how my team books travel and submits expenses. Pull out only the parts about booking, approvals, and reimbursement limits. Give me five plain bullet points, and flag anything that needs me to take action or change a process. Ignore the legal background." What comes back is exactly the slice she needs: the new approval threshold, the changed per-diem rate, the deadline to update the booking tool. The other seventeen pages of context she never has to touch.
 
 The kind of summary you ask for should match the kind of document, because different material hides different things. For a contract, ask for the obligations and the risks: "I am reviewing this service agreement before we sign. List every commitment we are making, every fee or penalty, any auto-renewal or cancellation terms, and flag anything unusual or one-sided. Plain language, no legalese." For a meeting transcript, ask for decisions and owners: "From this transcript, give me the decisions we made, the action items with who owns each one, and any open questions left unresolved." For a dense research report or a technical paper, ask for plain-language translation: "Explain the main finding of this study as if I have no background in the field, then tell me in one sentence why it matters for a school like mine." Naming the kind of summary you need is what separates a useful answer from a shorter wall of text.
-
-A few moves make summaries far more valuable. Ask for the decision, not just the content. "What should I do differently after reading this?" is often worth more than a neutral recap, because it pushes the AI to connect the document to your situation. Ask what is missing or unclear: "What questions should I ask before agreeing to this?" turns the AI into a thinking partner instead of just a text-shrinker. And request the exact structure you want. A one-paragraph overview, five bullets, a pros-and-cons table, a list of risks ranked by seriousness. Name the format and you will get it, which means you can drop the result straight into your own notes or an email without reformatting.
-
-Now the discipline that keeps you safe. For anything that matters, spot-check the summary against the real document, especially numbers, dates, names, and any claim you are about to act on. AI summaries can quietly get a figure wrong, blur two points into one, or state something confidently that the document does not actually say. If the summary tells you the contract auto-renews on December 1, find that line in the contract before you put it in your calendar. If it says the policy raises the expense limit to $75, check the actual number. The summary is a fast first read that tells you where to look, not the final word you quote to your boss. Think of it as a sharp intern's memo: usually right, occasionally wrong in ways that matter, and always worth verifying before you stake a decision on it. Used that way, summarizing is one of the biggest time savings AI offers a knowledge worker, and one of the safest, as long as you keep your eyes on the source for the parts that count.
 
 ## multiple_choice
 
@@ -56,15 +82,43 @@ Now the discipline that keeps you safe. For anything that matters, spot-check th
 
 ## reading
 
+A few moves make summaries far more valuable. Ask for the decision, not just the content. "What should I do differently after reading this?" is often worth more than a neutral recap, because it pushes the AI to connect the document to your situation. Ask what is missing or unclear: "What questions should I ask before agreeing to this?" turns the AI into a thinking partner instead of just a text-shrinker. And request the exact structure you want. A one-paragraph overview, five bullets, a pros-and-cons table, a list of risks ranked by seriousness. Name the format and you will get it, which means you can drop the result straight into your own notes or an email without reformatting.
+
+Now the discipline that keeps you safe. For anything that matters, spot-check the summary against the real document, especially numbers, dates, names, and any claim you are about to act on. AI summaries can quietly get a figure wrong, blur two points into one, or state something confidently that the document does not actually say. If the summary tells you the contract auto-renews on December 1, find that line in the contract before you put it in your calendar. If it says the policy raises the expense limit to $75, check the actual number. The summary is a fast first read that tells you where to look, not the final word you quote to your boss. Think of it as a sharp intern's memo: usually right, occasionally wrong in ways that matter, and always worth verifying before you stake a decision on it. Used that way, summarizing is one of the biggest time savings AI offers a knowledge worker, and one of the safest, as long as you keep your eyes on the source for the parts that count.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The reading suggests asking 'What should I do differently after reading this?' Why is that often worth more than a neutral recap?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It guarantees the AI will never make a factual error in the summary.",
+      "is_correct": false,
+      "explanation": "Nothing guarantees that. The reading is clear that summaries can get figures wrong or state things the document does not say, which is why you still spot-check."
+    },
+    {
+      "id": "b",
+      "label": "It produces a longer answer, and longer answers are more trustworthy.",
+      "is_correct": false,
+      "explanation": "The reading does not equate length with value. The point of the question is to connect the document to your situation, not to add words."
+    },
+    {
+      "id": "c",
+      "label": "It pushes the AI to connect the document to your situation instead of just shrinking the text.",
+      "is_correct": true,
+      "explanation": "Right. The reading says asking for the decision pushes the AI to connect the document to your situation, which is worth more than a neutral recap."
+    }
+  ]
+}
+```
+
+## reading
+
 The biggest mistake is trusting the summary without ever opening the source. People paste in a contract, get back a clean list of terms, and act on it as if they read the contract themselves. Then they discover the AI missed an auto-renewal clause, or rounded a penalty figure, or stated a deadline the document never mentioned. AI summaries are confident even when they are wrong, and a missing point looks exactly like a document that did not contain that point. For anything you will act on, find the key claims in the source before you rely on them, especially numbers, dates, and obligations.
 
 The second mistake is asking for an unaimed "summarize this" and accepting the generic result. Without your role and your decision, the AI has no way to know which parts matter, so it gives every section equal weight and you get a shorter version of the same wall of text. The fix is one sentence: say who you are and what you need to decide. "I am a team lead checking whether this affects my budget" produces a completely different, far more useful summary than no framing at all.
-
-The third mistake is asking the wrong kind of summary for the document. A contract summarized as a neutral overview buries the risks; you needed obligations and penalties flagged, not a friendly recap. A meeting transcript summarized as prose buries the action items; you needed a list of decisions and owners. Match the request to what the document is for. Ask a contract for risks, a transcript for decisions and owners, a research paper for a plain-language finding.
-
-A fourth trap is pasting sensitive material into a tool your workplace has not approved. Patient records, client matters, employee files, and confidential contracts may not belong in a public AI tool. Check your organization's policy first, and when in doubt, summarize a redacted version or describe the document in general terms rather than pasting the real thing.
-
-The last mistake is letting the summary replace your own judgment on the parts that carry weight. A summary is a fast first read that tells you where to focus, not a substitute for reading the clause your signature depends on. Use it to triage a long document quickly, then read the few sections that actually matter in full. The time you save on the boilerplate is real; the time you spend verifying the critical parts is not optional.
 
 ## multiple_choice
 
@@ -89,6 +143,42 @@ The last mistake is letting the summary replace your own judgment on the parts t
       "label": "Ask the AI a second time and go with whichever date it gives twice.",
       "is_correct": false,
       "explanation": "Repeating the question to the same tool can repeat the same error. The authority is the document itself, so check the clause there."
+    }
+  ]
+}
+```
+
+## reading
+
+The third mistake is asking the wrong kind of summary for the document. A contract summarized as a neutral overview buries the risks; you needed obligations and penalties flagged, not a friendly recap. A meeting transcript summarized as prose buries the action items; you needed a list of decisions and owners. Match the request to what the document is for. Ask a contract for risks, a transcript for decisions and owners, a research paper for a plain-language finding.
+
+A fourth trap is pasting sensitive material into a tool your workplace has not approved. Patient records, client matters, employee files, and confidential contracts may not belong in a public AI tool. Check your organization's policy first, and when in doubt, summarize a redacted version or describe the document in general terms rather than pasting the real thing.
+
+The last mistake is letting the summary replace your own judgment on the parts that carry weight. A summary is a fast first read that tells you where to focus, not a substitute for reading the clause your signature depends on. Use it to triage a long document quickly, then read the few sections that actually matter in full. The time you save on the boilerplate is real; the time you spend verifying the critical parts is not optional.
+
+## multiple_choice
+
+```json
+{
+  "stem": "The reading warns against pasting sensitive material into an unapproved tool. What does it suggest doing when you are in doubt?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Paste the full document anyway, since the AI will keep it confidential.",
+      "is_correct": false,
+      "explanation": "The reading says the opposite. Patient records, client matters, and confidential contracts may not belong in a public AI tool at all."
+    },
+    {
+      "id": "b",
+      "label": "Check your organization's policy first, and summarize a redacted version or describe the document in general terms.",
+      "is_correct": true,
+      "explanation": "Right. The reading says to check the policy first and, when in doubt, summarize a redacted version or describe the document in general terms instead of pasting the real thing."
+    },
+    {
+      "id": "c",
+      "label": "Wait until after the deadline so the material is no longer sensitive.",
+      "is_correct": false,
+      "explanation": "The reading never suggests timing as a fix. The concern is the tool's approval and the data itself, so you redact, generalize, or check the policy."
     }
   ]
 }

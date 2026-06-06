@@ -16,16 +16,6 @@ Most AI guidance focuses on getting better output. In finance, the more urgent s
 
 Start with the line that ends careers: material non-public information. Picture an analyst named Priya who has the unreleased quarterly earnings sitting in a spreadsheet. The numbers are strong, the beat is real, and the press release goes out in two days. She wants AI to help her draft a clean summary, so she is tempted to paste the figures in. Stop. Those numbers are material non-public information. Feeding them into a public tool is sharing them with an outside party before the public has them, which is exactly the conduct insider-trading and Regulation FD rules exist to prevent. It does not matter that Priya has no intent to trade. The exposure is in the act of disclosure, not in her motive. The same logic applies to a controller, call him David, staring at a draft 10-Q. That filing contains the company's unreleased financial position. Pasting the draft into a chatbot to "tighten the language" is not a copy-edit. It is moving confidential, market-moving information outside the company before it is filed. The convenience is real. The risk is your firm's reputation and your own standing.
 
-Next comes client data and personally identifiable information. An accountant named Marcus is doing tax returns and has a stack of W-2s, Social Security numbers, and account balances. He wants AI to help explain a deduction to a client, so the temptation is to paste the client's actual return. Stop again. SSNs, account numbers, names tied to financial details, and similar personal data are protected, and a public tool is not an approved home for them. The fix is almost always available: work with the shape of the problem, not the live data. Marcus can ask AI to explain how a particular deduction works in general, then apply it to the real return himself inside his secured software. The AI never needs to see a single SSN to be useful.
-
-Now the part people miss most often. There are tasks AI is not allowed to do even when no sensitive data is involved, because they require a licensed professional's judgment and authority. AI cannot sign an audit opinion. AI cannot take a tax position and stand behind it. AI cannot be the authority on a regulatory filing. These are not formatting tasks. They are professional acts that carry legal weight and require a credentialed human to own them. AI can help you think, draft, and check. It cannot be the one accountable. When an auditor relies on an opinion, when a client relies on a tax position, when a regulator receives a filing, a named professional is standing behind that work. A chatbot cannot stand anywhere. It has no license to lose and no duty to uphold, which is precisely why it can never hold the authority.
-
-The fourth boundary ties the others together: AI output is never the system of record. Whatever the tool gives you is a draft, a suggestion, a starting point. The official numbers live in your ledger, your tax software, your filing system, your approved enterprise platform. If a figure matters, it gets verified against the real source and recorded in the real system, every time. AI is a thinking aid sitting beside your work, never the place the truth lives. The moment you treat its output as the authoritative record, you have handed a machine a responsibility that belongs to a person and a controlled system.
-
-So the first move with any AI task is not the prompt. It is the classification question: what kind of data is involved, what kind of judgment does the task require, and where does the answer have to live? Run that check and the boundaries become obvious. Material non-public information stays out. Client and personal data stays out. Anything requiring a licensed professional's sign-off stays with the professional. And the system of record stays the system of record.
-
-This is not a reason to avoid AI. It is the boundary that lets you use it with confidence. Huge amounts of finance work involve none of these traps: explaining a concept, structuring a generic template, rephrasing public information, drafting a policy summary, learning a standard. The professional habit is to make the check a reflex. Before you open the chat box, you already know which bucket your data sits in, whether the task needs a license, and where the real answer must be stored. When you are unsure, you treat it as off-limits and confirm, because the cost of asking is a minute and the cost of guessing wrong can be your license. AI will cheerfully accept whatever you paste and confidently answer whatever you ask. The boundary is yours to hold.
-
 ## multiple_choice
 
 ```json
@@ -56,19 +46,87 @@ This is not a reason to avoid AI. It is the boundary that lets you use it with c
 
 ## reading
 
+Next comes client data and personally identifiable information. An accountant named Marcus is doing tax returns and has a stack of W-2s, Social Security numbers, and account balances. He wants AI to help explain a deduction to a client, so the temptation is to paste the client's actual return. Stop again. SSNs, account numbers, names tied to financial details, and similar personal data are protected, and a public tool is not an approved home for them. The fix is almost always available: work with the shape of the problem, not the live data. Marcus can ask AI to explain how a particular deduction works in general, then apply it to the real return himself inside his secured software. The AI never needs to see a single SSN to be useful.
+
+Now the part people miss most often. There are tasks AI is not allowed to do even when no sensitive data is involved, because they require a licensed professional's judgment and authority. AI cannot sign an audit opinion. AI cannot take a tax position and stand behind it. AI cannot be the authority on a regulatory filing. These are not formatting tasks. They are professional acts that carry legal weight and require a credentialed human to own them. AI can help you think, draft, and check. It cannot be the one accountable. When an auditor relies on an opinion, when a client relies on a tax position, when a regulator receives a filing, a named professional is standing behind that work. A chatbot cannot stand anywhere. It has no license to lose and no duty to uphold, which is precisely why it can never hold the authority.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Marcus wants AI to help explain a deduction, but the only copy he has is the client's actual tax return with SSNs and balances. Which response fits both the client-data and licensed-judgment boundaries?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Paste the full return so the AI has accurate context, then sign off on whatever position it suggests.",
+      "is_correct": false,
+      "explanation": "This breaks two boundaries at once: protected personal data enters a public tool, and a credentialed professional hands the tax position to a machine that cannot own it."
+    },
+    {
+      "id": "b",
+      "label": "Remove only the client's name and paste the rest, then let the AI decide whether the deduction is allowed.",
+      "is_correct": false,
+      "explanation": "SSNs and account balances can re-identify a person on their own, so dropping the name is not anonymization, and AI still cannot take or stand behind a tax position."
+    },
+    {
+      "id": "c",
+      "label": "Ask AI to explain how the deduction works in general, then apply it to the real return and own the position himself inside his secured software.",
+      "is_correct": true,
+      "explanation": "Correct. Working on the abstract shape keeps protected data out of the tool, and the licensed professional verifies and owns the position, which AI is never allowed to do."
+    }
+  ]
+}
+```
+
+## reading
+
+The fourth boundary ties the others together: AI output is never the system of record. Whatever the tool gives you is a draft, a suggestion, a starting point. The official numbers live in your ledger, your tax software, your filing system, your approved enterprise platform. If a figure matters, it gets verified against the real source and recorded in the real system, every time. AI is a thinking aid sitting beside your work, never the place the truth lives. The moment you treat its output as the authoritative record, you have handed a machine a responsibility that belongs to a person and a controlled system.
+
+So the first move with any AI task is not the prompt. It is the classification question: what kind of data is involved, what kind of judgment does the task require, and where does the answer have to live? Run that check and the boundaries become obvious. Material non-public information stays out. Client and personal data stays out. Anything requiring a licensed professional's sign-off stays with the professional. And the system of record stays the system of record.
+
+This is not a reason to avoid AI. It is the boundary that lets you use it with confidence. Huge amounts of finance work involve none of these traps: explaining a concept, structuring a generic template, rephrasing public information, drafting a policy summary, learning a standard. The professional habit is to make the check a reflex. Before you open the chat box, you already know which bucket your data sits in, whether the task needs a license, and where the real answer must be stored. When you are unsure, you treat it as off-limits and confirm, because the cost of asking is a minute and the cost of guessing wrong can be your license. AI will cheerfully accept whatever you paste and confidently answer whatever you ask. The boundary is yours to hold.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Before writing a single prompt, what is the first move a compliance-first professional makes with any AI task?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Ask the classification question: what kind of data is involved, what kind of judgment the task requires, and where the answer has to live.",
+      "is_correct": true,
+      "explanation": "Correct. Running that check first makes the boundaries obvious before any data is pasted, so MNPI and client data stay out, licensed judgment stays with the professional, and the system of record stays the record."
+    },
+    {
+      "id": "b",
+      "label": "Write the most detailed prompt possible so the AI has full context to work from.",
+      "is_correct": false,
+      "explanation": "Leading with the prompt skips the classification step, which is exactly where sensitive data slips into the tool. The first move is the check, not the prompt."
+    },
+    {
+      "id": "c",
+      "label": "Avoid AI entirely, since finance work is too sensitive for it to be useful.",
+      "is_correct": false,
+      "explanation": "The boundary is not a reason to avoid AI. Plenty of work involves none of the traps, and the classification reflex is what lets you use AI with confidence."
+    },
+    {
+      "id": "d",
+      "label": "Paste the data first and decide afterward whether it should have gone in.",
+      "is_correct": false,
+      "explanation": "The breach happens on input. Deciding after the paste is too late, which is why the classification question comes before the chat box is even open."
+    }
+  ]
+}
+```
+
+## reading
+
 The mistakes here rarely come from bad intent. They come from a convenient moment overriding a quiet rule, so it helps to see the exact shapes the trouble takes.
 
 The most common is the "just this once" paste. David, the controller, is on deadline with the draft 10-Q and the language is clunky. He tells himself a single paste to tighten a paragraph is harmless. It is not. The filing is unreleased, market-moving information, and moving it into a public tool is the breach, full stop. Deadlines do not change data classifications. The fix is to copy only the non-sensitive structure of what he needs, or to use an approved enterprise tool with the right agreements in place.
 
 The second mistake is believing cleanup fixes a leak. People think deleting the chat, or turning on a "do not train" setting, makes a sensitive paste safe after the fact. It does not. The data was already transmitted to and processed by a third party the instant you hit enter. The breach happens on input, not on cleanup. The only safe move is to never put the protected data in to begin with.
-
-The third is mistaking partial redaction for safety. Marcus removes the client's name from the tax return but leaves the SSN, the account balances, and the employer. Stripping one identifier while leaving others is not anonymization. Account numbers, SSNs, and specific financial details can re-identify a person on their own. If you cannot fully separate the data from the individual, treat the whole thing as off-limits and work on the abstract shape instead.
-
-The fourth is letting AI quietly become the authority. An accountant asks AI whether a deduction is allowed, likes the confident answer, and puts it straight on the return without checking the actual rule. Now a machine has effectively taken a tax position, and a credentialed human is supposed to own that. AI can help you understand and draft, but the professional must verify against the real authority and stand behind the position. The same goes for audit opinions and regulatory filings: AI assists, the licensed human decides.
-
-The fifth is treating AI output as the record. Someone asks AI to total a set of figures, likes the number, and pastes it into a report as final. AI can make arithmetic and citation errors that look completely confident. The official number has to come from, and be verified against, the real system of record, every time. AI sits beside your ledger. It never becomes your ledger.
-
-The thread through all five is the same. The convenience feels small and the rule feels abstract, right up until it does not. Knowing the line in advance, and holding it even when you are rushed, is the entire skill.
 
 ## fill_blank
 
@@ -80,6 +138,50 @@ The thread through all five is the same. The convenience feels small and the rul
     {"id":"2","accept":["system of record","record","source of truth","official record"],"ideal":"system of record"}
   ],
   "explanation": "The breach occurs on input, the moment protected data is transmitted to a third party, so deleting the chat afterward does not help. And AI output is never authoritative: the system of record is the verified, approved place where the real numbers live."
+}
+```
+
+## reading
+
+The third is mistaking partial redaction for safety. Marcus removes the client's name from the tax return but leaves the SSN, the account balances, and the employer. Stripping one identifier while leaving others is not anonymization. Account numbers, SSNs, and specific financial details can re-identify a person on their own. If you cannot fully separate the data from the individual, treat the whole thing as off-limits and work on the abstract shape instead.
+
+The fourth is letting AI quietly become the authority. An accountant asks AI whether a deduction is allowed, likes the confident answer, and puts it straight on the return without checking the actual rule. Now a machine has effectively taken a tax position, and a credentialed human is supposed to own that. AI can help you understand and draft, but the professional must verify against the real authority and stand behind the position. The same goes for audit opinions and regulatory filings: AI assists, the licensed human decides.
+
+The fifth is treating AI output as the record. Someone asks AI to total a set of figures, likes the number, and pastes it into a report as final. AI can make arithmetic and citation errors that look completely confident. The official number has to come from, and be verified against, the real system of record, every time. AI sits beside your ledger. It never becomes your ledger.
+
+The thread through all five is the same. The convenience feels small and the rule feels abstract, right up until it does not. Knowing the line in advance, and holding it even when you are rushed, is the entire skill.
+
+## multiple_choice
+
+```json
+{
+  "stem": "An accountant removes a client's name from a tax return but leaves the SSN, account balances, and employer before pasting it into a public AI tool. Why is this still a breach?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It is fine, because removing the name fully anonymizes the document.",
+      "is_correct": false,
+      "explanation": "Stripping one identifier while leaving others is not anonymization. The remaining details still point straight back to the individual."
+    },
+    {
+      "id": "b",
+      "label": "Account numbers, SSNs, and specific financial details can re-identify a person on their own, so partial redaction does not make the data safe to paste.",
+      "is_correct": true,
+      "explanation": "Correct. If you cannot fully separate the data from the individual, treat the whole thing as off-limits and work on the abstract shape of the problem instead."
+    },
+    {
+      "id": "c",
+      "label": "It is a breach only if the AI provider later trains on the data.",
+      "is_correct": false,
+      "explanation": "The breach happens on input, the instant the protected data is transmitted to a third party, regardless of any later training decision."
+    },
+    {
+      "id": "d",
+      "label": "It is safe as long as the accountant deletes the chat afterward.",
+      "is_correct": false,
+      "explanation": "Cleanup does not undo a leak. The data was already sent and processed, so the only safe move is to never put the protected details in to begin with."
+    }
+  ]
 }
 ```
 

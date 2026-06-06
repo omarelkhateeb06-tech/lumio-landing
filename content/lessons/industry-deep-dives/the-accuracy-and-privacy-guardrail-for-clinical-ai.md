@@ -20,6 +20,42 @@ Large language models do not look anything up. They do not have a live connectio
 
 The failure mode has a name: hallucination. A model produces a confident, fluent, specific, wrong answer. The problem is not that the model gives obviously garbled output. The problem is that it gives output that looks exactly like a correct answer. A nurse who asks an AI for the maximum daily dose of metformin for a patient with mild renal impairment may get a specific number stated with clinical authority. That number might be right. It might also be significantly higher than what current guidelines recommend for that patient's GFR range, presented with identical tone and formatting. Nothing in the output signals the error.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, why is a hallucination especially dangerous in a clinical context, compared to obviously garbled output?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the model refuses to answer clinical questions, leaving the clinician without any information.",
+      "is_correct": false,
+      "explanation": "The danger described is the opposite. The model does answer, fluently and confidently. A refusal would at least signal that something is missing."
+    },
+    {
+      "id": "b",
+      "label": "Because the output looks exactly like a correct answer, stated with clinical authority, so nothing in it signals the error.",
+      "is_correct": true,
+      "explanation": "Correct. The segment stresses that the problem is not garbled output but fluent, specific, confident output that is wrong. A plausible metformin dose for the wrong GFR range looks identical to a correct one."
+    },
+    {
+      "id": "c",
+      "label": "Because the model is querying a live drug database that is frequently out of date.",
+      "is_correct": false,
+      "explanation": "The segment is explicit that the model has no live connection to a drug database or formulary. It predicts plausible text rather than looking anything up."
+    },
+    {
+      "id": "d",
+      "label": "Because the output is always formatted differently from a real reference, which confuses the reader.",
+      "is_correct": false,
+      "explanation": "The opposite is described: the wrong answer is presented with identical tone and formatting to a correct one, which is what makes it hard to catch."
+    }
+  ]
+}
+```
+
+## reading
+
 **Rule 1: AI is a drafting tool, never a clinical reference**
 
 The line is not complicated, but it needs to be a firm habit. Use AI to organize your notes, rephrase complex language for a patient education handout, draft a shift summary, or structure a care coordination email. Do not use it as the source for any clinical fact, because it cannot reliably be that source.
@@ -33,20 +69,6 @@ A medical assistant working on prior authorization paperwork uses an AI tool to 
 A nurse preparing for a patient education session asks an AI about a drug-drug interaction between two medications a patient is taking. The AI says there is no significant interaction and briefly explains the mechanisms. The nurse, pressed for time, moves on. The interaction is real, documented in UpToDate and the facility's clinical pharmacology database, and clinically significant. The AI was wrong and had no way to signal that it was wrong.
 
 In all three cases, the problem is not that AI was used. The problem is that AI output was treated as a clinical reference. The rule is: any clinical fact in AI output, including a dose, an interaction, a guideline recommendation, a contraindication, or a monitoring parameter, is a question to verify, not an answer to trust. Verification means checking against your approved drug reference, your organization's clinical protocols, or consulting with pharmacy or a supervising clinician.
-
-**Rule 2: Patient identifiers never go into an unapproved tool**
-
-Names, dates of birth, medical record numbers, room numbers paired with diagnosis details, insurance IDs, dates of service, anything that identifies a specific patient is protected health information under HIPAA. Pasting a sentence that includes a patient name and diagnosis into a consumer AI chatbot is a potential HIPAA violation. Pasting a full chart excerpt into an app on your personal phone that has not been reviewed and approved by your organization's compliance or IT security team is a potential HIPAA violation, regardless of how helpful the app appears or how convenient it would be.
-
-This matters because consumer AI tools, including the major chatbots most people have heard of, are not approved business associates under HIPAA unless your organization has a signed BAA with that vendor and has specifically authorized the tool for clinical use. The two safe paths are clear. First, de-identify thoroughly before using any AI tool: use "a 68-year-old male patient" instead of the patient's name and MRN, describe the clinical situation without identifiers, and ask your question in a way that would not allow anyone reading it to identify the specific patient. Second, use only tools your organization has formally approved for handling PHI, and follow your organization's specific guidance on how to use them.
-
-When in doubt, do not paste it. That is not overcaution. That is the rule.
-
-**A check before you hit enter**
-
-Before you submit any prompt to any AI tool, ask yourself one question: would I be comfortable if this exact text appeared on a screen at the nurses' station, or in a compliance audit next quarter? If patient-identifiable information is in the prompt, the answer is no. If you are about to let an AI-generated clinical fact go to a patient without verifying it, the answer is no. Fix it first, then submit.
-
-These two rules are not restrictions on what AI can do for you. They are the conditions that make everything else in this track safe to use. Every lesson in this track assumes you are applying both of them. Starting now, you are.
 
 ## multiple_choice
 
@@ -84,6 +106,56 @@ These two rules are not restrictions on what AI can do for you. They are the con
 
 ## reading
 
+**Rule 2: Patient identifiers never go into an unapproved tool**
+
+Names, dates of birth, medical record numbers, room numbers paired with diagnosis details, insurance IDs, dates of service, anything that identifies a specific patient is protected health information under HIPAA. Pasting a sentence that includes a patient name and diagnosis into a consumer AI chatbot is a potential HIPAA violation. Pasting a full chart excerpt into an app on your personal phone that has not been reviewed and approved by your organization's compliance or IT security team is a potential HIPAA violation, regardless of how helpful the app appears or how convenient it would be.
+
+This matters because consumer AI tools, including the major chatbots most people have heard of, are not approved business associates under HIPAA unless your organization has a signed BAA with that vendor and has specifically authorized the tool for clinical use. The two safe paths are clear. First, de-identify thoroughly before using any AI tool: use "a 68-year-old male patient" instead of the patient's name and MRN, describe the clinical situation without identifiers, and ask your question in a way that would not allow anyone reading it to identify the specific patient. Second, use only tools your organization has formally approved for handling PHI, and follow your organization's specific guidance on how to use them.
+
+When in doubt, do not paste it. That is not overcaution. That is the rule.
+
+**A check before you hit enter**
+
+Before you submit any prompt to any AI tool, ask yourself one question: would I be comfortable if this exact text appeared on a screen at the nurses' station, or in a compliance audit next quarter? If patient-identifiable information is in the prompt, the answer is no. If you are about to let an AI-generated clinical fact go to a patient without verifying it, the answer is no. Fix it first, then submit.
+
+These two rules are not restrictions on what AI can do for you. They are the conditions that make everything else in this track safe to use. Every lesson in this track assumes you are applying both of them. Starting now, you are.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Under Rule 2, when is it acceptable to paste a sentence containing a patient's name and diagnosis into a major consumer AI chatbot?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Whenever the chatbot is one of the well-known major tools, since those are generally considered trustworthy.",
+      "is_correct": false,
+      "explanation": "The segment specifically names the major chatbots as tools that are not approved business associates by default. Being well-known does not make a tool HIPAA-compliant for PHI."
+    },
+    {
+      "id": "b",
+      "label": "Whenever the task is convenient and the app appears helpful on your personal phone.",
+      "is_correct": false,
+      "explanation": "The segment states a personal phone app that has not been reviewed and approved is a potential HIPAA violation regardless of how helpful or convenient it appears."
+    },
+    {
+      "id": "c",
+      "label": "Only if your organization has a signed BAA with that vendor and has specifically authorized the tool for clinical use.",
+      "is_correct": true,
+      "explanation": "Correct. The segment says consumer tools are not approved business associates unless your organization has a signed BAA and has specifically authorized the tool. Otherwise the safe path is to de-identify or use a formally approved tool."
+    },
+    {
+      "id": "d",
+      "label": "Any time, as long as you delete the chat history immediately afterward.",
+      "is_correct": false,
+      "explanation": "Deleting history does not change the fact that PHI was sent to an unapproved tool. The exposure has already occurred, and the rule is when in doubt, do not paste it."
+    }
+  ]
+}
+```
+
+## reading
+
 **Common mistakes: what actually goes wrong**
 
 The two rules are simple. The mistakes happen in predictable patterns, and knowing them in advance is the best way to avoid them.
@@ -95,6 +167,42 @@ Most clinicians who have worked through a pharmacy reference know what a reasona
 **Mistake 2: Asking AI to double-check its own clinical claim**
 
 This one feels logical in the moment: if the model gave you a dose, ask it whether that dose is correct. The problem is that language models are not verifying against an external database when they answer. They are predicting what a confident, correct-sounding response looks like. The same process that produced the original answer will produce a confirmation of that answer. You may get a response like "yes, 25 mg twice daily is the standard dose for this indication" when the answer was wrong to begin with. Verification has to happen outside the model, against your approved drug reference, your organization's protocol, or a clinical pharmacist.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Mistake 1 warns against trusting a fluent dose because it sounds right. Which situation best illustrates a dose that is within a plausible range but still wrong?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The AI refuses to give a dose and tells you to consult pharmacy.",
+      "is_correct": false,
+      "explanation": "That is not the mistake being described. A refusal sends you to a verified source. Mistake 1 is about confidently stated doses that look reasonable but do not fit the patient."
+    },
+    {
+      "id": "b",
+      "label": "The AI returns a string of garbled numbers that obviously cannot be a real dose.",
+      "is_correct": false,
+      "explanation": "Obviously garbled output is easy to catch. The danger in Mistake 1 is a number that falls inside the expected range and reads as plausible, so the brain moves on."
+    },
+    {
+      "id": "c",
+      "label": "The AI asks you a clarifying question about the patient before answering.",
+      "is_correct": false,
+      "explanation": "A clarifying question is not the failure mode here. Mistake 1 is about a plausible-looking dose stated with clinical language that does not match the patient's situation."
+    },
+    {
+      "id": "d",
+      "label": "The AI gives a standard adult dose when your patient has renal impairment, so the number looks normal but is wrong for this patient.",
+      "is_correct": true,
+      "explanation": "Correct. The segment lists exactly this: a standard adult dose for a patient with renal impairment is within a plausible range yet wrong for the situation. That is why the rule is to verify all doses, not only the ones that seem off."
+    }
+  ]
+}
+```
+
+## reading
 
 **Mistake 3: Assuming de-identification is done when it is not**
 

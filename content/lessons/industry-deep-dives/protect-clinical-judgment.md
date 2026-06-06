@@ -22,6 +22,42 @@ Here is what that looks like in practice. A 68-year-old woman with a documented 
 
 If you had opened with "Here is her chart, what is most likely going on?", the tool would have answered. It might even have said heart failure exacerbation, which in this case would be correct. But you would have confirmed your thinking against the AI's output rather than the other way around. Over time, that inversion is the problem.
 
+## multiple_choice
+
+```json
+{
+  "stem": "According to this section, what is the correct order of operations when using AI on a patient you are evaluating?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Ask AI what is most likely going on, then confirm your own thinking against its answer.",
+      "is_correct": false,
+      "explanation": "This is the inversion the section warns against. Confirming your thinking against the AI's output hands over the one thing you cannot delegate, even when the AI happens to be right."
+    },
+    {
+      "id": "b",
+      "label": "Reach your own clinical impression first, then ask AI to help you write it up clearly.",
+      "is_correct": true,
+      "explanation": "Correct. Think first, draft second. You form the impression from your training and examination, and AI helps you say it precisely. The order matters more than anything else in this lesson."
+    },
+    {
+      "id": "c",
+      "label": "Let AI and your own judgment run in parallel and pick whichever conclusion sounds more confident.",
+      "is_correct": false,
+      "explanation": "A fluent, confident AI answer is exactly what subtly shapes your thinking before you have done your own. Confidence is not a tiebreaker. Your assessment comes first, on its own."
+    },
+    {
+      "id": "d",
+      "label": "Skip your own impression for routine cases and reserve independent reasoning for complex ones.",
+      "is_correct": false,
+      "explanation": "The section treats forming your own assessment first as the non-negotiable order every time, not a step you drop on cases that look routine. Routine-looking cases are where anchoring slips in unnoticed."
+    }
+  ]
+}
+```
+
+## reading
+
 **Treat every AI suggestion as a question, not a conclusion.**
 
 When a summary says "patient likely stable" or an output hints toward a particular diagnosis, that is not a finding. It is a fluent guess from a tool that cannot examine anyone, cannot hear a lung, and cannot notice that the patient looks more tired than her chart suggests. Let it prompt you to check something, never to skip checking. The right internal response to any AI clinical claim is: "Is that actually true?" Then you go confirm it the way you always would.
@@ -33,14 +69,6 @@ Consider a different scenario. A clinical coordinator is preparing for a post-di
 A well-written AI summary of a 30-page chart is genuinely useful. It saves you time orienting to a new patient. But it flattens nuance by design. The offhand comment in a nurse's note, the trend you would have spotted across three visits, the detail that does not fit the otherwise tidy picture: these are exactly what a summary smooths over. Use the summary to find your way into the chart faster. Then look at the source for anything that will drive a care decision.
 
 Here is the specific pattern to watch for. You pull up a chart on a patient you have not seen in two months. The AI summary says "no significant changes, chronic conditions managed, follow-up as needed." You are about to go into the room. But if you had scanned the actual visit notes, you would have seen that at the last two visits the patient mentioned fatigue and that her primary care provider had ordered labs that came back showing a mild but trending-down hemoglobin. Each visit note mentioned it briefly. The AI summary averaged those mentions into "managed." The trend was real. The summary erased it. You cannot examine a summary. You examine a patient, and you need your full attention when you walk in.
-
-**The deskilling trap is real, and it is gradual.**
-
-Skills you stop using fade. This is not a character flaw. It is physiology and learning science. If you regularly hand your clinical reasoning to an AI tool, your own reasoning gets slower and rustier, precisely in the cases where it matters most: the patient who does not fit the pattern, the situation the AI has not been trained to flag, the subtle shift in presentation that only your trained eye would catch.
-
-The way to avoid this is not to avoid AI. It is to keep reasoning first, every time, as a non-negotiable step before the tool is involved. Protect the practice the same way you protect any clinical skill: by using it. AI should carry the clerical load so you have more attention available for the thinking. The moment it starts replacing the thinking, the benefit has inverted.
-
-The core principle of this entire healthcare track lands right here. AI handles the language around care. You handle the care. A tool that drafts your words, organizes your documentation, and saves you from repetitive tasks is a genuine asset. A tool you let reason for you is a liability with your name, your license, and your patient's safety attached.
 
 ## multiple_choice
 
@@ -78,6 +106,50 @@ The core principle of this entire healthcare track lands right here. AI handles 
 
 ## reading
 
+**The deskilling trap is real, and it is gradual.**
+
+Skills you stop using fade. This is not a character flaw. It is physiology and learning science. If you regularly hand your clinical reasoning to an AI tool, your own reasoning gets slower and rustier, precisely in the cases where it matters most: the patient who does not fit the pattern, the situation the AI has not been trained to flag, the subtle shift in presentation that only your trained eye would catch.
+
+The way to avoid this is not to avoid AI. It is to keep reasoning first, every time, as a non-negotiable step before the tool is involved. Protect the practice the same way you protect any clinical skill: by using it. AI should carry the clerical load so you have more attention available for the thinking. The moment it starts replacing the thinking, the benefit has inverted.
+
+The core principle of this entire healthcare track lands right here. AI handles the language around care. You handle the care. A tool that drafts your words, organizes your documentation, and saves you from repetitive tasks is a genuine asset. A tool you let reason for you is a liability with your name, your license, and your patient's safety attached.
+
+## multiple_choice
+
+```json
+{
+  "stem": "This section calls deskilling 'real, and gradual.' Based on it, what is the recommended way to protect your clinical reasoning?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Limit AI to your most complex cases, where rusty reasoning would be most dangerous.",
+      "is_correct": false,
+      "explanation": "The complex, off-pattern cases are exactly where your reasoning must be sharpest, so leaning on AI there is the worst place to do it. The section keeps reasoning first across the board, not just on routine work."
+    },
+    {
+      "id": "b",
+      "label": "Avoid AI tools altogether so your reasoning never has the chance to fade.",
+      "is_correct": false,
+      "explanation": "The section is explicit that the way to avoid deskilling is not to avoid AI. The tool should carry the clerical load so you have more attention for the thinking."
+    },
+    {
+      "id": "c",
+      "label": "Let AI handle the reasoning on busy days and reason unaided only when you have time.",
+      "is_correct": false,
+      "explanation": "Handing the reasoning to AI on busy days is precisely the repeated delegation that makes the skill fade. Reasoning first is described as a non-negotiable step, not a time-permitting one."
+    },
+    {
+      "id": "d",
+      "label": "Keep reasoning first every time as a non-negotiable step, letting AI carry the clerical load while you keep doing the thinking.",
+      "is_correct": true,
+      "explanation": "Correct. You protect the practice by using it: reasoning stays first every time, and AI carries the clerical load so you have more attention for the thinking. The moment it replaces the thinking, the benefit has inverted."
+    }
+  ]
+}
+```
+
+## reading
+
 The principle sounds clear enough: form your own assessment first. But in practice, several specific patterns trip up even experienced clinicians. Knowing them by name helps you catch yourself.
 
 **Asking AI "what is going on with this patient" before forming your own impression.**
@@ -91,6 +163,42 @@ Many clinicians report doing this on busy days, especially for patients they hav
 **Letting AI framing anchor your assessment.**
 
 This one is subtler. You read the AI summary first, and it uses a particular frame: maybe it emphasizes cardiac history in a way that primes you to think cardiac even when respiratory is the better fit. You do your own assessment, but the AI's framing has already shaped what you notice. The countermeasure is sequence: read the patient and form your impression before you read any AI output about that patient. The summary should follow your assessment, not precede it.
+
+## multiple_choice
+
+```json
+{
+  "stem": "A clinician reads an AI summary that emphasizes a patient's cardiac history, and afterward finds herself leaning toward a cardiac explanation even though respiratory may fit better. Which named pattern is this, and what is the countermeasure?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Confusing documentation quality with reasoning quality; the fix is to write a more structured note.",
+      "is_correct": false,
+      "explanation": "That pattern is about mistaking a polished note for sound reasoning, which is not what is happening here. The issue here is that the AI's framing shaped what she noticed before she formed her own impression."
+    },
+    {
+      "id": "b",
+      "label": "Letting AI framing anchor your assessment; the countermeasure is sequence, forming your own impression before you read any AI output.",
+      "is_correct": true,
+      "explanation": "Correct. Reading the AI summary first lets its frame prime what you notice. The countermeasure named here is sequence: read the patient and form your impression first, so the summary follows your assessment rather than preceding it."
+    },
+    {
+      "id": "c",
+      "label": "Gradual deskilling from never reasoning unaided; the fix is intentional unassisted practice.",
+      "is_correct": false,
+      "explanation": "Deskilling is the slow erosion of skill over months from repeated delegation. Here the clinician did reason on her own, but the AI's framing had already anchored what she noticed. The relevant fix is sequence, not unassisted practice."
+    },
+    {
+      "id": "d",
+      "label": "Trusting a clean summary and skipping the source notes; the fix is to always open the source chart.",
+      "is_correct": false,
+      "explanation": "That pattern is about skipping verification of the source. Here she did her own assessment but was anchored by the AI's frame, so the precise countermeasure is the order in which she reads, not whether she opens the source."
+    }
+  ]
+}
+```
+
+## reading
 
 **Gradual deskilling from never reasoning unaided.**
 

@@ -24,36 +24,6 @@ Here is the prompt you will use:
 
 That final instruction is not boilerplate. It is the guardrail that separates a useful handoff tool from a liability. More on that in the next section.
 
-**Clinical example 1: Post-op hip patient with a blood pressure trend**
-
-Consider a 72-year-old woman, post-operative day one from a left hip ORIF for a femoral neck fracture. Her baseline systolic runs around 130. At 1400 her BP was 108/64. At 1600 it dropped to 96/58. She received 500 mL of normal saline at 1500. You notified the surgeon at 1630 and got an order for repeat labs at 1800. The patient is alert but says she feels dizzy when she sits up.
-
-Your working notes look like this: "72F, L hip ORIF POD1, BP trending down, 108 at 2, 96 at 4, got fluid, told surgeon, labs ordered, dizzy with positioning, family at bedside."
-
-You paste those notes with the prompt above. The tool structures: Situation as a post-op hip patient with a hypotensive trend on POD1, Background covering the ORIF and the saline bolus, Assessment noting ongoing hypotension despite fluid, Recommendation flagging the 1800 labs and orthostatic precautions.
-
-What you get is not a finished handoff. It is a first draft you now read critically. You confirm the times are right, the interventions match what actually happened, and nothing has been added that you did not state. Then you use it.
-
-**Clinical example 2: A medication change mid-shift with a communication gap**
-
-A 58-year-old man admitted for COPD exacerbation has been on scheduled albuterol nebulizers every four hours. At 1100 the hospitalist discontinued the scheduled nebs and changed him to PRN based on improved breath sounds. The change happened in the EMR but you are not certain the respiratory therapist who covered during your lunch break was notified. The patient also has a new SpO2 order to titrate supplemental oxygen to keep sats between 88 and 92.
-
-Your rough notes: "58M COPD exacer, albuterol changed from scheduled to PRN at 1100, RT may not know, new O2 titration order 88-92, breath sounds improved, no distress."
-
-After running that through the prompt, the SBAR Recommendation section will flag: confirm RT is aware of the schedule change, hold scheduled nebs, respond to O2 sat per new titration parameters. The structure surfaces a communication gap you noted but that can easily get compressed or lost in a verbal handoff when the unit is busy.
-
-**Clinical example 3: A declining elderly patient whose family needs to be part of the plan**
-
-An 84-year-old man, admitted for a UTI with altered mental status, has not returned to his baseline cognition after 48 hours of IV antibiotics. His daughter, who is his healthcare proxy, is at the bedside and expressed concern this morning that "he does not seem like himself." He had a fall attempt overnight at 0200 caught by staff. The care team discussed goals of care briefly at rounds but no formal family meeting has been documented.
-
-Your rough notes: "84M, UTI with AMS, day 2 abx, still confused, not back to baseline, daughter proxy concerned, fall attempt 0200, GOC not formally documented."
-
-The tool structures that into a Recommendation that names three discrete items: document the goals of care conversation or initiate a formal meeting, fall precautions are in place but a bed alarm review is warranted, and follow up with the team on whether a delirium consult has been considered. Nothing in that output was invented. All of it came from what you wrote. But now it is organized so the oncoming nurse has a clear action list instead of a vague worry.
-
-**The one non-negotiable before you run any of this**
-
-Do not paste your patient's full name, date of birth, medical record number, or any combination of details that would identify them into a consumer AI product such as a public chatbot, a free web tool, or any application your organization has not specifically approved for use with protected health information. That is a HIPAA violation regardless of how useful the output is. Use initials, a room number, or the word "the patient." If your organization has licensed a healthcare-specific AI tool with a business associate agreement, follow its guidelines for what identifiers are permissible. When in doubt, de-identify first.
-
 ## multiple_choice
 
 ```json
@@ -90,6 +60,95 @@ Do not paste your patient's full name, date of birth, medical record number, or 
 
 ## reading
 
+**Clinical example 1: Post-op hip patient with a blood pressure trend**
+
+Consider a 72-year-old woman, post-operative day one from a left hip ORIF for a femoral neck fracture. Her baseline systolic runs around 130. At 1400 her BP was 108/64. At 1600 it dropped to 96/58. She received 500 mL of normal saline at 1500. You notified the surgeon at 1630 and got an order for repeat labs at 1800. The patient is alert but says she feels dizzy when she sits up.
+
+Your working notes look like this: "72F, L hip ORIF POD1, BP trending down, 108 at 2, 96 at 4, got fluid, told surgeon, labs ordered, dizzy with positioning, family at bedside."
+
+You paste those notes with the prompt above. The tool structures: Situation as a post-op hip patient with a hypotensive trend on POD1, Background covering the ORIF and the saline bolus, Assessment noting ongoing hypotension despite fluid, Recommendation flagging the 1800 labs and orthostatic precautions.
+
+What you get is not a finished handoff. It is a first draft you now read critically. You confirm the times are right, the interventions match what actually happened, and nothing has been added that you did not state. Then you use it.
+
+**Clinical example 2: A medication change mid-shift with a communication gap**
+
+A 58-year-old man admitted for COPD exacerbation has been on scheduled albuterol nebulizers every four hours. At 1100 the hospitalist discontinued the scheduled nebs and changed him to PRN based on improved breath sounds. The change happened in the EMR but you are not certain the respiratory therapist who covered during your lunch break was notified. The patient also has a new SpO2 order to titrate supplemental oxygen to keep sats between 88 and 92.
+
+Your rough notes: "58M COPD exacer, albuterol changed from scheduled to PRN at 1100, RT may not know, new O2 titration order 88-92, breath sounds improved, no distress."
+
+After running that through the prompt, the SBAR Recommendation section will flag: confirm RT is aware of the schedule change, hold scheduled nebs, respond to O2 sat per new titration parameters. The structure surfaces a communication gap you noted but that can easily get compressed or lost in a verbal handoff when the unit is busy.
+
+## fill_blank
+
+```json
+{
+  "template": "In Clinical example 1, the post-op hip patient's blood pressure dropped from 108/64 at 1400 to {{1}} at 1600, and she received 500 mL of {{2}} at 1500.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["96/58", "96 over 58"],
+      "ideal": "96/58"
+    },
+    {
+      "id": "2",
+      "accept": ["normal saline", "saline", "NS", "0.9% saline"],
+      "ideal": "normal saline"
+    }
+  ],
+  "explanation": "The example gives a BP trend of 108/64 at 1400 falling to 96/58 at 1600, with a 500 mL normal saline bolus at 1500. These are the precise values the nurse paraphrases into the notes, and they are exactly the kind of specifics the SBAR draft must match against the original notes."
+}
+```
+
+## reading
+
+**Clinical example 3: A declining elderly patient whose family needs to be part of the plan**
+
+An 84-year-old man, admitted for a UTI with altered mental status, has not returned to his baseline cognition after 48 hours of IV antibiotics. His daughter, who is his healthcare proxy, is at the bedside and expressed concern this morning that "he does not seem like himself." He had a fall attempt overnight at 0200 caught by staff. The care team discussed goals of care briefly at rounds but no formal family meeting has been documented.
+
+Your rough notes: "84M, UTI with AMS, day 2 abx, still confused, not back to baseline, daughter proxy concerned, fall attempt 0200, GOC not formally documented."
+
+The tool structures that into a Recommendation that names three discrete items: document the goals of care conversation or initiate a formal meeting, fall precautions are in place but a bed alarm review is warranted, and follow up with the team on whether a delirium consult has been considered. Nothing in that output was invented. All of it came from what you wrote. But now it is organized so the oncoming nurse has a clear action list instead of a vague worry.
+
+**The one non-negotiable before you run any of this**
+
+Do not paste your patient's full name, date of birth, medical record number, or any combination of details that would identify them into a consumer AI product such as a public chatbot, a free web tool, or any application your organization has not specifically approved for use with protected health information. That is a HIPAA violation regardless of how useful the output is. Use initials, a room number, or the word "the patient." If your organization has licensed a healthcare-specific AI tool with a business associate agreement, follow its guidelines for what identifiers are permissible. When in doubt, de-identify first.
+
+## multiple_choice
+
+```json
+{
+  "stem": "In Clinical example 3, the 84-year-old man with a UTI and altered mental status had a fall attempt overnight and his daughter (his proxy) is concerned, but no formal family meeting is documented. Why does the AI organize these into a Recommendation action list rather than the nurse simply relying on a verbal mention?",
+  "options": [
+    {
+      "id": "a",
+      "label": "The AI adds clinical detail the nurse forgot, such as ordering a delirium consult on its own initiative.",
+      "is_correct": false,
+      "explanation": "The lesson is explicit that nothing in the output was invented and all of it came from what the nurse wrote. The tool does not add orders or initiate consults on its own."
+    },
+    {
+      "id": "b",
+      "label": "A structured action list turns a vague worry into discrete, named items the oncoming nurse can act on, surfacing things that get glossed over in a busy verbal handoff.",
+      "is_correct": true,
+      "explanation": "Correct. The example shows the tool organizing the nurse's own notes into three discrete items so the oncoming nurse has a clear action list instead of a vague worry. The structure is the value; the clinical content stays the nurse's."
+    },
+    {
+      "id": "c",
+      "label": "The AI replaces the nurse's clinical judgment so the next shift does not have to think about goals of care.",
+      "is_correct": false,
+      "explanation": "The tool brings structure, not judgment. The goals-of-care conversation and any delirium workup remain clinical decisions for the team, not something the format decides."
+    },
+    {
+      "id": "d",
+      "label": "A written list is required documentation that replaces the family meeting note in the chart.",
+      "is_correct": false,
+      "explanation": "The output is a communication aid, not a charted note. It even flags that the goals-of-care conversation still needs to be documented; it does not substitute for that documentation."
+    }
+  ]
+}
+```
+
+## reading
+
 **Common mistakes healthcare workers make when using AI for SBAR handoffs**
 
 Nurses and coordinators who start using AI for handoffs make a predictable set of errors. They come from habits built around other tools: copy-pasting from the EMR, trusting printed reports, relying on colleagues to fill gaps. AI does not work like any of those things, and the mistakes that transfer are worth naming directly.
@@ -105,20 +164,6 @@ What to do instead: strip identifiers before you paste. Replace the name with "t
 This is the highest-stakes mistake because it travels through the handoff invisibly. You paste notes mentioning a BP trend, and the AI output includes a creatinine value or medication dose that sounds right for the diagnosis but was never in your notes. Without a read-back, that invented detail reaches the next nurse as if it happened.
 
 Most nurses who make this mistake are not skimming carelessly. The AI output is well-formatted, so a plausible-looking lab value scans as real. The fix is a two-part habit: use the explicit constraint phrase in your prompt, and do a read-back where you tick each item against your actual notes. If you cannot find where it came from, it does not go in.
-
-**Mistake 3: Sending the draft without reading it back**
-
-The value of AI-assisted SBAR is a clean draft faster than you could write it yourself. The risk is that the draft becomes the final product without clinical review. The AI does not know that the BP you mentioned was from a positional check, not a resting measurement. It does not know that the family concern you noted was about discharge planning, not about acuity. Context is yours. The tool only has what you typed.
-
-Before any AI-drafted SBAR leaves your hands, read it back against your actual patient knowledge. One pass, thirty seconds. If a line does not match what you know, fix it or cut it.
-
-**Mistake 4: Using vague language in the input and expecting precise output**
-
-"BP a little low" and "patient seemed off" are shorthand that works in verbal handoffs between colleagues who share context. They do not give the AI enough to work with, and the output will be vague or, worse, will fill gaps with specifics that sound right but were never observed. Put in the number. Put in the time. Put in the specific behavior you noticed. Specificity is what makes an SBAR actionable.
-
-**Mistake 5: Assuming the AI-generated SBAR constitutes documentation**
-
-The handoff tool produces a communication aid, not a charted note. Do not copy the AI output into the EMR as your nursing note or shift summary without reviewing and editing it to reflect your actual clinical assessment. AI-generated text entered into the record without review is not an accurate representation of your clinical judgment, and an audit will treat it as if it is.
 
 ## multiple_choice
 
@@ -149,6 +194,56 @@ The handoff tool produces a communication aid, not a charted note. Do not copy t
       "label": "The tool may time out on long inputs, causing her to lose the work.",
       "is_correct": false,
       "explanation": "Technical reliability is not the issue. This is a privacy violation that exists whether or not the tool performs flawlessly."
+    }
+  ]
+}
+```
+
+## reading
+
+**Mistake 3: Sending the draft without reading it back**
+
+The value of AI-assisted SBAR is a clean draft faster than you could write it yourself. The risk is that the draft becomes the final product without clinical review. The AI does not know that the BP you mentioned was from a positional check, not a resting measurement. It does not know that the family concern you noted was about discharge planning, not about acuity. Context is yours. The tool only has what you typed.
+
+Before any AI-drafted SBAR leaves your hands, read it back against your actual patient knowledge. One pass, thirty seconds. If a line does not match what you know, fix it or cut it.
+
+**Mistake 4: Using vague language in the input and expecting precise output**
+
+"BP a little low" and "patient seemed off" are shorthand that works in verbal handoffs between colleagues who share context. They do not give the AI enough to work with, and the output will be vague or, worse, will fill gaps with specifics that sound right but were never observed. Put in the number. Put in the time. Put in the specific behavior you noticed. Specificity is what makes an SBAR actionable.
+
+**Mistake 5: Assuming the AI-generated SBAR constitutes documentation**
+
+The handoff tool produces a communication aid, not a charted note. Do not copy the AI output into the EMR as your nursing note or shift summary without reviewing and editing it to reflect your actual clinical assessment. AI-generated text entered into the record without review is not an accurate representation of your clinical judgment, and an audit will treat it as if it is.
+
+## multiple_choice
+
+```json
+{
+  "stem": "A nurse mentioned a blood pressure in her notes that she took as a positional (orthostatic) check. The AI-drafted SBAR presents it as a resting measurement. Which mistake does this illustrate, and what is the safeguard?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Mistake 4, vague input. The fix is to always paste the full chart note including identifiers so the tool has complete context.",
+      "is_correct": false,
+      "explanation": "Pasting identifiers would be a HIPAA violation, and the issue here is not that the input was too vague to parse. The tool simply lacks the context that the reading was positional."
+    },
+    {
+      "id": "b",
+      "label": "Mistake 3, sending the draft without reading it back. The safeguard is a thirty-second read-back against your own patient knowledge, fixing or cutting any line that does not match.",
+      "is_correct": true,
+      "explanation": "Correct. The lesson uses this exact scenario: the AI does not know the BP came from a positional check rather than a resting measurement, because context is yours and the tool only has what you typed. A read-back before the draft leaves your hands catches it."
+    },
+    {
+      "id": "c",
+      "label": "Mistake 5, treating the SBAR as documentation. The safeguard is to chart the AI output directly so the record is complete.",
+      "is_correct": false,
+      "explanation": "Charting the AI output without review is itself the mistake the lesson warns against. The problem here is an unreviewed mismatch, and copying it into the record would make things worse, not better."
+    },
+    {
+      "id": "d",
+      "label": "Mistake 2, trusting fabricated vitals. The safeguard is the constraint phrase, which would have prevented the tool from misreading the value.",
+      "is_correct": false,
+      "explanation": "The value was not fabricated; the nurse did provide it. The constraint phrase stops invented details, but it cannot supply context the nurse never typed. The fix is the read-back, which is Mistake 3."
     }
   ]
 }

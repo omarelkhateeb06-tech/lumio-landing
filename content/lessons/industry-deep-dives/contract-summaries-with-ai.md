@@ -16,6 +16,42 @@ Reading contracts is slow work, and the parts that matter are buried in dense la
 
 The single most important move is this: work from the real pasted text, never from the AI's memory. If you type "summarize a standard NDA for me," the AI has no document in front of it, so it invents plausible terms. It will confidently describe a two-year confidentiality period, a mutual non-disclosure structure, and a carve-out for publicly available information, and none of that may match the NDA actually sitting on your desk. The output reads beautifully and describes a contract that does not exist. The danger is that an invented summary looks identical to an accurate one, so there is no warning sign on the page telling you it is wrong. That is why you always paste the actual contract or clause first, then ask for the summary you need from that text and nothing else. The text on the page is the only thing the AI should be summarizing.
 
+## multiple_choice
+
+```json
+{
+  "stem": "You ask an AI to 'summarize a standard NDA for me' without pasting any document. Why is this risky?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It will refuse to answer because no document was provided.",
+      "is_correct": false,
+      "explanation": "It will not refuse. With no document in front of it, the AI happily generates a plausible-sounding summary, which is exactly the problem."
+    },
+    {
+      "id": "b",
+      "label": "The summary will be too short to be useful.",
+      "is_correct": false,
+      "explanation": "Length is not the issue. The output often reads beautifully and at full length, while describing a contract that does not exist."
+    },
+    {
+      "id": "c",
+      "label": "With no real document in front of it, the AI invents plausible terms, and an invented summary looks identical to an accurate one with no warning sign that it is wrong.",
+      "is_correct": true,
+      "explanation": "Correct. The danger is that the invented summary reads just like an accurate one, so you always paste the actual contract or clause first."
+    },
+    {
+      "id": "d",
+      "label": "The AI will always describe a two-year confidentiality period regardless of input.",
+      "is_correct": false,
+      "explanation": "The two-year period was just one example of an invented term. The real point is that any invented detail may not match the NDA on your desk."
+    }
+  ]
+}
+```
+
+## reading
+
 Once the real text is in front of the AI, name the specific terms you care about. Do not ask for a vague overall summary. Tell it exactly what to pull. For a service agreement, you might write: "From the agreement below, summarize the termination terms, the payment schedule, the liability cap, the indemnification obligations, and any auto-renewal clause." Naming the terms focuses the output on what drives risk and money, instead of giving you a polite paragraph about the parties and the recitals that you did not need. The terms worth naming are almost always the same handful: how the contract ends, who pays what and when, how much each side can be on the hook for, who covers whom if something goes wrong, and whether the thing renews on its own. When you name them up front, the AI stops summarizing the boilerplate and starts summarizing the substance.
 
 Ask for plain English a client could understand. A line like "explain each of these in plain language a non-lawyer client could read without a dictionary" turns dense legalese into something you can drop into a client email or a memo. This matters because translating contract language is a real part of the job, and a clear summary saves you from writing one from scratch.
@@ -23,16 +59,6 @@ Ask for plain English a client could understand. A line like "explain each of th
 Ask the AI to flag and quote, not to advise. The right instruction is: "Flag anything unusual or one-sided compared to a typical agreement of this type, and quote the exact clause for each thing you flag, but do not give legal advice." This keeps the AI doing what it is good at, which is surfacing places to look, while the legal judgment stays with you. Asking for the exact quote also makes your verification instant, because the AI shows you the source language right next to its flag.
 
 Request a scannable format. A labeled bullet list or a table, with one row per term, makes the summary easy to read and easy to check against the document. "Format as a table with columns for the term, the plain-language summary, and the exact quoted clause" gives you something you can scan in seconds.
-
-Here is how this plays out on real documents. Take a commercial lease. You paste the full lease text and ask for the rent and escalation terms, the termination conditions, and any auto-renewal clause, formatted as a labeled list with quoted clauses. The AI shows you a three percent annual escalation, a sixty-day termination notice requirement, and an auto-renewal that triggers unless the tenant gives ninety days written notice. Now you know exactly where to look in the document to confirm each one.
-
-Take a service agreement between a marketing vendor and a client. You name the payment schedule, the liability cap, and the indemnification clause. The AI flags that the liability cap is set at one month of fees, which is unusually low, and quotes the exact sentence. That flag, with its quote, points you straight to a term worth negotiating.
-
-Take an NDA a new hire is being asked to sign. You paste it and ask for the confidentiality period, the definition of confidential information, and any non-solicitation language. The AI flags a five-year confidentiality term and a non-solicit clause buried in the definitions section, and quotes both. You would have found these eventually, but the summary got you there in two minutes instead of twenty. In each of these three cases the AI did the same job: it read the text you gave it, pulled the terms you named, put them in plain language, and pointed you to the exact clauses with quotes you can confirm.
-
-A full prompt that ties all of this together looks like this: "Here is the agreement: [paste text]. Using only this text, summarize the termination, payment schedule, liability cap, indemnification, and auto-renewal terms in plain language a client could understand. Format as a table with columns for the term, the summary, and the exact quoted clause. Flag anything unusual or one-sided for that type of agreement, but do not give legal advice." That one prompt covers the real text, the named terms, the plain English, the scannable format, and the flag-and-quote instruction at once.
-
-Used this way, AI turns hours of dense reading into a focused review where you spend your attention on the clauses that actually need it.
 
 ## multiple_choice
 
@@ -70,17 +96,57 @@ Used this way, AI turns hours of dense reading into a focused review where you s
 
 ## reading
 
+Here is how this plays out on real documents. Take a commercial lease. You paste the full lease text and ask for the rent and escalation terms, the termination conditions, and any auto-renewal clause, formatted as a labeled list with quoted clauses. The AI shows you a three percent annual escalation, a sixty-day termination notice requirement, and an auto-renewal that triggers unless the tenant gives ninety days written notice. Now you know exactly where to look in the document to confirm each one.
+
+Take a service agreement between a marketing vendor and a client. You name the payment schedule, the liability cap, and the indemnification clause. The AI flags that the liability cap is set at one month of fees, which is unusually low, and quotes the exact sentence. That flag, with its quote, points you straight to a term worth negotiating.
+
+Take an NDA a new hire is being asked to sign. You paste it and ask for the confidentiality period, the definition of confidential information, and any non-solicitation language. The AI flags a five-year confidentiality term and a non-solicit clause buried in the definitions section, and quotes both. You would have found these eventually, but the summary got you there in two minutes instead of twenty. In each of these three cases the AI did the same job: it read the text you gave it, pulled the terms you named, put them in plain language, and pointed you to the exact clauses with quotes you can confirm.
+
+A full prompt that ties all of this together looks like this: "Here is the agreement: [paste text]. Using only this text, summarize the termination, payment schedule, liability cap, indemnification, and auto-renewal terms in plain language a client could understand. Format as a table with columns for the term, the summary, and the exact quoted clause. Flag anything unusual or one-sided for that type of agreement, but do not give legal advice." That one prompt covers the real text, the named terms, the plain English, the scannable format, and the flag-and-quote instruction at once.
+
+Used this way, AI turns hours of dense reading into a focused review where you spend your attention on the clauses that actually need it.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Across the commercial lease, the service agreement, and the NDA examples, what job did the AI do the same way each time?",
+  "options": [
+    {
+      "id": "a",
+      "label": "It read the text you gave it, pulled the terms you named, put them in plain language, and pointed you to the exact clauses with quotes you can confirm.",
+      "is_correct": true,
+      "explanation": "Correct. In all three cases the AI worked from the pasted text, summarized the named terms in plain language, and quoted the exact clauses so you can verify them fast."
+    },
+    {
+      "id": "b",
+      "label": "It decided which contract terms were legally enforceable and advised whether to sign.",
+      "is_correct": false,
+      "explanation": "The AI flags and quotes rather than advising. Deciding enforceability or whether to sign stays with the human, not the model."
+    },
+    {
+      "id": "c",
+      "label": "It summarized each agreement from its general knowledge of that contract type.",
+      "is_correct": false,
+      "explanation": "In every example you paste the real text first. Summarizing from general knowledge is exactly the invented-terms trap the lesson warns against."
+    },
+    {
+      "id": "d",
+      "label": "It replaced your review entirely so you did not need to open the documents.",
+      "is_correct": false,
+      "explanation": "The summary points you to where to look so you can confirm each term in the document. It speeds the review, it does not replace reading the source."
+    }
+  ]
+}
+```
+
+## reading
+
 The fastest way to get burned by an AI contract summary is to trust it without checking each term against the actual clause. The classic failure is a flipped negation. The AI summarizes a clause as "the tenant may terminate with thirty days notice," but the lease actually says the tenant "shall not terminate" within the first year. A single dropped "not" inverts the legal meaning, and the summary reads just as smoothly either way. In a contract, "shall" and "shall not" are the difference between an obligation and a prohibition, so you check the source clause every time before you rely on the summary.
 
 A second mistake is a confidentiality breach. Pasting a privileged or confidential contract into a public AI tool can expose client information and waive privilege. Before any document goes into a tool, confirm it is approved for that use, or genericize the text by stripping party names, dollar figures, and identifying details first. Many firms have specific rules here, and a convenient summary is not worth a privilege problem.
 
 A third mistake is asking the AI to summarize a contract from memory. If you reference "the Acme master services agreement" without pasting it, the AI does not have it and will invent terms that sound right. Always paste the text you want summarized.
-
-A fourth mistake is accepting "usually right" on the details that carry the most risk: numbers, dates, and negations. An AI summary that gets a liability cap off by a zero, a notice period off by thirty days, or a renewal date off by a month is worse than no summary, because it reads with full confidence. These are exactly the items you verify character by character against the document.
-
-A fifth mistake is re-summarizing until two outputs agree and treating that agreement as proof. Two AI summaries can both make the same misread and confirm each other, especially on a tricky negation or a poorly worded clause. The authority is never another summary. The authority is the clause in the contract, so verification means reading the source text, not comparing AI outputs against each other. If you find yourself asking the AI "are you sure?" three times, stop and open the document instead.
-
-The pattern across all five is the same. The summary is a fast way to find the clauses that matter, and the contract itself is the only thing you trust for what those clauses say.
 
 ## fill_blank
 
@@ -92,6 +158,48 @@ The pattern across all five is the same. The summary is a fast way to find the c
     {"id": "2", "accept": ["privileged", "confidential", "sensitive", "protected"], "ideal": "privileged"}
   ],
   "explanation": "Verification means reading the actual clause, because the AI can invert a negation without the summary looking wrong. And privileged or confidential documents must never go into a public tool, since that can expose client information and waive privilege."
+}
+```
+
+## reading
+
+A fourth mistake is accepting "usually right" on the details that carry the most risk: numbers, dates, and negations. An AI summary that gets a liability cap off by a zero, a notice period off by thirty days, or a renewal date off by a month is worse than no summary, because it reads with full confidence. These are exactly the items you verify character by character against the document.
+
+A fifth mistake is re-summarizing until two outputs agree and treating that agreement as proof. Two AI summaries can both make the same misread and confirm each other, especially on a tricky negation or a poorly worded clause. The authority is never another summary. The authority is the clause in the contract, so verification means reading the source text, not comparing AI outputs against each other. If you find yourself asking the AI "are you sure?" three times, stop and open the document instead.
+
+The pattern across all five is the same. The summary is a fast way to find the clauses that matter, and the contract itself is the only thing you trust for what those clauses say.
+
+## multiple_choice
+
+```json
+{
+  "stem": "You run an AI contract summary twice and both outputs report the same notice period. Why is that agreement not proof the term is correct?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because the AI is never useful for numbers or dates and should not be used on them at all.",
+      "is_correct": false,
+      "explanation": "Too far. The AI can surface where these details live; the discipline is verifying numbers, dates, and negations character by character, not abandoning the tool."
+    },
+    {
+      "id": "b",
+      "label": "Because two summaries always disagree, so matching ones must be a glitch.",
+      "is_correct": false,
+      "explanation": "Matching outputs are not a glitch. The problem is that matching does not equal correct, since both can repeat the same misread."
+    },
+    {
+      "id": "c",
+      "label": "Because the second run automatically copies the first, so they can never differ.",
+      "is_correct": false,
+      "explanation": "That is not how it works mechanically. The real issue is that two independent summaries can still share the same misread and falsely confirm each other."
+    },
+    {
+      "id": "d",
+      "label": "Because two summaries can make the same misread and confirm each other, so the authority is the clause in the contract, not another summary.",
+      "is_correct": true,
+      "explanation": "Correct. Agreement between outputs proves nothing on a tricky negation or worded clause. Verification means reading the source text, not comparing AI outputs."
+    }
+  ]
 }
 ```
 

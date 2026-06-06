@@ -16,15 +16,24 @@ You already know the painful truth about most P&L analysis: it gets produced, it
 
 Picture an FP&A analyst named Dana, prepping a board P&L review for a SaaS company. The board deck is due Thursday. Dana has the quarter close, she has the prior quarter, she has the plan, and she has about three hours. The instinct is to start writing commentary line by line. The better move is to let the model do the first pass of pattern-spotting so Dana can spend her three hours on judgment instead of formatting. The workflow has four moves, and the order matters.
 
+## multiple_choice
+
+```json
+{
+  "stem": "Why does the lesson argue that the format of most P&L analysis is the core problem?",
+  "options": [
+    {"id":"a","label":"Finance teams do not collect enough data to support a real analysis.","is_correct":false,"explanation":"The lesson says the opposite: you are not short on data, you are short on a fast way to turn it into the few things leadership needs to discuss."},
+    {"id":"b","label":"The numbers are usually wrong because they are produced under deadline pressure.","is_correct":false,"explanation":"The problem the lesson names is presentation, not accuracy. Dense tables and restated narrative, not bad arithmetic, are what get the analysis filed and forgotten."},
+    {"id":"c","label":"Dense tables and narrative that restates the numbers never surface the three or four things leadership actually needs to discuss.","is_correct":true,"explanation":"Correct. The format buries the decisions. The work is turning data into the handful of items leadership needs, which is where a careful AI workflow earns its place."}
+  ]
+}
+```
+
+## reading
+
 The first move is to anonymize and paste the actual numbers. This sounds trivial and it is the step people skip, which is why their analysis drifts into fiction. If your data is sensitive, replace company identifiers and absolute figures with placeholders or scaled values, but paste the real structure: every line item, both periods, in a clean table the model can read. The reason is simple. A model that is summarizing from a pasted statement is constrained by that statement. A model that is asked to "analyze our Q3" with no numbers will invent a plausible-sounding quarter, and plausible-sounding is the most dangerous output in finance. Paste first, always, so that every figure the model mentions can be traced straight back to a cell you can point to.
 
 The second move is to ask for a bounded, plain-language summary. Bounded is the key word. You are not asking for an essay. Dana might ask for a five-sentence summary covering the overall health signal, the two biggest contributors to the period's performance, any unusual line items, and the trend direction. The boundary forces prioritization. When a model can write as much as it wants, it writes everything, and everything is the same as nothing for a board that has eleven minutes for finance. A tight summary gives Dana a draft of the "so what" that she can then sharpen with the context only she has.
-
-The third move is variance analysis, and this is where you have to frame the request carefully. A controller named Marcus is explaining a margin swing: gross margin dropped four points quarter over quarter and the CFO will ask why. The weak version is to ask the model "why did margin drop." It does not know why. It was not in the room. So Marcus asks instead for each significant variance to come back as two or three possible explanations, a read on whether the move is likely signal or noise, and one clarifying question he should go answer. Now the output is honest about its own limits. It hands Marcus a structured set of hypotheses to test against reality rather than a confident wrong answer he might repeat to the CFO.
-
-The fourth move is decision framing, and the discipline here is to ask for questions, not recommendations. A finance manager named Priya is framing leadership decisions for the next thirty days. She asks the model for the three most important financial decisions leadership should be discussing, each phrased as a question rather than a recommendation. "Should we reallocate the unspent travel budget into demand generation before year end?" is a question Priya's leadership team is equipped to answer. "Reallocate the travel budget" is a recommendation the model has no business making, because it cannot see strategy, timing, cash position, or the conversation that happened in last week's leadership offsite. Questions invite the human judgment; recommendations pretend the judgment is already done.
-
-Hold the whole workflow together with one principle: the model surfaces patterns and frames questions, and you do every interpretation. It can see that marketing rose while revenue stayed flat. It cannot know whether that was a deliberate brand investment with a lag, a one-time event, or a genuine problem. That gap is not a flaw to engineer away. It is the line between what the tool does and what you are paid to do. Used this way, the four moves give Dana, Marcus, and Priya a faster first draft and a sharper set of questions, while every figure still traces to the real statement and every judgment still belongs to a person who understands the business.
 
 ## multiple_choice
 
@@ -41,17 +50,33 @@ Hold the whole workflow together with one principle: the model surfaces patterns
 
 ## reading
 
+The third move is variance analysis, and this is where you have to frame the request carefully. A controller named Marcus is explaining a margin swing: gross margin dropped four points quarter over quarter and the CFO will ask why. The weak version is to ask the model "why did margin drop." It does not know why. It was not in the room. So Marcus asks instead for each significant variance to come back as two or three possible explanations, a read on whether the move is likely signal or noise, and one clarifying question he should go answer. Now the output is honest about its own limits. It hands Marcus a structured set of hypotheses to test against reality rather than a confident wrong answer he might repeat to the CFO.
+
+The fourth move is decision framing, and the discipline here is to ask for questions, not recommendations. A finance manager named Priya is framing leadership decisions for the next thirty days. She asks the model for the three most important financial decisions leadership should be discussing, each phrased as a question rather than a recommendation. "Should we reallocate the unspent travel budget into demand generation before year end?" is a question Priya's leadership team is equipped to answer. "Reallocate the travel budget" is a recommendation the model has no business making, because it cannot see strategy, timing, cash position, or the conversation that happened in last week's leadership offsite. Questions invite the human judgment; recommendations pretend the judgment is already done.
+
+Hold the whole workflow together with one principle: the model surfaces patterns and frames questions, and you do every interpretation. It can see that marketing rose while revenue stayed flat. It cannot know whether that was a deliberate brand investment with a lag, a one-time event, or a genuine problem. That gap is not a flaw to engineer away. It is the line between what the tool does and what you are paid to do. Used this way, the four moves give Dana, Marcus, and Priya a faster first draft and a sharper set of questions, while every figure still traces to the real statement and every judgment still belongs to a person who understands the business.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Marcus asks the model for variance explanations and Priya asks it to frame decisions. What distinguishes a well-framed request in both moves?",
+  "options": [
+    {"id":"a","label":"The request keeps the model surfacing patterns and framing questions, leaving every interpretation and verdict to the person with company context.","is_correct":true,"explanation":"Correct. Marcus asks for possible explanations plus a clarifying question; Priya asks for decisions phrased as questions. Both keep the model inside detection and framing, never deciding."},
+    {"id":"b","label":"The request asks the model directly why margin dropped and which budget to cut, so leadership gets fast answers.","is_correct":false,"explanation":"That is the weak version. The model was not in the room and cannot see strategy or cash position, so a direct 'why' or 'which' returns a confident wrong answer."},
+    {"id":"c","label":"The request tells the model to phrase everything as recommendations so the deck reads decisively.","is_correct":false,"explanation":"Recommendations pretend the judgment is already done. The lesson's discipline is questions, not recommendations, because questions invite the human judgment the model cannot supply."},
+    {"id":"d","label":"The request asks the model to fill in any missing company context from what it already knows.","is_correct":false,"explanation":"The model has no company context to fill in. That gap is the line between what the tool does and what you are paid to do, not something to engineer away."}
+  ]
+}
+```
+
+## reading
+
 The workflow is simple, but there are a handful of ways confident users still walk it into a wall. Knowing them in advance is most of the protection.
 
 The most common failure is treating the model's framing as a finding. Marcus runs his variance pass and the model writes, "Marketing spend rose forty percent while revenue was flat, a likely inefficiency to address." The phrase "likely inefficiency" feels like a conclusion, so it is tempting to drop it straight into the deck. But the model only saw two numbers move in opposite directions. It has no idea the spend was a deliberate brand campaign with a two-quarter payback. The fix is a habit: read every model conclusion as a question to investigate, never as a verdict to repeat. Detection is the model's job. Interpretation is yours.
 
 The second failure is unbounded prompts. Ask for "a full analysis" and you get three pages that restate the table in sentences. The board does not have time for that, and neither do you on a Thursday. Bound everything: five sentences, three decisions, two to three explanations per variance. The constraint is what produces prioritization, and prioritization is the whole point.
-
-The third failure is asking the model to decide. Priya is tired and types, "Tell me whether we should cut the contractor budget." The model will answer, confidently, and its answer will be a guess wearing the costume of analysis. It cannot see cash runway, the hiring plan, or the commitment leadership made to a client last month. When you ask for a verdict, you get a fluent one, and fluency is easy to mistake for being right. Keep the model framing questions and leave the deciding to the people with context.
-
-The fourth failure is letting figures drift. Someone pastes a P&L, then asks a follow-up question, then a third, and three turns later the model is referencing a "twelve percent decline" that does not appear anywhere in the original statement. Models will paraphrase numbers and occasionally round or recombine them. Before any figure leaves your screen and enters a deck, trace it back to the actual statement. If you cannot point to the cell, the number does not ship.
-
-The last failure is forgetting to anonymize when the data is genuinely sensitive, then over-correcting by pasting nothing at all. Both extremes break the workflow. Pasting raw confidential figures into a tool you do not control is a real risk; pasting a vague description instead is how you get fiction. The middle path is to scale or mask the sensitive parts while preserving the real structure and the real relationships between line items. Get that habit right once and the rest of the workflow stays both safe and honest.
 
 ## multiple_choice
 
@@ -64,6 +89,27 @@ The last failure is forgetting to anonymize when the data is genuinely sensitive
     {"id":"c","label":"Drop the observation entirely, because models cannot read financial statements.","is_correct":false,"explanation":"Too far. Spotting that spend rose while revenue stayed flat is a legitimate, useful pattern. The limit is interpretation, not detection."},
     {"id":"d","label":"Ask the model to decide whether the spend was justified.","is_correct":false,"explanation":"It lacks company context, so its verdict would be a guess dressed as analysis. Use it to frame the question; Marcus and his team answer it."}
   ]
+}
+```
+
+## reading
+
+The third failure is asking the model to decide. Priya is tired and types, "Tell me whether we should cut the contractor budget." The model will answer, confidently, and its answer will be a guess wearing the costume of analysis. It cannot see cash runway, the hiring plan, or the commitment leadership made to a client last month. When you ask for a verdict, you get a fluent one, and fluency is easy to mistake for being right. Keep the model framing questions and leave the deciding to the people with context.
+
+The fourth failure is letting figures drift. Someone pastes a P&L, then asks a follow-up question, then a third, and three turns later the model is referencing a "twelve percent decline" that does not appear anywhere in the original statement. Models will paraphrase numbers and occasionally round or recombine them. Before any figure leaves your screen and enters a deck, trace it back to the actual statement. If you cannot point to the cell, the number does not ship.
+
+The last failure is forgetting to anonymize when the data is genuinely sensitive, then over-correcting by pasting nothing at all. Both extremes break the workflow. Pasting raw confidential figures into a tool you do not control is a real risk; pasting a vague description instead is how you get fiction. The middle path is to scale or mask the sensitive parts while preserving the real structure and the real relationships between line items. Get that habit right once and the rest of the workflow stays both safe and honest.
+
+## fill_blank
+
+```json
+{
+  "template": "If you ask the model 'tell me whether we should cut the contractor budget,' you get a verdict that is really a {{1}}, because the model cannot see cash runway or prior commitments. And before any number the model cites reaches a deck, you must {{2}} it back to the actual statement, or it does not ship.",
+  "blanks": [
+    {"id":"1","accept":["guess","guess wearing the costume of analysis","guess dressed as analysis","fluent guess"],"ideal":"guess"},
+    {"id":"2","accept":["trace","trace back","trace it"],"ideal":"trace"}
+  ],
+  "explanation": "Asking the model to decide returns a fluent guess, since it lacks the context to truly decide. And because models paraphrase and recombine figures, every number must trace back to a cell in the original statement before it enters a deck."
 }
 ```
 

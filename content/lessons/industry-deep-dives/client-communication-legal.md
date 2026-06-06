@@ -16,14 +16,6 @@ Clients live in the dark, and it scares them. They do not know what discovery me
 
 Here is the core idea, and it is the whole lesson in one sentence: template the recurring message, not the individual matter. The shape of a status update is the same whether your client is a small business in a contract dispute or a parent in a custody case. The shape of a document request is the same no matter what document you need. So you build the reusable shell once, with AI, and you fill in the confidential specifics yourself, by hand, where no outside tool can see them.
 
-Think about three messages that come up constantly. First, the status update. You ask AI, "Create a plain-language template for a client status update letter. Reassure the client, summarize where things stand in general terms, explain the next step, and set realistic expectations for timing. Mark every fill-in part with brackets like [client name] and [matter description], and use no real names or facts." What you get back is a warm, professional shell you can reuse for years. Second, the document request. A client who has never been in litigation does not know what a "responsive document" is, and a cold checklist makes them panic. Ask for a template that explains, in plain words, what you need and why, with brackets for [client name], [document list], and [deadline]. Third, the appointment confirmation, which sounds trivial until a client misses a deposition because the email was confusing. A clean confirmation template with [date], [time], [location or video link], and [what to bring] prevents real problems.
-
-Plain language is where AI earns its keep. Your clients are not lawyers, and legal vocabulary makes anxious people more anxious. One of the most useful prompts you can run is, "Rewrite this explanation of the discovery process for a client with no legal background, in a calm, clear tone, and keep it under 150 words." Imagine telling a first-time client, "Discovery is the part of the case where both sides exchange information and documents. It can feel slow, and that is normal. It does not mean anything has gone wrong." That single calm paragraph saves you three worried phone calls. You can build the same kind of plain-language explainer for what an interrogatory is, why a continuance happened, or what a settlement conference will be like. Each one of these is a small template you write once and reuse with every new client who hits that same moment of confusion, so the second time a client asks "what is a deposition," you are not starting from a blank page.
-
-Tone matters as much as clarity, and here legal work has a special trap. Legal outcomes are uncertain, so your templates must be reassuring and honest at the same time, without ever over-promising. A delay notice is the classic case. You want a template that says, in effect, "I want to keep you informed. The [hearing or filing] has been moved to [new date]. This kind of scheduling change is common and does not affect the strength of your position." Notice what it does not say. It does not say "we will win" or "this is great news." Ask AI directly, "Write a template for telling a client about an unexpected delay that is honest, calm, and does not promise any particular result." The same balance applies to a settlement update. You can reassure the client that an offer has arrived and that you are reviewing it carefully, without ever stating in the template that they should accept or that the number is good, because that judgment belongs to you and depends on facts the template can never hold.
-
-Now the two rules that protect you and your client, and these are not optional. First, never paste confidential client details into a public AI tool. Not the client's name, not the opposing party, not the settlement figure, not the diagnosis or the arrest or the dollar amount. Everything sensitive lives in a bracket, like [client name] and [matter description], and you fill it in offline or in a private, firm-approved tool. The moment a real detail goes into a free public chat box, it has left your control. Second, the legal substance is yours. AI shapes the wording of a message. What you actually tell a client about their matter, whether to counter an offer, how to characterize their odds, what their next move should be, is your professional judgment, made and verified by you. Build a small library of these templates once, and your routine communication gets faster and more consistent, while the care and judgment your clients truly value stay firmly in your hands.
-
 ## multiple_choice
 
 ```json
@@ -54,19 +46,72 @@ Now the two rules that protect you and your client, and these are not optional. 
 
 ## reading
 
+Think about three messages that come up constantly. First, the status update. You ask AI, "Create a plain-language template for a client status update letter. Reassure the client, summarize where things stand in general terms, explain the next step, and set realistic expectations for timing. Mark every fill-in part with brackets like [client name] and [matter description], and use no real names or facts." What you get back is a warm, professional shell you can reuse for years. Second, the document request. A client who has never been in litigation does not know what a "responsive document" is, and a cold checklist makes them panic. Ask for a template that explains, in plain words, what you need and why, with brackets for [client name], [document list], and [deadline]. Third, the appointment confirmation, which sounds trivial until a client misses a deposition because the email was confusing. A clean confirmation template with [date], [time], [location or video link], and [what to bring] prevents real problems.
+
+Plain language is where AI earns its keep. Your clients are not lawyers, and legal vocabulary makes anxious people more anxious. One of the most useful prompts you can run is, "Rewrite this explanation of the discovery process for a client with no legal background, in a calm, clear tone, and keep it under 150 words." Imagine telling a first-time client, "Discovery is the part of the case where both sides exchange information and documents. It can feel slow, and that is normal. It does not mean anything has gone wrong." That single calm paragraph saves you three worried phone calls. You can build the same kind of plain-language explainer for what an interrogatory is, why a continuance happened, or what a settlement conference will be like. Each one of these is a small template you write once and reuse with every new client who hits that same moment of confusion, so the second time a client asks "what is a deposition," you are not starting from a blank page.
+
+## fill_blank
+
+```json
+{
+  "template": "When clients are not lawyers, legal vocabulary makes anxious people more anxious, so a strong prompt asks AI to rewrite an explanation in a {{1}} tone. Each plain-language explainer is a small {{2}} you write once and reuse with every new client who hits the same moment of confusion.",
+  "blanks": [
+    {
+      "id": "1",
+      "accept": ["calm", "calm, clear", "clear", "calm and clear"],
+      "ideal": "calm"
+    },
+    {
+      "id": "2",
+      "accept": ["template", "reusable template", "shell"],
+      "ideal": "template"
+    }
+  ],
+  "explanation": "The segment recommends a calm, clear tone so legal vocabulary does not raise anxiety, and it frames each plain-language explainer as a template you write once and reuse with every new client."
+}
+```
+
+## reading
+
+Tone matters as much as clarity, and here legal work has a special trap. Legal outcomes are uncertain, so your templates must be reassuring and honest at the same time, without ever over-promising. A delay notice is the classic case. You want a template that says, in effect, "I want to keep you informed. The [hearing or filing] has been moved to [new date]. This kind of scheduling change is common and does not affect the strength of your position." Notice what it does not say. It does not say "we will win" or "this is great news." Ask AI directly, "Write a template for telling a client about an unexpected delay that is honest, calm, and does not promise any particular result." The same balance applies to a settlement update. You can reassure the client that an offer has arrived and that you are reviewing it carefully, without ever stating in the template that they should accept or that the number is good, because that judgment belongs to you and depends on facts the template can never hold.
+
+Now the two rules that protect you and your client, and these are not optional. First, never paste confidential client details into a public AI tool. Not the client's name, not the opposing party, not the settlement figure, not the diagnosis or the arrest or the dollar amount. Everything sensitive lives in a bracket, like [client name] and [matter description], and you fill it in offline or in a private, firm-approved tool. The moment a real detail goes into a free public chat box, it has left your control. Second, the legal substance is yours. AI shapes the wording of a message. What you actually tell a client about their matter, whether to counter an offer, how to characterize their odds, what their next move should be, is your professional judgment, made and verified by you. Build a small library of these templates once, and your routine communication gets faster and more consistent, while the care and judgment your clients truly value stay firmly in your hands.
+
+## multiple_choice
+
+```json
+{
+  "stem": "According to this segment, how should a template handle the tension between reassurance and uncertain legal outcomes?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Promise a favorable result so the client feels confident and stays calm.",
+      "is_correct": false,
+      "explanation": "Legal outcomes are uncertain, so the segment warns against over-promising. A template must never say 'we will win' or 'this is great news.'"
+    },
+    {
+      "id": "b",
+      "label": "Be reassuring and honest at the same time, reassuring the process without promising any particular result, and leave the legal substance to your own judgment.",
+      "is_correct": true,
+      "explanation": "Correct. The segment says templates must be reassuring and honest without over-promising, and that what you tell a client about their matter is your professional judgment."
+    },
+    {
+      "id": "c",
+      "label": "Avoid reassurance entirely and only state cold facts so nothing can be misread.",
+      "is_correct": false,
+      "explanation": "The segment values a warm, reassuring tone; the point is to reassure the process, not to strip out reassurance altogether."
+    }
+  ]
+}
+```
+
+## reading
+
 Knowing the right approach is not the same as avoiding the wrong one, and the wrong ones in legal work can cost a license. Here are the mistakes that show up most often.
 
 The big one is pasting a real client name, the opposing party, and a settlement figure into a public AI tool to "make the message accurate." Picture typing, "Write a status update for Maria Chen about her wrongful termination case against Acme Corp, where we received an $85,000 settlement offer." In one sentence you have disclosed a client's identity, the existence of her matter, who she is fighting, and a confidential negotiation number, all to an outside service. That is a confidentiality breach, full stop. It does not matter that you were trying to help her.
 
 The second mistake is believing you can undo it by deleting the chat. You cannot. The moment you hit send, those details left your office and reached an outside server. Deleting the conversation from your screen does not pull the data back. The disclosure already happened.
-
-The third mistake is letting the AI decide what to tell the client about their matter. AI is happy to generate advice, and it will sound confident, but it does not know your client, the judge, the jurisdiction, or the facts. Whether to counter an offer, how to describe the odds, what the next move should be, that is your call to make and verify. Use AI for the wording, never for the legal substance.
-
-The fourth mistake is subtle and very common: including just the client's name "because a name is harmless." It is not. A name tied to the existence of a legal matter is itself confidential. The fact that "Maria Chen is our client" can reveal that she is being sued, getting divorced, or under investigation. Put the name in a bracket, [client name], every time.
-
-The fifth mistake lives inside the templates themselves: over-promising in the name of reassurance. A warm tone is good, but a template that tells every client "we are confident this will resolve in your favor" is a promise you cannot keep, and it can come back to haunt the firm. Reassure the process, not the outcome. Say the delay is normal, not that the case is won. The same caution applies to timelines. A template that says "this will be resolved by next month" sets a deadline you do not control, so write "we expect the next step around [date]" instead, and let the bracket hold a date you can actually stand behind.
-
-If you notice a pattern in these mistakes, it is this: each one trades a long-term protection for a short-term convenience. Pasting real details feels faster, deleting the chat feels safe, letting the AI decide feels efficient, dropping in a name feels harmless, and promising a result feels kind. Every one of them is a shortcut that puts the client, and your standing, at risk. The slower, bracketed, judgment-stays-with-you habit is the one that keeps you out of trouble.
 
 ## multiple_choice
 
@@ -97,6 +142,44 @@ If you notice a pattern in these mistakes, it is this: each one trades a long-te
       "label": "It is fine as long as the colleague did not include the opposing party's name.",
       "is_correct": false,
       "explanation": "Omitting one detail does not cure the others. The client name and settlement figure are already enough to constitute a confidentiality breach."
+    }
+  ]
+}
+```
+
+## reading
+
+The third mistake is letting the AI decide what to tell the client about their matter. AI is happy to generate advice, and it will sound confident, but it does not know your client, the judge, the jurisdiction, or the facts. Whether to counter an offer, how to describe the odds, what the next move should be, that is your call to make and verify. Use AI for the wording, never for the legal substance.
+
+The fourth mistake is subtle and very common: including just the client's name "because a name is harmless." It is not. A name tied to the existence of a legal matter is itself confidential. The fact that "Maria Chen is our client" can reveal that she is being sued, getting divorced, or under investigation. Put the name in a bracket, [client name], every time.
+
+The fifth mistake lives inside the templates themselves: over-promising in the name of reassurance. A warm tone is good, but a template that tells every client "we are confident this will resolve in your favor" is a promise you cannot keep, and it can come back to haunt the firm. Reassure the process, not the outcome. Say the delay is normal, not that the case is won. The same caution applies to timelines. A template that says "this will be resolved by next month" sets a deadline you do not control, so write "we expect the next step around [date]" instead, and let the bracket hold a date you can actually stand behind.
+
+If you notice a pattern in these mistakes, it is this: each one trades a long-term protection for a short-term convenience. Pasting real details feels faster, deleting the chat feels safe, letting the AI decide feels efficient, dropping in a name feels harmless, and promising a result feels kind. Every one of them is a shortcut that puts the client, and your standing, at risk. The slower, bracketed, judgment-stays-with-you habit is the one that keeps you out of trouble.
+
+## multiple_choice
+
+```json
+{
+  "stem": "Why does this segment say that including just the client's name is not actually harmless?",
+  "options": [
+    {
+      "id": "a",
+      "label": "Because a name takes up space the AI could use for the actual matter details.",
+      "is_correct": false,
+      "explanation": "The concern is not space. The problem is that the name itself is confidential when tied to the existence of a legal matter."
+    },
+    {
+      "id": "b",
+      "label": "Because the AI might misspell the name and produce an inaccurate message.",
+      "is_correct": false,
+      "explanation": "Accuracy of spelling is not the issue. The segment's point is that disclosing the name is itself a confidentiality problem."
+    },
+    {
+      "id": "c",
+      "label": "Because a name tied to the existence of a legal matter is itself confidential and can reveal that the person is being sued, getting divorced, or under investigation.",
+      "is_correct": true,
+      "explanation": "Correct. The segment explains that 'Maria Chen is our client' can reveal sensitive facts, so the name belongs in a bracket every time."
     }
   ]
 }
