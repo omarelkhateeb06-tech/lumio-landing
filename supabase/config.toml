@@ -1,0 +1,7 @@
+# Supabase project configuration.
+#
+# process-boosters is invoked by a scheduled job (and manual test calls), not by
+# an end-user JWT, so JWT verification is disabled and the function guards itself
+# with the optional CRON_SECRET shared-secret header instead.
+[functions.process-boosters]
+verify_jwt = false

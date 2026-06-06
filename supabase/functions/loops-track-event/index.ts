@@ -27,6 +27,10 @@ const ALLOWED_EVENTS = new Set([
   "lesson_5_milestone",
   "lesson_15_halfway",
   "lesson_30_complete",
+  // Spaced-review nudge. Normally fired server-side by the process-boosters
+  // scheduled function (which passes lesson properties); allowlisted here too so
+  // the event is sendable through the standard client path if ever needed.
+  "booster_ready",
 ]);
 
 const CORS_HEADERS = {
@@ -56,11 +60,17 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: "Missing Authorization bearer token" }, 401);
   }
 
-  // Validate the event name first; reject anything off the allowlist.
+  // Validate the event name first; reject anything off the allowlist. Optional
+  // eventProperties (a flat string/number/bool map) ride along to Loops so an
+  // event like booster_ready can carry the lesson slug, title, and URL.
   let eventName = "";
+  let eventProperties: Record<string, unknown> | undefined;
   try {
     const body = await req.json();
     eventName = (body?.eventName ?? "").toString().trim();
+    if (body?.eventProperties && typeof body.eventProperties === "object") {
+      eventProperties = body.eventProperties as Record<string, unknown>;
+    }
   } catch {
     return jsonResponse({ error: "Invalid JSON body" }, 400);
   }
@@ -105,7 +115,7 @@ Deno.serve(async (req: Request) => {
     const res = await fetch(LOOPS_EVENT_URL, {
       method: "POST",
       headers: { Authorization: `Bearer ${loopsKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ email, eventName }),
+      body: JSON.stringify(eventProperties ? { email, eventName, eventProperties } : { email, eventName }),
     });
     if (!res.ok) {
       const text = await res.text();

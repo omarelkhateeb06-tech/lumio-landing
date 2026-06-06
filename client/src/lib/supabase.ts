@@ -294,6 +294,94 @@ export async function trackLoopsEvent(eventName: string): Promise<void> {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Booster queue — spaced review. On a lesson's FIRST completion the client
+// enqueues one booster scheduled a few days out; a scheduled Edge Function later
+// fires the 'booster_ready' Loops email, and the learner completes a short
+// review in-app (which stamps completed_at). RLS pins every row to its owner.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Days between finishing a lesson and its booster becoming due. Reviewing right
+// before the forgetting curve bites is what makes it stick.
+const BOOSTER_DELAY_DAYS = 4;
+
+export interface PendingBooster {
+  lesson_slug: string;
+  lesson_title: string;
+}
+
+// Enqueue a booster for a freshly completed lesson. Idempotent: if a booster for
+// this lesson already exists for the user (pending or done), it inserts nothing,
+// so re-completing a lesson (e.g. after an Undo) never stacks duplicates.
+// Best-effort — callers fire-and-forget; a failure must never block completion.
+export async function queueBooster(
+  lessonSlug: string,
+  lessonTitle: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated" };
+
+  // Skip if this lesson already has a booster row for the user.
+  const { data: existing } = await supabase
+    .from("booster_queue")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("lesson_slug", lessonSlug)
+    .limit(1)
+    .maybeSingle();
+  if (existing) return { ok: true };
+
+  const scheduledFor = new Date(
+    Date.now() + BOOSTER_DELAY_DAYS * 24 * 60 * 60 * 1000,
+  ).toISOString();
+  const { error } = await supabase.from("booster_queue").insert({
+    user_id: user.id,
+    lesson_slug: lessonSlug,
+    lesson_title: lessonTitle,
+    scheduled_for: scheduledFor,
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+// Boosters that are due now and not yet completed, soonest first. Drives the
+// dashboard "ready to review" card. Empty array when none (or signed out).
+export async function fetchPendingBoosters(): Promise<PendingBooster[]> {
+  const { data, error } = await supabase
+    .from("booster_queue")
+    .select("lesson_slug, lesson_title")
+    .is("completed_at", null)
+    .lte("scheduled_for", new Date().toISOString())
+    .order("scheduled_for", { ascending: true });
+  if (error || !data) return [];
+  return data as PendingBooster[];
+}
+
+// Mark the learner's most recent pending booster for a lesson as complete. Scoped
+// to the caller's own rows by RLS; updates the newest open one only.
+export async function completeBooster(
+  lessonSlug: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated" };
+  const { data: row } = await supabase
+    .from("booster_queue")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("lesson_slug", lessonSlug)
+    .is("completed_at", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!row) return { ok: true }; // nothing pending — treat as a no-op success
+  const { error } = await supabase
+    .from("booster_queue")
+    .update({ completed_at: new Date().toISOString() })
+    .eq("id", (row as { id: string }).id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
 // Returns the set of completed lesson UUIDs for the current user.
 export async function fetchCompletedLessonIds(): Promise<Set<string>> {
   const { data, error } = await supabase

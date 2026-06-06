@@ -12,6 +12,7 @@ import Signup from "./pages/app/Signup";
 import Login from "./pages/app/Login";
 import Dashboard from "./pages/app/Dashboard";
 import Lesson from "./pages/app/Lesson";
+import Booster from "./pages/app/Booster";
 import MasteryCheck from "./pages/app/MasteryCheck";
 import Onboarding from "./pages/app/Onboarding";
 import Profile from "./pages/app/Profile";
@@ -118,6 +119,9 @@ function Router() {
       </Route>
       <Route path={"/lesson/:slug"}>
         {() => <ProtectedRoute component={gated(Lesson)} />}
+      </Route>
+      <Route path={"/app/booster/:slug"}>
+        {() => <ProtectedRoute component={gated(Booster)} />}
       </Route>
       <Route path={"/check/:slug"}>
         {() => <ProtectedRoute component={gated(MasteryCheck)} />}

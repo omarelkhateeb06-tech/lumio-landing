@@ -10,9 +10,10 @@ import {
   fetchCompletedLessonIds,
   fetchActivePath,
   fetchProfileSummary,
+  fetchPendingBoosters,
   generateUserPath,
 } from "@/lib/supabase";
-import type { Curriculum, CurriculumLesson, ProfileSummary, OnboardingGoal } from "@/lib/supabase";
+import type { Curriculum, CurriculumLesson, ProfileSummary, OnboardingGoal, PendingBooster } from "@/lib/supabase";
 import {
   fetchUserStats,
   fetchBadgeDefinitions,
@@ -1094,6 +1095,62 @@ function CertifyCallout({ ready, rm }: { ready: CertDashboardCard | undefined; r
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Boosters ready — spaced-review nudges that have come due. Invisible when none.
+// A short memory check beats re-reading; reviewing at the right moment is what
+// makes a lesson stick. Card style matches the cert widget (paperHi + hairline).
+// ─────────────────────────────────────────────────────────────────────────────
+
+function BoosterCard({ boosters, rm }: { boosters: PendingBooster[]; rm: boolean }) {
+  if (boosters.length === 0) return null; // render nothing when no boosters are due
+  const multiple = boosters.length > 1;
+  return (
+    <motion.section
+      initial={rm ? false : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: dur.base, delay: 0.45, ease: ease.ink }}
+      className="mt-16 rounded-2xl p-6"
+      style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
+    >
+      <div className="text-[12px] uppercase tracking-[0.18em] mb-2" style={{ color: C.orangeInk, fontFamily: FONT_MONO }}>
+        Ready to review
+      </div>
+      <h2
+        className="font-serif"
+        style={{ color: C.espresso, fontSize: 22, fontVariationSettings: displayFV(72, DISPLAY_WEIGHT_SOFT) }}
+      >
+        Quick memory check
+      </h2>
+      <p className="mt-2 mb-5 text-sm leading-relaxed" style={{ color: C.umber, maxWidth: 560 }}>
+        {multiple
+          ? `You have ${boosters.length} lessons ready to review.`
+          : "Takes 2 minutes. Reviewing at the right moment is what makes it stick."}
+      </p>
+      <div className="grid gap-2">
+        {boosters.slice(0, 3).map((b) => (
+          <a
+            key={b.lesson_slug}
+            href={`/app/booster/${b.lesson_slug}`}
+            className={`flex items-center justify-between gap-3 px-5 py-4 rounded-2xl ${FOCUS_RING}`}
+            style={{ backgroundColor: C.surface, border: `1px solid ${C.hairline}` }}
+          >
+            <span
+              className="font-serif"
+              style={{ color: C.espresso, fontSize: 16, fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT) }}
+            >
+              {b.lesson_title}
+            </span>
+            <span className="flex items-center gap-3 flex-shrink-0">
+              <span className="text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>2 min</span>
+              <span aria-hidden="true" style={{ color: C.orangeInk }}>→</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1110,6 +1167,7 @@ export default function Dashboard() {
   const [checks, setChecks] = useState<MasteryCheckSummary[]>([]);
   const [certs, setCerts] = useState<CertDashboardCard[]>([]);
   const [profile, setProfile] = useState<ProfileSummary | null>(null);
+  const [pendingBoosters, setPendingBoosters] = useState<PendingBooster[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadFailed, setLoadFailed] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
@@ -1125,7 +1183,7 @@ export default function Dashboard() {
       // the learner on the skeleton forever. try/finally guarantees we always
       // exit the loading state, even if a read fails.
       try {
-        const [curr, done, masteredIds, userStats, badgeDefs, earnedIds, allChecks, certCards, prof] =
+        const [curr, done, masteredIds, userStats, badgeDefs, earnedIds, allChecks, certCards, prof, boosters] =
           await Promise.all([
             fetchCurriculum(),
             fetchCompletedLessonIds(),
@@ -1136,6 +1194,7 @@ export default function Dashboard() {
             fetchMasteryChecks(),
             fetchDashboardCerts(),
             fetchProfileSummary(),
+            fetchPendingBoosters(),
           ]);
         // The personalized path drives lesson ordering. If the user has none yet
         // (onboarded before rules_v1 shipped), generate it lazily, then read back.
@@ -1154,6 +1213,7 @@ export default function Dashboard() {
         setChecks(allChecks);
         setCerts(certCards);
         setProfile(prof);
+        setPendingBoosters(boosters);
         setPathOrder(path);
         if (done.size === 0 && masteredIds.size === 0 && !localStorage.getItem("lumio_welcomed")) {
           setShowWelcome(true);
@@ -1462,6 +1522,7 @@ export default function Dashboard() {
             />
             <CertifyCallout ready={readyCert} rm={rm} />
             <CertWidget certs={certs} rm={rm} calloutCertId={readyCert?.cert.id} />
+            <BoosterCard boosters={pendingBoosters} rm={rm} />
             <ModuleGrid curriculum={curriculum} completed={effectiveCompleted} checks={checks} rm={rm} />
             <IndustryDeepDives
               lessons={iddLessons}

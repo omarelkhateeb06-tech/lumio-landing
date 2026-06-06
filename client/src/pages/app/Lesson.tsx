@@ -10,6 +10,7 @@ import {
   fetchCurriculum,
   fetchLessonBySlug,
   markLessonComplete,
+  queueBooster,
   trackLoopsEvent,
   unmarkLessonComplete,
 } from "@/lib/supabase";
@@ -254,11 +255,19 @@ export default function Lesson() {
 
   async function handleMarkComplete() {
     if (!lesson) return;
+    // Capture first-completion state BEFORE we optimistically flip it below, so
+    // the booster is enqueued only the first time this lesson is finished.
+    const wasCompleted = isCompleted;
     setMarking(true);
     const res = await markLessonComplete(lesson.id);
     setMarking(false);
     if (res.ok) {
       setCompleted((prev) => new Set(prev).add(lesson.id));
+      // First completion only: enqueue a spaced-review booster a few days out.
+      // Best-effort and fire-and-forget — it must never block or undo completion.
+      if (!wasCompleted) {
+        void queueBooster(lesson.slug, lesson.title);
+      }
       // Re-read the authoritative completed count and fire any milestone the
       // learner just crossed. Best-effort and deduped: never blocks the UX.
       try {
