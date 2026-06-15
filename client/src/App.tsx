@@ -18,6 +18,7 @@ import Onboarding from "./pages/app/Onboarding";
 import Profile from "./pages/app/Profile";
 import CertOverview from "./pages/app/CertOverview";
 import CertSubmit from "./pages/app/CertSubmit";
+import Admin from "./pages/app/Admin";
 import Verify from "./pages/Verify";
 
 // Blank paper screen shown while auth/onboarding state resolves — avoids a
@@ -131,6 +132,11 @@ function Router() {
       </Route>
       <Route path={"/app/cert/:slug"}>
         {() => <ProtectedRoute component={gated(CertOverview)} />}
+      </Route>
+
+      {/* Admin — protected, email-gated inside the page itself (no onboarding gate) */}
+      <Route path={"/admin"}>
+        {() => <ProtectedRoute component={Admin} />}
       </Route>
 
       {/* Public certificate verification — intentionally outside ProtectedRoute */}
