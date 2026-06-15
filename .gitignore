@@ -123,3 +123,4 @@ supabase/.temp/
 graphify-out/
 .claude/settings.local.json
 .claude/settings.json
+.vercel
