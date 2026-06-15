@@ -40,7 +40,7 @@ export const LESSON_TIME_COPY = "a few minutes each";
 // softer "a few minutes each"; this is the exact figure for the one place that
 // states a number (First Principles MED-1).
 export const LESSON_TIME_RANGE = "5 to 15 minutes";
-export const LESSON_1_DELIVERY_COPY = "the next workday";
+export const LESSON_1_DELIVERY_COPY = "right away";
 
 export interface Cert {
   id: string;

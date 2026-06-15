@@ -299,7 +299,7 @@ function ModuleGrid({
       {/* "All lessons", not "Your progress": progress is anchored to the active
           certificate up top. This section is the full library to browse, so it
           shouldn't compete for the headline-progress framing (First Principles). */}
-      <div className="flex items-center justify-between gap-3 mb-6">
+      <div className={`flex items-center justify-between gap-3 ${showAll ? "mb-6" : ""}`}>
         <h2
           className="font-serif"
           style={{
@@ -631,7 +631,7 @@ function IndustryDeepDives({
       initial={rm ? false : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: dur.base, delay: 0.6, ease: ease.ink }}
-      className="mt-16"
+      className="mt-8"
     >
       {/* Secondary section: lighter than the two "earning" headings (Certificates,
           Your progress) so the resting screen has one clear spine, not four equal
