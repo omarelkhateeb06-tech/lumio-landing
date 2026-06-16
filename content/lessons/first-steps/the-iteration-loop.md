@@ -1,7 +1,7 @@
 ---
 slug: the-iteration-loop
 module: first-steps
-title: "Getting Better Answers: The Iteration Loop"
+title: "The Iteration Loop: Improving One Answer"
 level: beginner
 minutes: 15
 order: 9

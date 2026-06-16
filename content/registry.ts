@@ -29,15 +29,18 @@ export interface TagDef {
 }
 
 // Ordered — array position is the module's order_index.
+// Note: slugs are stable identifiers (lessons + cert seeds reference them) and
+// must not change; only titles and order are tuned here. "Working well with AI"
+// sits at position 3 so safety/judgment precedes the applied modules.
 export const MODULES: ModuleDef[] = [
   { slug: "foundations", title: "Foundations" },
   { slug: "first-steps", title: "First Steps" },
+  { slug: "working-well-with-ai", title: "Working well with AI" },
   { slug: "everyday-work", title: "Everyday work" },
   { slug: "creation", title: "Creation" },
   { slug: "business-workflows", title: "Business workflows" },
-  { slug: "working-well-with-ai", title: "Working well with AI" },
-  { slug: "industry-deep-dives", title: "Industry deep dives" },
-  { slug: "building-with-ai", title: "Building with AI" },
+  { slug: "industry-deep-dives", title: "AI in Your Role" },
+  { slug: "building-with-ai", title: "AI Workflows: Going Further" },
   { slug: "responsibility-and-judgment", title: "Responsibility & judgment" },
 ];
 

@@ -1,7 +1,7 @@
 ---
 slug: ai-and-your-privacy
 module: working-well-with-ai
-title: "AI and Your Privacy: What to Share and What Not To"
+title: "AI and Your Privacy: Where Your Data Goes"
 level: growing
 minutes: 6
 order: 1

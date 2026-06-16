@@ -4,7 +4,7 @@ module: industry-deep-dives
 title: "Protecting Your Clinical Judgment"
 level: confident
 minutes: 15
-order: 17
+order: 18
 hook: AI can draft your notes and summarize a chart, but the moment it starts nudging what you think is wrong with the patient, it has crossed a line. This lesson keeps the tool on the right side of it.
 key_takeaway: Use AI to handle the words around care, never the clinical reasoning itself. Form your own assessment first, treat any AI suggestion as a prompt to think rather than an answer, and never let a fluent summary quietly replace your own read of the patient.
 tags: [healthcare, hallucinations, fundamentals]

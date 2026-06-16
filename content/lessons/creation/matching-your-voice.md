@@ -1,7 +1,7 @@
 ---
 slug: matching-your-voice
 module: creation
-title: "Getting AI to Write in Your Voice"
+title: "Prompting AI to Write in Your Voice"
 level: growing
 minutes: 7
 order: 7

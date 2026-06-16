@@ -1,7 +1,7 @@
 ---
 slug: prompt-chaining
 module: building-with-ai
-title: "Prompt Chaining: Connecting AI Steps"
+title: "Prompt Chaining: Linking Steps Into a Workflow"
 level: confident
 minutes: 7
 order: 6

@@ -1,7 +1,7 @@
 ---
 slug: the-brainstorming-loop-getting-past-version-1
 module: creation
-title: The brainstorming loop: getting past version 1
+title: "The Brainstorming Loop: Generating Many Options"
 level: growing
 minutes: 7
 order: 2

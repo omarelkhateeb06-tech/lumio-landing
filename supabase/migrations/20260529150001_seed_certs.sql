@@ -16,7 +16,7 @@ values
     'Beginner AI Practitioner',
     'beginner',
     null,
-    'The core certificate for using AI well in everyday knowledge work. Work through the Foundations and Everyday Work lessons, submit a hands-on capstone, and earn a verifiable credential.',
+    'By the end of this track, you''ll be able to fold AI into your everyday work, drafting, summarizing, planning, and checking its output, with the judgment to know when to trust it and when not to. The core certificate for using AI well in everyday knowledge work. Work through the Foundations and Everyday Work lessons, submit a hands-on capstone, and earn a verifiable credential.',
     4900,
     true,
     $json$[
@@ -37,7 +37,7 @@ values
     'Healthcare AI Practitioner',
     'beginner',
     'healthcare',
-    'An industry certificate for clinicians and healthcare staff. Build on the AI foundations, then apply them to handoffs, documentation, and patient communication. Submit a clinical capstone to earn a verifiable credential.',
+    'By the end of this track, you''ll be able to use AI to cut documentation and admin time, draft clear patient-facing communication, and brief it safely, without putting protected health information at risk. An industry certificate for clinicians and healthcare staff. Build on the AI foundations, then apply them to handoffs, documentation, and patient communication. Submit a clinical capstone to earn a verifiable credential.',
     4900,
     true,
     $json$[

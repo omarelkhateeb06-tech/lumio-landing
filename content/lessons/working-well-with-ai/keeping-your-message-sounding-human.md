@@ -1,7 +1,7 @@
 ---
 slug: keeping-your-message-sounding-human
 module: working-well-with-ai
-title: "Keeping Your Message Sounding Human"
+title: "Editing AI Output to Sound Like You"
 level: growing
 minutes: 6
 order: 10

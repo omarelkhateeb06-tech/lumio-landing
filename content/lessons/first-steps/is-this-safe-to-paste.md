@@ -1,7 +1,7 @@
 ---
 slug: is-this-safe-to-paste
 module: first-steps
-title: "Is This Safe to Paste?"
+title: "Is This Safe to Paste? The 10-Second Check"
 level: beginner
 minutes: 15
 order: 11

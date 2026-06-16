@@ -22,7 +22,7 @@ values
     'Education AI Practitioner',
     'beginner',
     'education',
-    'An industry certificate for K-12 teachers, administrators, and curriculum designers. Build on the AI foundations, then apply them to lesson planning, feedback, differentiated materials, family communication, and assessment, while setting honest classroom expectations. Submit an education capstone to earn a verifiable credential.',
+    'By the end of this track, you''ll be able to use AI to build lesson plans, materials, and rubrics, differentiate for a range of learners, and turn slow prep into minutes, with a clear line on academic honesty. An industry certificate for K-12 teachers, administrators, and curriculum designers. Build on the AI foundations, then apply them to lesson planning, feedback, differentiated materials, family communication, and assessment, while setting honest classroom expectations. Submit an education capstone to earn a verifiable credential.',
     4900,
     true,
     $json$[
@@ -104,7 +104,7 @@ values
     'Finance AI Practitioner',
     'beginner',
     'finance',
-    'An industry certificate for accountants, CFOs, financial analysts, and finance staff. Build on the AI foundations, then apply them to verifying figures, drafting financial narratives, staying compliant, first-pass research, and spotting AI-enabled fraud. Submit a finance capstone to earn a verifiable credential.',
+    'By the end of this track, you''ll be able to use AI to draft analyses, explain numbers in plain language, and speed up recurring reporting, while verifying every figure so nothing unchecked goes out the door. An industry certificate for accountants, CFOs, financial analysts, and finance staff. Build on the AI foundations, then apply them to verifying figures, drafting financial narratives, staying compliant, first-pass research, and spotting AI-enabled fraud. Submit a finance capstone to earn a verifiable credential.',
     4900,
     true,
     $json$[
@@ -150,8 +150,8 @@ with cert as (
 approved(position, slug) as (
   values
     (0, 'the-verification-rule-every-number-needs-a-source'),
-    (1, 'drafting-financial-narratives-and-board-reports'),
-    (2, 'compliance-first-what-ai-cant-touch'),
+    (1, 'compliance-first-what-ai-cant-touch'),
+    (2, 'drafting-financial-narratives-and-board-reports'),
     (3, 'first-pass-market-and-competitive-research'),
     (4, 'spotting-ai-enabled-fraud-in-your-processes'),
     (5, 'ai-in-finance-quick-p-l-analysis')
@@ -186,7 +186,7 @@ values
     'HR AI Practitioner',
     'beginner',
     'hr',
-    'An industry certificate for HR managers, recruiters, and HR business partners. Build on the AI foundations, then apply them to job descriptions, fair screening, AI use policies, performance reviews, high-volume hiring, and employee communication. Submit an HR capstone to earn a verifiable credential.',
+    'By the end of this track, you''ll be able to use AI to write job posts, screening questions, and policy and employee communications, with the fairness and confidentiality guardrails the work demands. An industry certificate for HR managers, recruiters, and HR business partners. Build on the AI foundations, then apply them to job descriptions, fair screening, AI use policies, performance reviews, high-volume hiring, and employee communication. Submit an HR capstone to earn a verifiable credential.',
     4900,
     true,
     $json$[
@@ -268,7 +268,7 @@ values
     'Customer Service AI Practitioner',
     'beginner',
     'customer-service',
-    'An industry certificate for support agents, CS managers, and support staff. Build on the AI foundations, then apply them to empathetic responses, template libraries, de-escalation, quality monitoring, escalation handoffs, and self-review. Submit a customer service capstone to earn a verifiable credential.',
+    'By the end of this track, you''ll be able to use AI to draft fast, on-brand replies, defuse difficult messages, and turn repeat questions into reusable templates, while knowing when a human has to step in. An industry certificate for support agents, CS managers, and support staff. Build on the AI foundations, then apply them to empathetic responses, template libraries, de-escalation, quality monitoring, escalation handoffs, and self-review. Submit a customer service capstone to earn a verifiable credential.',
     4900,
     true,
     $json$[

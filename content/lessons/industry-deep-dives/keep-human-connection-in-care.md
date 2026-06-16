@@ -4,7 +4,7 @@ module: industry-deep-dives
 title: "Keeping the Human Connection in Care"
 level: growing
 minutes: 15
-order: 18
+order: 17
 hook: AI can write the patient message in seconds, but a message that sounds like a form letter can do more harm than no message at all. This lesson keeps the warmth in when the tool does the typing.
 key_takeaway: Let AI carry the clerical load so you have more time and attention for patients, but always add the human layer it cannot: the specific detail, the genuine reassurance, and a final read in your own voice before anything reaches a patient or family.
 tags: [healthcare, customer-comms, writing]

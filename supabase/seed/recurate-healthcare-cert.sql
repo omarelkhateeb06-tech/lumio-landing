@@ -25,8 +25,8 @@ approved(position, slug) as (
     (6, 'turn-rough-encounter-notes-into-clean-documentation'),
     (7, 'explain-it-in-plain-language-patient-communication'),
     (8, 'the-accuracy-and-privacy-guardrail-for-clinical-ai'),
-    (9, 'protect-clinical-judgment'),
-    (10, 'keep-human-connection-in-care')
+    (9, 'keep-human-connection-in-care'),
+    (10, 'protect-clinical-judgment')
 )
 insert into cert_lessons (cert_id, lesson_id, position, is_required)
 select cert.id, l.id, a.position, true

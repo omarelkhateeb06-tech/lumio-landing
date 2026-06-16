@@ -18,7 +18,7 @@ values
     'Legal AI Practitioner',
     'beginner',
     'legal',
-    'An industry certificate for lawyers, paralegals, and legal staff. Build on the AI foundations, then apply them to contract summaries, research, client communication, and document review, all while protecting confidentiality. Submit a legal capstone to earn a verifiable credential.',
+    'By the end of this track, you''ll be able to use AI to summarize and compare documents, draft routine correspondence and clauses, and pressure-test wording, while catching the fabricated citations and confident errors before they reach a client. An industry certificate for lawyers, paralegals, and legal staff. Build on the AI foundations, then apply them to contract summaries, research, client communication, and document review, all while protecting confidentiality. Submit a legal capstone to earn a verifiable credential.',
     4900,
     true,
     $json$[
