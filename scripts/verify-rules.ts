@@ -171,8 +171,8 @@ function verifyPersona(name: string, profile: RecProfile, lessons: RecLesson[], 
 
 const lessons = await loadLessons();
 console.log(`Loaded ${lessons.length} published lessons from the DB.`);
-if (lessons.length !== 101) {
-  console.log(`\x1b[33m⚠ expected 101 published lessons, got ${lessons.length} — seed may not be fully applied.\x1b[0m`);
+if (lessons.length !== 126) {
+  console.log(`\x1b[33m⚠ expected 126 published lessons, got ${lessons.length} — seed may not be fully applied.\x1b[0m`);
 }
 
 const personas: Array<{ name: string; profile: RecProfile; exclude?: Set<string> }> = [

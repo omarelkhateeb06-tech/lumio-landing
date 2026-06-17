@@ -577,46 +577,46 @@ function DarkPromptRunner() {
 // ──────────────────────────────────────────────────────────────────────────────
 const CURRICULUM = [
   { module: "I. Foundations", lessons: [
-    { n: "01", title: "When to use ChatGPT vs. Google", min: 5, level: "BEG" },
-    { n: "02", title: "Spot when AI is making things up", min: 5, level: "BEG" },
-    { n: "03", title: "The 3-step framing technique", min: 7, level: "BEG" },
-    { n: "04", title: "Stop writing prompts (start writing briefs)", min: 6, level: "BEG" },
-    { n: "05", title: "Set up AI once so it remembers how you work", min: 8, level: "BEG" },
+    { n: "01", title: "You're Not Behind (and It's Not Cheating)", min: 5, level: "BEG" },
+    { n: "02", title: "What AI Actually Is (and Isn't)", min: 6, level: "BEG" },
+    { n: "03", title: "Which AI Tool, and Is It Online?", min: 6, level: "BEG" },
+    { n: "04", title: "The AI Tool Landscape: Which One Does What", min: 9, level: "BEG" },
+    { n: "05", title: "When to use ChatGPT vs. Google", min: 15, level: "BEG" },
   ]},
-  { module: "II. Everyday work", lessons: [
-    { n: "06", title: "The 5-minute meeting debrief protocol", min: 5, level: "BEG" },
-    { n: "07", title: "Inbox triage: auto-drafting responses", min: 6, level: "BEG" },
-    { n: "08", title: "Writing better briefs for external teams", min: 7, level: "BEG" },
-    { n: "09", title: "Calendar audits: where did your week go?", min: 5, level: "BEG" },
-    { n: "10", title: "The Slack summary rule", min: 5, level: "BEG" },
+  { module: "II. First Steps", lessons: [
+    { n: "06", title: "Your First Five Minutes (and Your First Win)", min: 5, level: "BEG" },
+    { n: "07", title: "Free vs Paid: What You Actually Need", min: 5, level: "BEG" },
+    { n: "08", title: "The 3-step framing technique", min: 15, level: "BEG" },
+    { n: "09", title: "Stop writing prompts (start writing briefs)", min: 15, level: "BEG" },
+    { n: "10", title: "What's a Good Job for AI?", min: 6, level: "BEG" },
   ]},
-  { module: "III. Creation", lessons: [
-    { n: "11", title: "Structural editing: rewrite without losing voice", min: 8, level: "INT" },
-    { n: "12", title: "The brainstorming loop: getting past version 1", min: 7, level: "INT" },
-    { n: "13", title: "Make a great image from a sentence", min: 9, level: "INT" },
-    { n: "14", title: "Synthesizing research: 30 PDFs into 1 page", min: 10, level: "INT" },
-    { n: "15", title: "The outline method for long-form content", min: 8, level: "INT" },
+  { module: "III. Working well with AI", lessons: [
+    { n: "11", title: "Fact-Checking AI: A Practical Method", min: 7, level: "INT" },
+    { n: "12", title: "AI and Your Privacy: Where Your Data Goes", min: 6, level: "INT" },
+    { n: "13", title: "Trust Calibration: Knowing When to Believe AI", min: 7, level: "INT" },
+    { n: "14", title: "Catching the Subtle Errors AI Slips In", min: 7, level: "ADV" },
+    { n: "15", title: "Verifying AI at Scale Without Burning Out", min: 8, level: "ADV" },
   ]},
-  { module: "IV. Business workflows", lessons: [
-    { n: "16", title: "Automating lead research", min: 9, level: "INT" },
-    { n: "17", title: "Turn a screen recording into a step-by-step guide", min: 8, level: "INT" },
-    { n: "18", title: "Data cleaning for the spreadsheet-phobic", min: 10, level: "INT" },
-    { n: "19", title: "Build your own AI helper that knows your company", min: 12, level: "INT" },
-    { n: "20", title: "Competitor tracking on autopilot", min: 11, level: "INT" },
+  { module: "IV. Everyday work", lessons: [
+    { n: "16", title: "The 5-minute meeting debrief protocol", min: 5, level: "BEG" },
+    { n: "17", title: "Inbox triage: auto-drafting responses", min: 6, level: "BEG" },
+    { n: "18", title: "Writing better briefs for external teams", min: 7, level: "BEG" },
+    { n: "19", title: "The Slack summary rule", min: 5, level: "BEG" },
+    { n: "20", title: "Summarizing Long Documents in Seconds", min: 15, level: "BEG" },
   ]},
-  { module: "V. Industry deep dives", lessons: [
-    { n: "21", title: "AI in Product Management: spec writing", min: 8, level: "ADV" },
-    { n: "22", title: "AI in Marketing: campaign drafting", min: 8, level: "ADV" },
-    { n: "23", title: "AI in Design: copy-fitting and UX writing", min: 9, level: "ADV" },
-    { n: "24", title: "AI in Operations: process mapping", min: 10, level: "ADV" },
-    { n: "25", title: "AI in Finance: quick P&L analysis", min: 10, level: "ADV" },
+  { module: "V. Creation", lessons: [
+    { n: "21", title: "Structural editing: rewrite without losing voice", min: 8, level: "INT" },
+    { n: "22", title: "The Brainstorming Loop: Generating Many Options", min: 7, level: "INT" },
+    { n: "23", title: "Make a great image from a sentence", min: 9, level: "INT" },
+    { n: "24", title: "Synthesizing research: 30 PDFs into 1 page", min: 10, level: "INT" },
+    { n: "25", title: "The outline method for long-form content", min: 8, level: "INT" },
   ]},
-  { module: "VI. Building with AI", lessons: [
-    { n: "26", title: "Connect AI to your other tools (no code)", min: 12, level: "ADV" },
-    { n: "27", title: "Chain AI steps to finish a whole task", min: 15, level: "ADV" },
-    { n: "28", title: "Pull data from any website without code", min: 11, level: "ADV" },
-    { n: "29", title: "Find anything you've ever saved, instantly", min: 14, level: "ADV" },
-    { n: "30", title: "The autonomous workday: what's next?", min: 12, level: "ADV" },
+  { module: "VI. Business workflows", lessons: [
+    { n: "26", title: "Automating lead research", min: 9, level: "INT" },
+    { n: "27", title: "Turn a screen recording into a step-by-step guide", min: 8, level: "INT" },
+    { n: "28", title: "Data cleaning for the spreadsheet-phobic", min: 10, level: "INT" },
+    { n: "29", title: "Build your own AI helper that knows your company", min: 12, level: "INT" },
+    { n: "30", title: "Competitor tracking on autopilot", min: 11, level: "INT" },
   ]},
 ];
 
