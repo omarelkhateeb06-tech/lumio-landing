@@ -11,13 +11,17 @@ import { dur, ease } from "@/lib/motion";
 import { BrandNav } from "@/components/marketing";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Privacy — a public, on-brand placeholder. Linked from the onboarding consent
-// step. Intentionally outside ProtectedRoute (like /verify) so anyone weighing
-// the consent checkbox can read it without an account.
+// Privacy — public, plain-language data policy. Linked from the onboarding
+// consent step and the AI tutor consent notice. Intentionally outside
+// ProtectedRoute (like /verify) so anyone weighing a consent choice can read it
+// without an account. Must exist before any AI tutor query logging goes live.
+//
+// NOTE: the deletion contact address below is a placeholder. Swap
+// privacy@lumio.so for the real support inbox before driving traffic.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// A small section heading + body block, so the placeholder reads like a real
-// policy skeleton rather than a wall of text.
+const CONTACT_EMAIL = "privacy@lumio.so"; // placeholder — replace with real inbox
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-10">
@@ -66,27 +70,6 @@ export default function Privacy() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: dur.base, ease: ease.ink }}
         >
-          {/* ──────────────────────────────────────────────────────────────────
-              PLACEHOLDER — this policy is a working draft and is NOT legal advice.
-              It is pending review by counsel before launch. Do not treat the text
-              below as final or binding.
-              ────────────────────────────────────────────────────────────────── */}
-          <div
-            className="rounded-2xl px-5 py-4 mb-10 text-sm leading-relaxed"
-            style={{
-              backgroundColor: C.orangeWash,
-              border: `1px solid ${C.orangeWashBorder}`,
-              color: C.umber,
-            }}
-            role="note"
-          >
-            <span className="font-medium" style={{ color: C.espresso }}>
-              Placeholder.
-            </span>{" "}
-            This page is a working draft pending review by counsel. The language here is not final
-            and is not a binding legal agreement yet.
-          </div>
-
           <div
             className="text-[12px] uppercase tracking-[0.18em] mb-4"
             style={{ color: C.umber, fontFamily: FONT_MONO }}
@@ -107,41 +90,83 @@ export default function Privacy() {
             How we handle your data.
           </h1>
           <p className="mt-5 text-base leading-relaxed" style={{ color: C.umber, maxWidth: 560 }}>
-            Lumio is built for working adults learning to use AI on the job. We try to collect only
-            what helps us teach you better, and to be plain about what we do with it.
+            Lumio is built for working adults learning to use AI on the job. We collect only what
+            helps us teach you better, and we try to be plain about what we do with it. No fine
+            print, no surprises.
           </p>
 
           <Section title="What we collect">
             <p>
-              The basics you give us when you sign up and onboard — your email, and the optional
-              answers you share about your role, field, and experience. We also record your learning
-              activity inside the product, like the lessons you open and complete.
+              <strong style={{ color: C.espresso }}>Account basics.</strong> Your email, and the
+              optional answers you give during onboarding about your role, field, organization, and
+              experience.
+            </p>
+            <p>
+              <strong style={{ color: C.espresso }}>Learning activity.</strong> Which lessons you
+              open, complete, and revisit, and how you move through the product. This is what lets
+              us show you the right next lesson.
+            </p>
+            <p>
+              <strong style={{ color: C.espresso }}>AI tutor questions.</strong> When you practice
+              with the in-app AI tutor, the questions you type are saved only if you have turned on
+              AI tutor data sharing. If you have not, your questions are answered in the moment and
+              not stored.
             </p>
           </Section>
 
           <Section title="How we use it">
             <p>
-              We use what we collect to personalize your lessons, run the product, and improve it
-              over time. If you opt in, we may use your learning activity to make Lumio better, and
-              may share anonymized, aggregated insights with third parties. Aggregated means
-              combined across many learners so it can't be traced back to you.
+              We use what we collect to personalize your lessons to your role and field, to run the
+              product, and to make it better over time.
+            </p>
+            <p>
+              The main reason we look at AI tutor questions is to find where learners get stuck.
+              When many people ask about the same idea, that tells us a lesson needs clearer
+              teaching. That is how the questions you ask quietly improve the curriculum for
+              everyone.
+            </p>
+          </Section>
+
+          <Section title="What we share">
+            <p>
+              We do not sell your personal information.
+            </p>
+            <p>
+              We may share anonymized, aggregate patterns with third parties such as curriculum
+              partners and research groups. Aggregate means combined across many learners, so it
+              describes a trend, not a person. We do not share raw questions tied to an individual.
+              Your specific queries stay with us. Only the broad patterns ever leave.
             </p>
           </Section>
 
           <Section title="Your choices">
             <p>
-              The data-use consent is opt-in — leaving it unchecked is always fine, and you can
-              change your mind later. The identity questions during onboarding are optional; skip
-              any you'd rather not answer.
+              AI tutor data sharing is opt-in. You can turn it on or off at any time, and leaving it
+              off is always fine. The tutor works exactly the same either way.
+            </p>
+            <p>
+              The identity questions during onboarding are optional too. Skip any you would rather
+              not answer.
             </p>
           </Section>
 
-          <Section title="Contact">
+          <Section title="Deleting your data">
             <p>
-              Questions about your data? Reach us and we'll help. This section will carry a real
-              contact route once this policy is finalized.
+              You can ask us to delete your account and the data tied to it at any time. Email{" "}
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className={`underline underline-offset-2 ${FOCUS_RING}`}
+                style={{ color: C.orangeInk }}
+              >
+                {CONTACT_EMAIL}
+              </a>{" "}
+              and we will take care of it.
             </p>
           </Section>
+
+          <p className="mt-12 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+            Last updated June 2026.
+          </p>
         </motion.div>
       </main>
     </div>
