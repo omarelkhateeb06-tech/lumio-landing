@@ -443,6 +443,39 @@ export async function saveBlockProgress(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// AI tutor consent — a single boolean on the profiles row (ai_tutor_consent).
+// Gates whether the ask-tutor Edge Function logs the learner's raw query text.
+// The client uses these to drive a one-time inline notice in the try_it_live
+// block. Best-effort and own-row scoped via RLS, mirroring the helpers above.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Whether the current user has opted in to AI tutor query logging. Defaults to
+// false on no session, no profile row, or any read failure.
+export async function fetchAiTutorConsent(): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("ai_tutor_consent")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (error || !data) return false;
+  return (data as { ai_tutor_consent: boolean | null }).ai_tutor_consent === true;
+}
+
+// Record the current user's opt-in to AI tutor query logging. Best-effort: a
+// signed-out caller or write failure is a no-op (the notice still dismisses
+// client-side; the Edge Function simply keeps not logging until this lands).
+export async function setAiTutorConsent(): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase
+    .from("profiles")
+    .update({ ai_tutor_consent: true })
+    .eq("id", user.id);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Onboarding — one profiles row per user. The quiz captures the personalization
 // signals the recommendation engine consumes (skill level + industry + goal +
 // usage). onboarding_completed_at is the gate flag: null/no-row means the user

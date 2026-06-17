@@ -150,7 +150,10 @@ function ExerciseCard({ brief, parts }: { brief: string; parts: { id: string; pr
   );
 }
 
-function renderBlock(block: LessonBlock) {
+// The try_it_live block holds a live tutor conversation, so it needs the lesson
+// context (id + slug) the rest of the reader closes over. Threaded in as
+// `lessonCtx` so the other block types keep their unchanged signature.
+function renderBlock(block: LessonBlock, lessonCtx: { id: string; slug: string }) {
   switch (block.type) {
     case "reading":
       return <div key={block.id}>{renderMarkdown(block.content.markdown)}</div>;
@@ -161,7 +164,15 @@ function renderBlock(block: LessonBlock) {
     case "fill_blank":
       return <FillBlankBlock key={block.id} blockId={block.id} content={block.content} />;
     case "try_it_live":
-      return <TryItLiveBlock key={block.id} blockId={block.id} content={block.content} />;
+      return (
+        <TryItLiveBlock
+          key={block.id}
+          blockId={block.id}
+          content={block.content}
+          lessonId={lessonCtx.id}
+          lessonSlug={lessonCtx.slug}
+        />
+      );
     case "before_after":
       return <BeforeAfterBlock key={block.id} blockId={block.id} content={block.content} />;
     default:
@@ -173,16 +184,22 @@ function renderBlock(block: LessonBlock) {
 // the current user. The base block always renders; personalization is additive
 // framing layered around it. Calling the hook here (one component per block)
 // keeps the hook count stable across renders.
-function RenderedBlock({ block }: { block: LessonBlock }) {
+function RenderedBlock({
+  block,
+  lessonCtx,
+}: {
+  block: LessonBlock;
+  lessonCtx: { id: string; slug: string };
+}) {
   const { content, personalization, isPersonalized } = usePersonalizedBlock(block.id, block);
   if (isPersonalized && personalization) {
     return (
       <PersonalizationLayer personalization={personalization}>
-        {renderBlock(content)}
+        {renderBlock(content, lessonCtx)}
       </PersonalizationLayer>
     );
   }
-  return renderBlock(content);
+  return renderBlock(content, lessonCtx);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -437,7 +454,7 @@ export default function Lesson() {
 
         {/* Blocks (reading, exercise, ...) in order */}
         {lesson.blocks.map((block) => (
-          <RenderedBlock key={block.id} block={block} />
+          <RenderedBlock key={block.id} block={block} lessonCtx={{ id: lesson.id, slug: lesson.slug }} />
         ))}
 
         {/* Key takeaway */}
