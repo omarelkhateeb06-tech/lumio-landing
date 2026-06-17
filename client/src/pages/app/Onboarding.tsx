@@ -18,9 +18,12 @@ import { dur, ease } from "@/lib/motion";
 import { BrandNav } from "@/components/marketing";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Quiz definition — five single-purpose questions mapped to profiles columns.
-// The industry values are tags.slug (kind = 'industry'); the rest map to the
-// CHECK-constrained enum columns. Order: confidence → field → habit → goal → role.
+// Quiz definition — single-purpose questions mapped to profiles columns. The
+// industry values are tags.slug (kind = 'industry'); the rest map to the
+// CHECK-constrained enum columns. Order: confidence → field → habit → goal →
+// role → discovery → org size → experience → company → data-use consent. The
+// identity-capture steps (found_via onward) are all optional/skippable; the
+// final consent step is an affirmative opt-in that never blocks finishing.
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface Choice {
@@ -30,22 +33,34 @@ interface Choice {
 }
 
 interface SingleStep {
-  key: "skill_level" | "industry" | "ai_usage" | "goal";
+  key: "skill_level" | "industry" | "ai_usage" | "goal" | "found_via" | "company_size" | "years_experience";
   kind: "single";
   question: string;
   helper: string;
   choices: Choice[];
+  /** Optional single steps can be advanced without a selection (and offer a Skip). */
+  optional?: boolean;
 }
 
 interface TextStep {
-  key: "job_role";
+  key: "job_role" | "company_name";
   kind: "text";
   question: string;
   helper: string;
   placeholder: string;
 }
 
-type Step = SingleStep | TextStep;
+// Final affirmative-opt-in step: a single checkbox for data-use consent. Kept as
+// its own kind so it never blocks finishing — an unchecked box just leaves no
+// consent stamp.
+interface ConsentStep {
+  key: "data_consent";
+  kind: "consent";
+  question: string;
+  helper: string;
+}
+
+type Step = SingleStep | TextStep | ConsentStep;
 
 const STEPS: Step[] = [
   {
@@ -103,6 +118,62 @@ const STEPS: Step[] = [
     question: "What's your role?",
     helper: "Optional. A job title helps us pick the right examples.",
     placeholder: "e.g. Nurse, paralegal, marketing manager",
+  },
+  {
+    key: "found_via",
+    kind: "single",
+    question: "How did you find Lumio?",
+    helper: "Optional. It just helps us know what's working.",
+    optional: true,
+    choices: [
+      { value: "youtube", label: "YouTube", sub: "A video or channel" },
+      { value: "linkedin", label: "LinkedIn", sub: "A post or someone I follow" },
+      { value: "reddit", label: "Reddit", sub: "A thread or community" },
+      { value: "twitter", label: "X / Twitter", sub: "A post or reply" },
+      { value: "search", label: "Search", sub: "Google or another search engine" },
+      { value: "friend", label: "A friend or colleague", sub: "Someone told me about it" },
+      { value: "other", label: "Somewhere else", sub: "None of these" },
+    ],
+  },
+  {
+    key: "company_size",
+    kind: "single",
+    question: "How big is your organization?",
+    helper: "Optional. Skip if it's not relevant.",
+    optional: true,
+    choices: [
+      { value: "1-10", label: "Just me / small team", sub: "1–10 people" },
+      { value: "11-50", label: "A growing team", sub: "11–50 people" },
+      { value: "51-200", label: "Mid-sized", sub: "51–200 people" },
+      { value: "201-1000", label: "Large", sub: "201–1,000 people" },
+      { value: "1000+", label: "Enterprise", sub: "More than 1,000 people" },
+    ],
+  },
+  {
+    key: "years_experience",
+    kind: "single",
+    question: "How long have you worked in your field?",
+    helper: "Optional. It helps us pitch examples at the right level.",
+    optional: true,
+    choices: [
+      { value: "0-2", label: "Just getting started", sub: "0–2 years" },
+      { value: "3-7", label: "A few years in", sub: "3–7 years" },
+      { value: "8-15", label: "Well established", sub: "8–15 years" },
+      { value: "15+", label: "Deeply experienced", sub: "15+ years" },
+    ],
+  },
+  {
+    key: "company_name",
+    kind: "text",
+    question: "Where do you work?",
+    helper: "Optional. Leave it blank if you'd rather not say.",
+    placeholder: "Company or organization (optional)",
+  },
+  {
+    key: "data_consent",
+    kind: "consent",
+    question: "One last thing.",
+    helper: "How we'd like to use what you learn here.",
   },
 ];
 
@@ -211,6 +282,54 @@ function SingleChoice({
   );
 }
 
+// Affirmative-opt-in consent checkbox. Unchecked by default; a native checkbox
+// keeps the keyboard/space-to-toggle contract for free. The Privacy Policy link
+// opens in a new tab so it never interrupts the flow.
+function ConsentCheckbox({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label
+      htmlFor="data-consent"
+      className={`flex items-start gap-3 text-left rounded-2xl px-5 py-4 cursor-pointer transition-colors ${FOCUS_RING}`}
+      style={{
+        backgroundColor: checked ? C.orangeWash : C.paperHi,
+        border: `1.5px solid ${checked ? C.orange : C.hairline}`,
+      }}
+    >
+      <input
+        id="data-consent"
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className={`mt-0.5 shrink-0 ${FOCUS_RING}`}
+        style={{ width: 18, height: 18, accentColor: C.orange }}
+      />
+      <span className="text-sm leading-relaxed" style={{ color: C.espresso }}>
+        I agree that Lumio may use my learning activity to improve the product, and may share
+        anonymized, aggregated insights with third parties. See our{" "}
+        <a
+          href="/privacy"
+          target="_blank"
+          rel="noopener noreferrer"
+          // Stop the click from toggling the surrounding label's checkbox when the
+          // learner just wants to read the policy.
+          onClick={(e) => e.stopPropagation()}
+          className="underline underline-offset-2"
+          style={{ color: C.orangeInk }}
+        >
+          Privacy Policy
+        </a>
+        .
+      </span>
+    </label>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
@@ -225,6 +344,10 @@ export default function Onboarding() {
   const [draft, setDraft] = useState<Draft>({});
   const [goalOther, setGoalOther] = useState("");
   const [jobRole, setJobRole] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  // Affirmative opt-in: unchecked by default. An unchecked finish simply records
+  // no consent stamp.
+  const [dataConsent, setDataConsent] = useState(false);
   const [saving, setSaving] = useState(false);
 
   // A user who already finished the quiz shouldn't see it again.
@@ -246,15 +369,17 @@ export default function Onboarding() {
 
   // Whether the current step is answered enough to advance.
   const canContinue = (() => {
-    if (step.kind === "text") return true; // job_role is optional
+    if (step.kind === "text") return true; // text steps (role, company) are optional
+    if (step.kind === "consent") return true; // never block finishing on consent
+    if (step.optional) return true; // optional single steps can advance unselected
     const v = draft[step.key];
     if (!v) return false;
     if (step.key === "goal" && v === "other") return goalOther.trim().length > 0;
     return true;
   })();
 
-  function selectSingle(value: string) {
-    setDraft((d) => ({ ...d, [step.key]: value }));
+  function selectSingle(key: SingleStep["key"], value: string) {
+    setDraft((d) => ({ ...d, [key]: value }));
   }
 
   function handleBack() {
@@ -275,6 +400,11 @@ export default function Onboarding() {
       goal: draft.goal as OnboardingGoal,
       goal_other: draft.goal === "other" ? goalOther : undefined,
       job_role: jobRole,
+      company_name: companyName,
+      company_size: draft.company_size,
+      years_experience: draft.years_experience,
+      found_via: draft.found_via,
+      data_consent: dataConsent,
     };
     setSaving(true);
     const res = await saveOnboarding(answers);
@@ -388,7 +518,11 @@ export default function Onboarding() {
 
             {step.kind === "single" ? (
               <>
-                <SingleChoice step={step} value={draft[step.key]} onSelect={selectSingle} />
+                <SingleChoice
+                  step={step}
+                  value={draft[step.key]}
+                  onSelect={(v) => selectSingle(step.key, v)}
+                />
                 {step.key === "goal" && draft.goal === "other" && (
                   <motion.div
                     initial={rm ? false : { opacity: 0, height: 0 }}
@@ -415,16 +549,20 @@ export default function Onboarding() {
                   </motion.div>
                 )}
               </>
-            ) : (
+            ) : step.kind === "text" ? (
               <>
-                <label htmlFor="job-role" className="sr-only">
+                <label htmlFor={`text-${step.key}`} className="sr-only">
                   {step.question}
                 </label>
                 <input
-                  id="job-role"
+                  id={`text-${step.key}`}
                   type="text"
-                  value={jobRole}
-                  onChange={(e) => setJobRole(e.target.value)}
+                  value={step.key === "company_name" ? companyName : jobRole}
+                  onChange={(e) =>
+                    step.key === "company_name"
+                      ? setCompanyName(e.target.value)
+                      : setJobRole(e.target.value)
+                  }
                   placeholder={step.placeholder}
                   className={`w-full rounded-2xl px-5 py-4 text-base ${FOCUS_RING}`}
                   style={{
@@ -437,6 +575,8 @@ export default function Onboarding() {
                   }}
                 />
               </>
+            ) : (
+              <ConsentCheckbox checked={dataConsent} onChange={setDataConsent} />
             )}
           </motion.div>
         </AnimatePresence>
@@ -469,13 +609,7 @@ export default function Onboarding() {
               cursor: !canContinue || saving ? "not-allowed" : "pointer",
             }}
           >
-            {saving
-              ? "Saving…"
-              : isLast
-                ? jobRole.trim()
-                  ? "Start learning →"
-                  : "Skip and start →"
-                : "Continue →"}
+            {saving ? "Saving…" : isLast ? "Start learning →" : "Continue →"}
           </button>
         </div>
       </main>

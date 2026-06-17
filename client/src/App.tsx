@@ -20,6 +20,7 @@ import CertOverview from "./pages/app/CertOverview";
 import CertSubmit from "./pages/app/CertSubmit";
 import Admin from "./pages/app/Admin";
 import Verify from "./pages/Verify";
+import Privacy from "./pages/Privacy";
 
 // Blank paper screen shown while auth/onboarding state resolves — avoids a
 // flash of redirect on protected routes.
@@ -138,6 +139,10 @@ function Router() {
       <Route path={"/admin"}>
         {() => <ProtectedRoute component={Admin} />}
       </Route>
+
+      {/* Public privacy policy — intentionally outside ProtectedRoute so the
+          onboarding consent link is readable without an account. */}
+      <Route path={"/privacy"} component={Privacy} />
 
       {/* Public certificate verification — intentionally outside ProtectedRoute */}
       <Route path={"/verify/:token"} component={Verify} />

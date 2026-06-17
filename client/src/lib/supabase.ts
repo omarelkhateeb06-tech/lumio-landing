@@ -460,7 +460,31 @@ export interface OnboardingAnswers {
   goal: OnboardingGoal;
   goal_other?: string;
   job_role?: string;
+  // Identity-capture signals (all optional / skippable in the quiz).
+  company_name?: string;
+  company_size?: string; // '1-10' | '11-50' | '51-200' | '201-1000' | '1000+'
+  years_experience?: string; // '0-2' | '3-7' | '8-15' | '15+'
+  found_via?: string; // 'youtube' | 'linkedin' | 'reddit' | 'twitter' | 'search' | 'friend' | 'referral' | 'other'
+  // Affirmative opt-in to data use. Only true stamps a consent record.
+  data_consent?: boolean;
 }
+
+// Generate a short, URL-safe referral code (e.g. "lum-7f3a9c2e") from the
+// platform CSPRNG. Lowercase alphanumeric so it's easy to read aloud and share.
+function generateReferralCode(): string {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const bytes = new Uint8Array(8);
+  crypto.getRandomValues(bytes);
+  let code = "";
+  for (let i = 0; i < bytes.length; i++) {
+    code += alphabet[bytes[i] % alphabet.length];
+  }
+  return `lum-${code}`;
+}
+
+// Current consent copy version. Bump when the consent language materially
+// changes so each stamp records which wording the user actually agreed to.
+const DATA_CONSENT_VERSION = "v1";
 
 // Whether the current user has finished onboarding. Returns false when there's
 // no session, no profile row, or onboarding_completed_at is null — all of which
@@ -479,24 +503,55 @@ export async function fetchOnboardingComplete(): Promise<boolean> {
 
 // Upsert the quiz answers onto the user's profile row and stamp completion.
 // goal_other is only persisted when goal is "other"; job_role is optional.
+// Also captures the identity signals (company, size, experience, found_via),
+// resolves referral attribution from localStorage, mints the user's own referral
+// code on first onboarding, and — only on affirmative opt-in — stamps consent.
 export async function saveOnboarding(
   answers: OnboardingAnswers
 ): Promise<{ ok: boolean; error?: string }> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Not authenticated" };
-  const { error } = await supabase.from("profiles").upsert(
-    {
-      id: user.id,
-      skill_level: answers.skill_level,
-      industry: answers.industry,
-      ai_usage: answers.ai_usage,
-      goal: answers.goal,
-      goal_other: answers.goal === "other" ? answers.goal_other?.trim() || null : null,
-      job_role: answers.job_role?.trim() || null,
-      onboarding_completed_at: new Date().toISOString(),
-    },
-    { onConflict: "id" }
-  );
+
+  // Mint a referral code the first time only — never overwrite an existing one,
+  // so a user's shareable code stays stable across re-onboarding.
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("referral_code")
+    .eq("id", user.id)
+    .maybeSingle();
+  const referralCode =
+    (existing as { referral_code: string | null } | null)?.referral_code ?? generateReferralCode();
+
+  // The code that referred this user, dropped on /signup before the magic-link
+  // round-trip. Read defensively (no window during SSR / tests).
+  const referredByCode =
+    typeof window !== "undefined" ? window.localStorage.getItem("lumio_ref") : null;
+
+  const row: Record<string, unknown> = {
+    id: user.id,
+    skill_level: answers.skill_level,
+    industry: answers.industry,
+    ai_usage: answers.ai_usage,
+    goal: answers.goal,
+    goal_other: answers.goal === "other" ? answers.goal_other?.trim() || null : null,
+    job_role: answers.job_role?.trim() || null,
+    company_name: answers.company_name?.trim() || null,
+    company_size: answers.company_size ?? null,
+    years_experience: answers.years_experience ?? null,
+    found_via: answers.found_via ?? null,
+    referral_code: referralCode,
+    referred_by_code: referredByCode || null,
+    onboarding_completed_at: new Date().toISOString(),
+  };
+
+  // Stamp consent only on affirmative opt-in. An unchecked box simply leaves no
+  // consent record — we never write a "declined" state, just absence.
+  if (answers.data_consent === true) {
+    row.data_consent_at = new Date().toISOString();
+    row.data_consent_version = DATA_CONSENT_VERSION;
+  }
+
+  const { error } = await supabase.from("profiles").upsert(row, { onConflict: "id" });
   if (error) return { ok: false, error: error.message };
   return { ok: true };
 }

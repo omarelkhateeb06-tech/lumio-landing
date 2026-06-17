@@ -31,6 +31,7 @@ import { CERT_STATUS_TONE } from "@/lib/certStatusUi";
 import { C, FOCUS_RING, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT_SOFT, PILL } from "@/lib/theme";
 import { dur, ease } from "@/lib/motion";
 import { truncateEmail } from "@/lib/format";
+import { logEvent } from "@/lib/analytics";
 import { BrandNav } from "@/components/marketing";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -526,6 +527,15 @@ function FieldGroup({
   const total = lessons.length;
   const doneCount = lessons.filter((l) => completed.has(l.id)).length;
   const panelId = `field-panel-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  // Behavioral capture: a field group is the dashboard's "module/section" the
+  // learner opens. Log module_entered on the open action only (when this group is
+  // currently closed and about to open), not on collapse and not on every render.
+  // No real module uuid is on hand here — the section is a profession label — so
+  // we carry the label in metadata. Best-effort/fire-and-forget.
+  const handleToggle = () => {
+    if (!open) void logEvent("module_entered", { metadata: { label } });
+    onToggle();
+  };
   return (
     <div
       className="rounded-2xl p-5"
@@ -537,7 +547,7 @@ function FieldGroup({
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={`${label} - ${doneCount} of ${total} complete`}
-        onClick={onToggle}
+        onClick={handleToggle}
       >
         <div className="flex items-start justify-between gap-2">
           <div className="text-base font-medium leading-tight" style={{ color: C.espresso }}>

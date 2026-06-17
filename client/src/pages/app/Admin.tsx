@@ -31,6 +31,82 @@ interface AdminSubmission {
   cert_slug: string;
 }
 
+// Analytics RPC return shapes ─────────────────────────────────────────────────
+
+interface DataAssetHealth {
+  total_identified_users: number;
+  users_per_industry: Record<string, number>;
+  consented_users: number;
+  tutor_queries_logged: number;
+  avg_session_minutes: number;
+  targets: {
+    total_identified_users: number;
+    users_per_industry: number;
+    tutor_queries_logged: number;
+    avg_session_minutes: number;
+  };
+}
+
+interface EngagementDistribution {
+  at_risk: number;
+  active: number;
+  power: number;
+  total: number;
+}
+
+interface RetentionCohort {
+  cohort_week: string;
+  cohort_size: number;
+  retained_d1: number;
+  retained_d7: number;
+  retained_d30: number;
+}
+
+interface CertFunnelRow {
+  cert_id: string;
+  cert_slug: string;
+  cert_name: string;
+  enrolled: number;
+  paid: number;
+  completed: number;
+  avg_days_to_complete: number;
+}
+
+interface TopEvent {
+  event_type: string;
+  event_count: number;
+}
+
+interface ConfusionRow {
+  lesson_id: string;
+  lesson_title: string;
+  module_id: string;
+  module_title: string;
+  interactions: number;
+  avg_iterations: number;
+}
+
+const EMPTY_HEALTH: DataAssetHealth = {
+  total_identified_users: 0,
+  users_per_industry: {},
+  consented_users: 0,
+  tutor_queries_logged: 0,
+  avg_session_minutes: 0,
+  targets: {
+    total_identified_users: 2000,
+    users_per_industry: 200,
+    tutor_queries_logged: 5000,
+    avg_session_minutes: 12,
+  },
+};
+
+const EMPTY_ENGAGEMENT: EngagementDistribution = {
+  at_risk: 0,
+  active: 0,
+  power: 0,
+  total: 0,
+};
+
 // ── Admin data helpers ───────────────────────────────────────────────────────
 
 async function fetchAdminSubmissions(): Promise<AdminSubmission[]> {
@@ -69,12 +145,54 @@ async function stampPaid(
   return d?.ok ? { ok: true } : { ok: false, error: String(d?.error ?? "Unknown error") };
 }
 
+async function fetchDataAssetHealth(): Promise<DataAssetHealth> {
+  const { data, error } = await supabase.rpc("admin_data_asset_health");
+  if (error || !data || typeof data !== "object") return EMPTY_HEALTH;
+  const d = data as Partial<DataAssetHealth>;
+  return {
+    ...EMPTY_HEALTH,
+    ...d,
+    users_per_industry: d.users_per_industry ?? {},
+    targets: { ...EMPTY_HEALTH.targets, ...(d.targets ?? {}) },
+  };
+}
+
+async function fetchEngagementDistribution(): Promise<EngagementDistribution> {
+  const { data, error } = await supabase.rpc("admin_engagement_distribution");
+  if (error || !data || typeof data !== "object") return EMPTY_ENGAGEMENT;
+  return { ...EMPTY_ENGAGEMENT, ...(data as Partial<EngagementDistribution>) };
+}
+
+async function fetchRetentionCohorts(): Promise<RetentionCohort[]> {
+  const { data, error } = await supabase.rpc("admin_retention_cohorts");
+  if (error || !data) return [];
+  return Array.isArray(data) ? (data as RetentionCohort[]) : [];
+}
+
+async function fetchCertFunnel(): Promise<CertFunnelRow[]> {
+  const { data, error } = await supabase.rpc("admin_cert_funnel");
+  if (error || !data) return [];
+  return Array.isArray(data) ? (data as CertFunnelRow[]) : [];
+}
+
+async function fetchTopEvents(): Promise<TopEvent[]> {
+  const { data, error } = await supabase.rpc("admin_top_events");
+  if (error || !data) return [];
+  return Array.isArray(data) ? (data as TopEvent[]) : [];
+}
+
+async function fetchConfusionMap(): Promise<ConfusionRow[]> {
+  const { data, error } = await supabase.rpc("admin_confusion_map");
+  if (error || !data) return [];
+  return Array.isArray(data) ? (data as ConfusionRow[]) : [];
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Admin() {
   const { user, signOut } = useAuth();
   const rm = useReducedMotion() ?? false;
-  const [tab, setTab] = useState<"queue" | "stamp">("queue");
+  const [tab, setTab] = useState<"queue" | "stamp" | "analytics">("queue");
 
   async function handleSignOut() {
     await signOut();
@@ -114,7 +232,7 @@ export default function Admin() {
 
         {/* Tabs */}
         <div className="flex gap-6 mt-8" style={{ borderBottom: `1px solid ${C.hairline}` }}>
-          {(["queue", "stamp"] as const).map((id) => (
+          {(["queue", "stamp", "analytics"] as const).map((id) => (
             <button
               key={id}
               type="button"
@@ -126,13 +244,23 @@ export default function Admin() {
                 fontFamily: FONT_MONO,
               }}
             >
-              {id === "queue" ? "Review queue" : "Stamp payment"}
+              {id === "queue"
+                ? "Review queue"
+                : id === "stamp"
+                ? "Stamp payment"
+                : "Analytics"}
             </button>
           ))}
         </div>
 
         <div className="mt-8">
-          {tab === "queue" ? <ReviewQueue rm={rm} /> : <StampPayment />}
+          {tab === "queue" ? (
+            <ReviewQueue rm={rm} />
+          ) : tab === "stamp" ? (
+            <StampPayment />
+          ) : (
+            <AnalyticsPanel rm={rm} />
+          )}
         </div>
       </div>
     </div>
@@ -538,5 +666,524 @@ function StampPayment() {
         {saving ? "Stamping…" : "Stamp paid_at →"}
       </button>
     </form>
+  );
+}
+
+// ── Analytics ────────────────────────────────────────────────────────────────
+
+const INDUSTRY_LABELS: Record<string, string> = {
+  total_identified_users: "Identified users",
+  tutor_queries_logged: "Tutor queries",
+  avg_session_minutes: "Avg session (min)",
+};
+
+function fmtNum(n: number): string {
+  if (!Number.isFinite(n)) return "0";
+  return Math.round(n).toLocaleString("en-US");
+}
+
+function fmtDec(n: number): string {
+  if (!Number.isFinite(n)) return "0";
+  return (Math.round(n * 10) / 10).toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+  });
+}
+
+function pct(value: number, target: number): number {
+  if (!target || !Number.isFinite(target)) return 0;
+  return Math.max(0, Math.min(100, (value / target) * 100));
+}
+
+function AnalyticsPanel({ rm }: { rm: boolean }) {
+  const [loading, setLoading] = useState(true);
+  const [health, setHealth] = useState<DataAssetHealth>(EMPTY_HEALTH);
+  const [engagement, setEngagement] = useState<EngagementDistribution>(EMPTY_ENGAGEMENT);
+  const [cohorts, setCohorts] = useState<RetentionCohort[]>([]);
+  const [funnel, setFunnel] = useState<CertFunnelRow[]>([]);
+  const [events, setEvents] = useState<TopEvent[]>([]);
+  const [confusion, setConfusion] = useState<ConfusionRow[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      const [h, e, c, f, ev, cf] = await Promise.all([
+        fetchDataAssetHealth(),
+        fetchEngagementDistribution(),
+        fetchRetentionCohorts(),
+        fetchCertFunnel(),
+        fetchTopEvents(),
+        fetchConfusionMap(),
+      ]);
+      if (!cancelled) {
+        setHealth(h);
+        setEngagement(e);
+        setCohorts(c);
+        setFunnel(f);
+        setEvents(ev);
+        setConfusion(cf);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[220, 120, 160].map((h, i) => (
+          <div
+            key={i}
+            className="rounded-2xl animate-pulse"
+            style={{ backgroundColor: C.hairline, height: h }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={rm ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: dur.base, ease: ease.ink }}
+      className="space-y-10"
+    >
+      <DataAssetHealthSection health={health} />
+      <EngagementSection engagement={engagement} />
+      <RetentionSection cohorts={cohorts} />
+      <CertFunnelSection funnel={funnel} />
+      <TopEventsSection events={events} />
+      <ConfusionSection confusion={confusion} />
+    </motion.div>
+  );
+}
+
+// Shared analytics primitives ─────────────────────────────────────────────────
+
+function SectionHead({ kicker, title }: { kicker: string; title: string }) {
+  return (
+    <div className="mb-4">
+      <p
+        className="text-[11px] uppercase tracking-[0.16em] mb-1"
+        style={{ color: C.umber, fontFamily: FONT_MONO }}
+      >
+        {kicker}
+      </p>
+      <h2 className="text-base font-medium" style={{ color: C.espresso }}>
+        {title}
+      </h2>
+    </div>
+  );
+}
+
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="rounded-2xl p-5 md:p-6"
+      style={{ backgroundColor: C.paperHi, border: `1px solid ${C.hairline}` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function EmptyLine({ text = "No data yet" }: { text?: string }) {
+  return (
+    <p className="text-sm" style={{ color: C.inkSoft }}>
+      {text}
+    </p>
+  );
+}
+
+function ProgressBar({ value, target }: { value: number; target: number }) {
+  return (
+    <div
+      className="rounded-full overflow-hidden mt-3"
+      style={{ height: 4, backgroundColor: C.hairline }}
+    >
+      <div
+        className="h-full rounded-full"
+        style={{ width: `${pct(value, target)}%`, backgroundColor: C.orange }}
+      />
+    </div>
+  );
+}
+
+function MetricCard({
+  label,
+  value,
+  target,
+  decimal,
+}: {
+  label: string;
+  value: number;
+  target: number;
+  decimal?: boolean;
+}) {
+  const shown = decimal ? fmtDec(value) : fmtNum(value);
+  const shownTarget = decimal ? fmtDec(target) : fmtNum(target);
+  return (
+    <div
+      className="rounded-2xl p-4"
+      style={{ backgroundColor: C.surface, border: `1px solid ${C.hairline}` }}
+    >
+      <p
+        className="text-[11px] uppercase tracking-[0.16em]"
+        style={{ color: C.umber, fontFamily: FONT_MONO }}
+      >
+        {label}
+      </p>
+      <p
+        className="mt-2 font-serif"
+        style={{
+          color: C.espresso,
+          fontSize: 28,
+          lineHeight: 1.05,
+          letterSpacing: "-0.02em",
+          fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT),
+        }}
+      >
+        {shown}
+      </p>
+      <p className="mt-1 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+        of {shownTarget} target
+      </p>
+      <ProgressBar value={value} target={target} />
+    </div>
+  );
+}
+
+// Table primitives — shared by retention / funnel / confusion ─────────────────
+
+function Th({ children, right }: { children: React.ReactNode; right?: boolean }) {
+  return (
+    <th
+      className={`pb-2 text-[11px] uppercase tracking-[0.14em] font-normal ${
+        right ? "text-right" : "text-left"
+      }`}
+      style={{ color: C.umber, fontFamily: FONT_MONO }}
+    >
+      {children}
+    </th>
+  );
+}
+
+function Td({
+  children,
+  right,
+  strong,
+}: {
+  children: React.ReactNode;
+  right?: boolean;
+  strong?: boolean;
+}) {
+  return (
+    <td
+      className={`py-2.5 text-sm align-top ${right ? "text-right tabular-nums" : "text-left"}`}
+      style={{
+        color: strong ? C.espresso : C.umber,
+        fontFamily: right ? FONT_MONO : undefined,
+      }}
+    >
+      {children}
+    </td>
+  );
+}
+
+// Sections ────────────────────────────────────────────────────────────────────
+
+function DataAssetHealthSection({ health }: { health: DataAssetHealth }) {
+  const industries = Object.entries(health.users_per_industry).sort(
+    (a, b) => b[1] - a[1],
+  );
+  return (
+    <section>
+      <SectionHead kicker="Hero metric" title="Data asset health" />
+      <Card>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <MetricCard
+            label={INDUSTRY_LABELS.total_identified_users}
+            value={health.total_identified_users}
+            target={health.targets.total_identified_users}
+          />
+          <MetricCard
+            label={INDUSTRY_LABELS.tutor_queries_logged}
+            value={health.tutor_queries_logged}
+            target={health.targets.tutor_queries_logged}
+          />
+          <MetricCard
+            label={INDUSTRY_LABELS.avg_session_minutes}
+            value={health.avg_session_minutes}
+            target={health.targets.avg_session_minutes}
+            decimal
+          />
+          <div
+            className="rounded-2xl p-4"
+            style={{ backgroundColor: C.surface, border: `1px solid ${C.hairline}` }}
+          >
+            <p
+              className="text-[11px] uppercase tracking-[0.16em]"
+              style={{ color: C.umber, fontFamily: FONT_MONO }}
+            >
+              Consented users
+            </p>
+            <p
+              className="mt-2 font-serif"
+              style={{
+                color: C.espresso,
+                fontSize: 28,
+                lineHeight: 1.05,
+                letterSpacing: "-0.02em",
+                fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT),
+              }}
+            >
+              {fmtNum(health.consented_users)}
+            </p>
+            <p className="mt-1 text-xs" style={{ color: C.inkSoft, fontFamily: FONT_MONO }}>
+              opted in to data use
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <p
+            className="text-[11px] uppercase tracking-[0.16em] mb-3"
+            style={{ color: C.umber, fontFamily: FONT_MONO }}
+          >
+            Users per industry · target {fmtNum(health.targets.users_per_industry)} each
+          </p>
+          {industries.length === 0 ? (
+            <EmptyLine />
+          ) : (
+            <ul className="space-y-2.5">
+              {industries.map(([industry, count]) => (
+                <li key={industry}>
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span className="text-sm" style={{ color: C.espresso }}>
+                      {industry}
+                    </span>
+                    <span
+                      className="text-xs tabular-nums"
+                      style={{ color: C.umber, fontFamily: FONT_MONO }}
+                    >
+                      {fmtNum(count)} / {fmtNum(health.targets.users_per_industry)}
+                    </span>
+                  </div>
+                  <ProgressBar value={count} target={health.targets.users_per_industry} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </Card>
+    </section>
+  );
+}
+
+function EngagementSection({ engagement }: { engagement: EngagementDistribution }) {
+  const items: { label: string; value: number }[] = [
+    { label: "At risk", value: engagement.at_risk },
+    { label: "Active", value: engagement.active },
+    { label: "Power", value: engagement.power },
+    { label: "Total", value: engagement.total },
+  ];
+  return (
+    <section>
+      <SectionHead kicker="Cohort split" title="Engagement" />
+      <Card>
+        {engagement.total === 0 ? (
+          <EmptyLine />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {items.map((it) => (
+              <div key={it.label}>
+                <p
+                  className="text-[11px] uppercase tracking-[0.16em]"
+                  style={{ color: C.umber, fontFamily: FONT_MONO }}
+                >
+                  {it.label}
+                </p>
+                <p
+                  className="mt-1.5 font-serif"
+                  style={{
+                    color: C.espresso,
+                    fontSize: 26,
+                    lineHeight: 1.05,
+                    letterSpacing: "-0.02em",
+                    fontVariationSettings: displayFV(48, DISPLAY_WEIGHT_SOFT),
+                  }}
+                >
+                  {fmtNum(it.value)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+    </section>
+  );
+}
+
+function RetentionSection({ cohorts }: { cohorts: RetentionCohort[] }) {
+  return (
+    <section>
+      <SectionHead kicker="Weekly cohorts" title="Retention" />
+      <Card>
+        {cohorts.length === 0 ? (
+          <EmptyLine />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.hairline}` }}>
+                  <Th>Week</Th>
+                  <Th right>Size</Th>
+                  <Th right>D1</Th>
+                  <Th right>D7</Th>
+                  <Th right>D30</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {cohorts.map((c) => (
+                  <tr
+                    key={c.cohort_week}
+                    style={{ borderBottom: `1px solid ${C.hairlineSoft}` }}
+                  >
+                    <Td strong>{c.cohort_week}</Td>
+                    <Td right>{fmtNum(c.cohort_size)}</Td>
+                    <Td right>{fmtNum(c.retained_d1)}</Td>
+                    <Td right>{fmtNum(c.retained_d7)}</Td>
+                    <Td right>{fmtNum(c.retained_d30)}</Td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </section>
+  );
+}
+
+function CertFunnelSection({ funnel }: { funnel: CertFunnelRow[] }) {
+  return (
+    <section>
+      <SectionHead kicker="Enrolled → completed" title="Certificate funnel" />
+      <Card>
+        {funnel.length === 0 ? (
+          <EmptyLine />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.hairline}` }}>
+                  <Th>Cert</Th>
+                  <Th right>Enrolled</Th>
+                  <Th right>Paid</Th>
+                  <Th right>Completed</Th>
+                  <Th right>Avg days</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {funnel.map((f) => (
+                  <tr
+                    key={f.cert_id}
+                    style={{ borderBottom: `1px solid ${C.hairlineSoft}` }}
+                  >
+                    <Td strong>{f.cert_name}</Td>
+                    <Td right>{fmtNum(f.enrolled)}</Td>
+                    <Td right>{fmtNum(f.paid)}</Td>
+                    <Td right>{fmtNum(f.completed)}</Td>
+                    <Td right>{f.completed > 0 ? fmtDec(f.avg_days_to_complete) : "—"}</Td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </section>
+  );
+}
+
+function TopEventsSection({ events }: { events: TopEvent[] }) {
+  const max = events.reduce((m, e) => Math.max(m, e.event_count), 0);
+  return (
+    <section>
+      <SectionHead kicker="Last 30 days" title="Top events" />
+      <Card>
+        {events.length === 0 ? (
+          <EmptyLine />
+        ) : (
+          <ul className="space-y-2.5">
+            {events.map((e) => (
+              <li key={e.event_type}>
+                <div className="flex items-baseline justify-between gap-4">
+                  <span
+                    className="text-sm truncate"
+                    style={{ color: C.espresso, fontFamily: FONT_MONO }}
+                  >
+                    {e.event_type}
+                  </span>
+                  <span
+                    className="text-xs tabular-nums flex-shrink-0"
+                    style={{ color: C.umber, fontFamily: FONT_MONO }}
+                  >
+                    {fmtNum(e.event_count)}
+                  </span>
+                </div>
+                <ProgressBar value={e.event_count} target={max} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </section>
+  );
+}
+
+function ConfusionSection({ confusion }: { confusion: ConfusionRow[] }) {
+  return (
+    <section>
+      <SectionHead kicker="Where learners struggle" title="Confusion map" />
+      <Card>
+        {confusion.length === 0 ? (
+          <EmptyLine />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.hairline}` }}>
+                  <Th>Lesson</Th>
+                  <Th>Module</Th>
+                  <Th right>Interactions</Th>
+                  <Th right>Avg iters</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {confusion.map((c) => (
+                  <tr
+                    key={c.lesson_id}
+                    style={{ borderBottom: `1px solid ${C.hairlineSoft}` }}
+                  >
+                    <Td strong>{c.lesson_title}</Td>
+                    <Td>{c.module_title}</Td>
+                    <Td right>{fmtNum(c.interactions)}</Td>
+                    <Td right>{fmtDec(c.avg_iterations)}</Td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="mt-4 text-xs" style={{ color: C.inkSoft }}>
+          Fills in once the in-app AI tutor ships.
+        </p>
+      </Card>
+    </section>
   );
 }

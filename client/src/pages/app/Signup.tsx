@@ -45,6 +45,22 @@ export default function Signup() {
     return certSlug ? `${base}__${refSource}_${certSlug}` : `${base}__${refSource}`;
   }
 
+  // Persist referral attribution across the magic-link round-trip. The visitor
+  // confirms the link in a fresh page load on /onboarding, where saveOnboarding
+  // reads this key — so stash the raw ?ref= source here, fire-and-forget, guarded
+  // for SSR / no-window. Only the first ref wins; we don't overwrite an existing
+  // one, so a later untagged visit can't wipe an earlier attribution.
+  useEffect(() => {
+    if (typeof window === "undefined" || !refSource) return;
+    try {
+      if (!window.localStorage.getItem("lumio_ref")) {
+        window.localStorage.setItem("lumio_ref", refSource);
+      }
+    } catch {
+      // storage can be blocked (private mode, denied) — attribution is best-effort
+    }
+  }, [refSource]);
+
   // Move focus to the confirmation when the form is swapped out, so keyboard and
   // screen-reader users aren't stranded on a now-removed submit button (Executor H3).
   useEffect(() => {

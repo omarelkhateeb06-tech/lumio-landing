@@ -15,6 +15,7 @@ import {
   unmarkLessonComplete,
 } from "@/lib/supabase";
 import type { CurriculumLesson, LessonReaderData } from "@/lib/supabase";
+import { logEvent } from "@/lib/analytics";
 import type { LessonBlock } from "@/lib/curriculum";
 import { C, FOCUS_RING, FONT_MONO, SKIP_LINK, displayFV, DISPLAY_WEIGHT_SOFT, PILL } from "@/lib/theme";
 import { dur, ease } from "@/lib/motion";
@@ -237,6 +238,16 @@ export default function Lesson() {
     }
   }, [lesson, isCompleted]);
 
+  // Behavioral capture: log that this lesson was opened, keyed on its uuid so it
+  // fires once per loaded lesson. Best-effort/fire-and-forget — never blocks the
+  // reader. (Distinct from the Loops nudge above: this fires for any open, even a
+  // re-open of an already-completed lesson.)
+  useEffect(() => {
+    if (lesson) {
+      void logEvent("lesson_started", { lessonId: lesson.id });
+    }
+  }, [lesson?.id]);
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -263,6 +274,9 @@ export default function Lesson() {
     setMarking(false);
     if (res.ok) {
       setCompleted((prev) => new Set(prev).add(lesson.id));
+      // Behavioral capture: log the completion. Best-effort/fire-and-forget so it
+      // never blocks the confetti, toast, or booster work below.
+      void logEvent("lesson_completed", { lessonId: lesson.id });
       // First completion only: enqueue a spaced-review booster a few days out.
       // Best-effort and fire-and-forget — it must never block or undo completion.
       if (!wasCompleted) {

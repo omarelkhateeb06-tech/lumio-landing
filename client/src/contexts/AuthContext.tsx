@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { startSession, endSession } from "@/lib/analytics";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -43,6 +44,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Behavioral analytics session lifecycle. Once a user is authenticated, open a
+  // capture session and arrange to close it when the page goes away. Both writes
+  // are best-effort/fire-and-forget and must never disrupt auth or the UX. Keyed
+  // on the user id so it runs once per signed-in user and tears down on sign-out.
+  useEffect(() => {
+    if (!user || !session) return;
+    void startSession();
+    // Close the session on the two reliable "page is going away" signals: a
+    // pagehide (covers tab close, navigation, bfcache) and the tab becoming
+    // hidden. endSession() is idempotent, so a double-fire is harmless.
+    const onHidden = () => {
+      if (document.visibilityState === "hidden") void endSession();
+    };
+    const onPageHide = () => {
+      void endSession();
+    };
+    window.addEventListener("pagehide", onPageHide);
+    document.addEventListener("visibilitychange", onHidden);
+    return () => {
+      window.removeEventListener("pagehide", onPageHide);
+      document.removeEventListener("visibilitychange", onHidden);
+      void endSession();
+    };
+  }, [user?.id, session]);
 
   async function signInWithMagicLink(
     email: string,
